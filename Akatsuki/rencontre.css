@@ -1324,6 +1324,11 @@ body:has(
 
 }
 
+.continue-button a {
+    color: white;
+    text-decoration: none;
+}
+
 
 /* ACTIF LORSQU'UN MODE EST CHOISI */
 

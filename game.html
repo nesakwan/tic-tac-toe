@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TIC TAC TOE</title>
+    <link rel="stylesheet" href="css/gamestyle.css">
+</head>
+
+<body>
+    <main id="main-app">
+        <div id="gamepage">
+            <nav id="game-nav">
+
+                <button id="back-button">
+                    ← Accueil
+                </button>
+
+                <h1>TIC TAC TOE</h1>
+
+                <button id="settings-button">
+                    ⚙
+                </button>
+
+            </nav>
+
+
+            <div id="turn-player"></div>
+
+            <section id="gameplay">
+
+                <div id="game-board">
+
+                    <button id="cell0" class="cell" data-index="0"></button>
+                    <button id="cell1" class="cell" data-index="1"></button>
+                    <button id="cell2" class="cell" data-index="2"></button>
+
+                    <button id="cell3" class="cell" data-index="3"></button>
+                    <button id="cell4" class="cell" data-index="4"></button>
+                    <button id="cell5" class="cell" data-index="5"></button>
+
+                    <button id="cell6" class="cell" data-index="6"></button>
+                    <button id="cell7" class="cell" data-index="7"></button>
+                    <button id="cell8" class="cell" data-index="8"></button>
+
+
+
+                </div>
+
+            </section>
+
+
+            <section id="game-result">
+
+                <div class="score">
+
+                    <div class="score-player">
+                        <span class="score-symbol x">Player X</span>
+                        <span id="score-x">0</span>
+                    </div>
+
+                    <div class="score-draw">
+                        <span>Matchs nuls</span>
+                        <span id="score-draw">0</span>
+                    </div>
+
+                    <div class="score-player">
+                        <span class="score-symbol o">Player O</span>
+                        <span id="score-o">0</span>
+                    </div>
+
+                </div>
+
+                <button id="restart-button">
+                    ↻ Rejouer
+                </button>
+
+            </section>
+
+
+            <div id="result-popup" class="popup-overlay">
+
+                <div class="popup">
+
+                    <div id="result-icon">🏆</div>
+
+                    <h2 id="result-title">X A GAGNÉ !</h2>
+
+                    <p id="result-message">Félicitations !</p>
+
+                    <div class="popup-buttons">
+                        <button id="replay-button">↻ Rejouer</button>
+                        <button id="home-button">⌂ Retour à l'accueil</button>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+    </main>
+    <script src="js/gamepage.js"></script>
+</body>
+
+</html>
