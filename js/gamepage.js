@@ -3,16 +3,22 @@ const turnPlayer = document.getElementById('turn-player');
 const cell0 = document.getElementById(`cell${gamePage}`);
 const cell1 = document.getElementById('cell1');
 
+const resultPopup = document.getElementById("result-popup");
+const resultTitle = document.getElementById("result-title");
+const resultMessage = document.getElementById("result-message");
+const resultIcon = document.getElementById("result-icon");
+
+
 let currentPlayer1 = "X";
 let currentPlayer2 = "O";
 let player1HasPlayed = false;
-
-
+let player1Won = false;
+let player2Won = false;
 
 let gameBoard = [
     "", "", "",
     "", "", "",
-    "", "", ""
+    "", "", "",
 ];
 
 const winningCombinations = [
@@ -25,7 +31,7 @@ const winningCombinations = [
     [2, 5, 8],
 
     [0, 4, 8],
-    [2, 4, 6]
+    [2, 4, 6],
 ];
 
 
@@ -51,8 +57,13 @@ cells.forEach(cell => {
         }
 
         console.log(`Cell clicked: ${cellId}`);
-        
+
         checkWinner();
+        if (player1Won || player2Won) {
+            console.log("Player has won!", player1Won || player2Won);
+            // alert(`Le joueur ${currentPlayer1} a gagné !`);
+            showResult();
+        }
 
     });
 
@@ -62,7 +73,6 @@ cells.forEach(cell => {
 
 
 // Functions
-
 function playX(c) {
     if (gameBoard[c] === "") {
         gameBoard[c] = currentPlayer1;
@@ -74,7 +84,6 @@ function playX(c) {
 }
 
 function playO(c) {
-
     if (gameBoard[c] === "") {
         gameBoard[c] = currentPlayer2;
         console.log(`Placing ${currentPlayer2} in cell ${c}`);
@@ -86,15 +95,35 @@ function playO(c) {
 }
 
 function checkWinner() {
-
     for (let combination of winningCombinations) {
         for (let player of [currentPlayer1, currentPlayer2]) {
             if (combination.every(index => gameBoard[index] === player)) {
-                alert(`Le joueur ${player} a gagné !`);
+                if (player === currentPlayer1) {
+                    player1Won = true;
+                } else {
+                    player2Won = true;
+                }
                 return;
             }
         }
+    }
+}
 
+function showResult() {
+
+    if (player1Won) {
+        resultTitle.textContent = "Victoire !";
+        resultMessage.textContent = `Le joueur ${currentPlayer1} a gagné !`;
+        resultIcon.textContent = "🏆";
+    } else if (player2Won) {
+        resultTitle.textContent = "Victoire !";
+        resultMessage.textContent = `Le joueur ${currentPlayer2} a gagné !`;
+        resultIcon.textContent = "🏆";
+    } else {
+        resultTitle.textContent = "Match nul !";
+        resultMessage.textContent = "Aucun joueur n'a gagné.";
+        resultIcon.textContent = "🤝";
     }
 
+    resultPopup.style.display = "flex";
 }

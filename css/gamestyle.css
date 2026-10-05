@@ -297,3 +297,86 @@ body {
     }
 
 }
+
+/** Pop Up for game results **/
+.popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+
+    width: 100%;
+    height: 100%;
+
+    display: none;
+
+    align-items: center;
+    justify-content: center;
+
+    background: rgba(0, 0, 0, 0.7);
+
+    z-index: 1000;
+}
+
+.popup {
+    width: min(90%, 450px);
+
+    padding: 40px;
+
+    text-align: center;
+
+    background: #101827;
+
+    border: 1px solid #2d3b55;
+
+    border-radius: 20px;
+
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+}
+
+#result-icon {
+    font-size: 60px;
+    margin-bottom: 15px;
+}
+
+#result-title {
+    margin: 0 0 10px;
+
+    font-size: 32px;
+    color: white;
+}
+
+#result-message {
+    margin-bottom: 30px;
+
+    color: #b9c4d6;
+    font-size: 18px;
+}
+
+.popup-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+#replay-button,
+#home-button {
+    padding: 13px 25px;
+
+    border: none;
+    border-radius: 10px;
+
+    font-size: 16px;
+    font-weight: bold;
+
+    cursor: pointer;
+}
+
+#replay-button {
+    background: linear-gradient(90deg, #4f9cff, #7067ff);
+    color: white;
+}
+
+#home-button {
+    background: #1b2638;
+    color: white;
+}
