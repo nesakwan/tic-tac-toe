@@ -8,6 +8,8 @@ const resultTitle = document.getElementById("result-title");
 const resultMessage = document.getElementById("result-message");
 const resultIcon = document.getElementById("result-icon");
 
+const continueButton = document.getElementById("continue-button");
+
 
 let currentPlayer1 = "X";
 let currentPlayer2 = "O";
@@ -68,6 +70,7 @@ cells.forEach(cell => {
     });
 
 });
+
 
 
 
