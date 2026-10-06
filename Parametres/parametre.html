@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paramètres - Tic Tac Toe</title>
+    <link rel="stylesheet" href="parametre.css">
+</head>
+<body>
+    <main class="settings-screen">
+        <div class="background-symbols" aria-hidden="true">
+            <div class="decor-x decor-x-1"></div>
+            <div class="decor-x decor-x-2"></div>
+            <div class="decor-o decor-o-1"></div>
+            <div class="decor-o decor-o-2"></div>
+        </div>
+
+        <a href="../Titre/titre.html" class="back-button" id="settings-back-button">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M15 18L9 12L15 6"></path>
+            </svg>
+            <span>Retour</span>
+        </a>
+
+        <section class="settings-content">
+            <header class="settings-header">
+                <span class="settings-kicker">TIC TAC TOE</span>
+                <h1>PARAMÈTRES</h1>
+                <p>Réglez le son et la langue du jeu.</p>
+            </header>
+
+            <div class="settings-panel">
+                <section class="setting-group sound-group">
+                    <div class="setting-row">
+                        <div class="setting-info">
+                            <div class="icon-box">
+                                <svg viewBox="0 0 24 24" aria-hidden="true">
+                                    <path d="M11 5L6 9H3V15H6L11 19V5Z"></path>
+                                    <path d="M15 9C16.3 10.6 16.3 13.4 15 15"></path>
+                                    <path d="M18 6C21 9.2 21 14.8 18 18"></path>
+                                </svg>
+                            </div>
+                            <div class="setting-text">
+                                <span class="setting-name">Son</span>
+                                <span class="setting-description">Activer ou désactiver les sons du jeu</span>
+                            </div>
+                        </div>
+
+                        <label class="switch">
+                            <input type="checkbox" id="sound-toggle" checked>
+                            <span class="switch-slider"></span>
+                        </label>
+                    </div>
+
+                    <div class="volume-row" id="volume-section">
+                        <div class="volume-top">
+                            <span>Volume</span>
+                            <span class="volume-value" id="volume-value">70 %</span>
+                        </div>
+
+                        <div class="volume-control">
+                            <svg class="volume-small-icon" viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M11 5L6 9H3V15H6L11 19V5Z"></path>
+                                <path d="M15 9C16.3 10.6 16.3 13.4 15 15"></path>
+                            </svg>
+                            <input
+                                class="volume-slider"
+                                id="volume-slider"
+                                type="range"
+                                min="0"
+                                max="100"
+                                value="70"
+                                aria-label="Volume"
+                            >
+                        </div>
+                    </div>
+                </section>
+
+                <section class="setting-row language-row">
+                    <div class="setting-info">
+                        <div class="icon-box">
+                            <svg viewBox="0 0 24 24" aria-hidden="true">
+                                <circle cx="12" cy="12" r="9"></circle>
+                                <path d="M3 12H21"></path>
+                                <path d="M12 3C14.5 5.5 15.5 8.5 15.5 12C15.5 15.5 14.5 18.5 12 21"></path>
+                                <path d="M12 3C9.5 5.5 8.5 8.5 8.5 12C8.5 15.5 9.5 18.5 12 21"></path>
+                            </svg>
+                        </div>
+                        <div class="setting-text">
+                            <span class="setting-name">Langue</span>
+                            <span class="setting-description">Choisir la langue du jeu</span>
+                        </div>
+                    </div>
+
+                    <div class="language-select-wrapper">
+                        <select class="language-select" id="language-select" aria-label="Langue">
+                            <option value="fr">Français</option>
+                            <option value="en">English</option>
+                            <option value="es">Español</option>
+                            <option value="de">Deutsch</option>
+                        </select>
+                        <svg class="select-arrow" viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M7 9L12 14L17 9"></path>
+                        </svg>
+                    </div>
+                </section>
+            </div>
+
+            <p class="settings-note">
+                Les réglages sont enregistrés automatiquement.
+            </p>
+        </section>
+    </main>
+
+    <script src="../js/music.js" data-music-src="../Sounds/Super Smash Bros Brawl Music - Final Destination.mp3"></script>
+
+    <script>
+        (() => {
+            const SETTINGS_RETURN_KEY = "tttSettingsReturn";
+            const SETTINGS_STORAGE_KEY = "tttSettings";
+            const RESUME_MATCH_KEY = "tttResumeMatch";
+
+            const settingsBackButton = document.getElementById("settings-back-button");
+            const sourcePage = new URLSearchParams(window.location.search).get("from");
+
+            if (sourcePage === "preparation") {
+                settingsBackButton.href =
+                    sessionStorage.getItem(SETTINGS_RETURN_KEY) || "../Rencontre/rencontre.html";
+            }
+
+            if (sourcePage === "game") {
+                settingsBackButton.href =
+                    sessionStorage.getItem(SETTINGS_RETURN_KEY) || "../Gameplay/game.html";
+
+                // Le retour vers game.html doit restaurer l'état sauvegardé.
+                settingsBackButton.addEventListener("click", () => {
+                    sessionStorage.setItem(RESUME_MATCH_KEY, "1");
+                });
+            }
+
+            const volumeSlider = document.getElementById("volume-slider");
+            const volumeValue = document.getElementById("volume-value");
+            const soundToggle = document.getElementById("sound-toggle");
+            const volumeSection = document.getElementById("volume-section");
+            const languageSelect = document.getElementById("language-select");
+
+            function saveSettings() {
+                const settings = {
+                    soundEnabled: soundToggle.checked,
+                    volume: Number(volumeSlider.value),
+                    language: languageSelect.value
+                };
+
+                localStorage.setItem(
+                    SETTINGS_STORAGE_KEY,
+                    JSON.stringify(settings)
+                );
+
+                window.dispatchEvent(
+                    new CustomEvent("ttt-settings-changed", {
+                        detail: settings
+                    })
+                );
+            }
+
+            function restoreSettings() {
+                const raw = localStorage.getItem(SETTINGS_STORAGE_KEY);
+                if (!raw) return;
+
+                try {
+                    const settings = JSON.parse(raw);
+                    if (typeof settings.soundEnabled === "boolean") {
+                        soundToggle.checked = settings.soundEnabled;
+                    }
+                    if (Number.isFinite(settings.volume)) {
+                        volumeSlider.value = settings.volume;
+                    }
+                    if (settings.language) {
+                        languageSelect.value = settings.language;
+                    }
+                } catch (error) {
+                    console.warn("Impossible de restaurer les paramètres.", error);
+                }
+            }
+
+            function updateVolumeSlider() {
+                const min = Number(volumeSlider.min);
+                const max = Number(volumeSlider.max);
+                const value = Number(volumeSlider.value);
+                const percentage = ((value - min) / (max - min)) * 100;
+
+                volumeSlider.style.setProperty(
+                    "--volume-progress",
+                    `${percentage}%`
+                );
+
+                volumeValue.textContent = `${Math.round(value)} %`;
+            }
+
+            function updateSoundState() {
+                const enabled = soundToggle.checked;
+                volumeSection.classList.toggle("volume-disabled", !enabled);
+                volumeSlider.disabled = !enabled;
+            }
+
+            soundToggle.addEventListener("change", () => {
+                updateSoundState();
+                saveSettings();
+            });
+
+            volumeSlider.addEventListener("input", () => {
+                updateVolumeSlider();
+                saveSettings();
+            });
+
+            languageSelect.addEventListener("change", saveSettings);
+
+            restoreSettings();
+            updateVolumeSlider();
+            updateSoundState();
+        })();
+    </script>
+</body>
+</html>

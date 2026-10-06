@@ -1,0 +1,2184 @@
+<!DOCTYPE html>
+
+<html lang="fr">
+
+
+
+<head>
+
+    <meta charset="UTF-8">
+
+
+
+    <meta
+
+        name="viewport"
+
+        content="width=device-width, initial-scale=1.0"
+
+    >
+
+
+
+    <title>Préparation de la partie - Tic Tac Toe</title>
+
+
+
+    <link rel="stylesheet" href="rencontre.css">
+
+</head>
+
+
+
+
+
+<body>
+
+
+
+    <main class="meeting-screen">
+
+
+
+
+
+        <!-- =====================================================
+
+             DÉCORATIONS DE FOND
+
+        ====================================================== -->
+
+
+
+        <div
+
+            class="background-symbols"
+
+            aria-hidden="true"
+
+        >
+
+
+
+            <div class="decor-x decor-x-1"></div>
+
+            <div class="decor-x decor-x-2"></div>
+
+            <div class="decor-x decor-x-3"></div>
+
+
+
+            <div class="decor-o decor-o-1"></div>
+
+            <div class="decor-o decor-o-2"></div>
+
+
+
+        </div>
+
+
+
+
+
+
+
+        <!-- =====================================================
+
+             RETOUR ACCUEIL
+
+        ====================================================== -->
+
+
+
+        <a
+
+            href="../Titre/titre.html"
+
+            class="back-button"
+
+        >
+
+
+
+            <svg
+
+                viewBox="0 0 24 24"
+
+                aria-hidden="true"
+
+            >
+
+                <path d="M15 18L9 12L15 6"></path>
+
+            </svg>
+
+
+
+            <span>Retour</span>
+
+
+
+        </a>
+
+
+
+
+
+
+
+        <!-- =====================================================
+             PARAMÈTRES
+        ====================================================== -->
+
+        <a
+            href="../Parametres/parametre.html?from=preparation"
+            class="settings-button"
+            id="settings-button"
+            aria-label="Ouvrir les paramètres"
+            title="Paramètres"
+        >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+                <circle cx="12" cy="12" r="3"></circle>
+                <path d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06-2.86 2.86-.06-.06A1.7 1.7 0 0 0 15 19.4a1.7 1.7 0 0 0-1 .6 1.7 1.7 0 0 0-.4 1.1V21H9.6v-.1a1.7 1.7 0 0 0-.4-1.1 1.7 1.7 0 0 0-1-.6 1.7 1.7 0 0 0-1.88.34l-.06.06L3.4 16.74l.06-.06A1.7 1.7 0 0 0 3.8 14.8a1.7 1.7 0 0 0-.6-1 1.7 1.7 0 0 0-1.1-.4H2V9.4h.1a1.7 1.7 0 0 0 1.1-.4 1.7 1.7 0 0 0 .6-1 1.7 1.7 0 0 0-.34-1.88l-.06-.06L6.26 3.2l.06.06A1.7 1.7 0 0 0 8.2 3.6a1.7 1.7 0 0 0 1-.6 1.7 1.7 0 0 0 .4-1.1V2h4v.1a1.7 1.7 0 0 0 .4 1.1 1.7 1.7 0 0 0 1 .6 1.7 1.7 0 0 0 1.88-.34l.06-.06 2.86 2.86-.06.06A1.7 1.7 0 0 0 19.4 8.2a1.7 1.7 0 0 0 .6 1 1.7 1.7 0 0 0 1.1.4h.1v4h-.1a1.7 1.7 0 0 0-1.1.4 1.7 1.7 0 0 0-.6 1Z"></path>
+            </svg>
+        </a>
+
+
+        <!-- =====================================================
+
+             CONTENU PRINCIPAL
+
+        ====================================================== -->
+
+
+
+        <section class="preparation-container">
+
+
+
+
+
+            <!-- =================================================
+
+                 TITRE
+
+            ================================================== -->
+
+
+
+            <header class="preparation-header">
+
+
+
+                <h1>
+
+                    PRÉPARATION DE LA PARTIE
+
+                </h1>
+
+
+
+                <p>
+
+                    Configurez votre rencontre avant de commencer.
+
+                </p>
+
+
+
+            </header>
+
+
+
+
+
+
+
+            <!-- =================================================
+
+                 PROGRESSION
+
+            ================================================== -->
+
+
+
+            <nav
+
+                class="progress-system"
+
+                aria-label="Progression de la préparation"
+
+            >
+
+
+
+
+
+                <!-- MODE -->
+
+
+
+                <div class="progress-step progress-mode active">
+
+
+
+                    <div class="progress-circle">
+
+                        1
+
+                    </div>
+
+
+
+                    <span>
+
+                        Mode
+
+                    </span>
+
+
+
+                </div>
+
+
+
+
+
+
+
+                <div class="progress-line"></div>
+
+
+
+
+
+
+
+                <!-- JOUEURS -->
+
+
+
+                <div class="progress-step progress-players">
+
+
+
+                    <div class="progress-circle">
+
+                        2
+
+                    </div>
+
+
+
+                    <span>
+
+                        Joueurs
+
+                    </span>
+
+
+
+                </div>
+
+
+
+            </nav>
+
+
+
+
+
+
+
+            <!-- =================================================
+
+                 ÉTAPE 1
+
+                 CHOIX DU MODE
+
+            ================================================== -->
+
+
+
+            <section
+
+                id="step-mode"
+
+                class="step-panel"
+
+            >
+
+
+
+                <div class="step-heading">
+
+
+
+                    <span class="step-number">
+
+                        Étape 1
+
+                    </span>
+
+
+
+                    <h2>
+
+                        Choisissez un mode de jeu
+
+                    </h2>
+
+
+
+                    <p>
+
+                        Sélectionnez la façon dont vous souhaitez jouer.
+
+                    </p>
+
+
+
+                </div>
+
+
+
+
+
+
+
+                <!-- =============================================
+
+                     CARTES MODE
+
+                ============================================== -->
+
+
+
+                <div class="mode-cards">
+
+
+
+
+
+                    <!-- =========================================
+
+                         2 JOUEURS
+
+                    ========================================== -->
+
+
+
+                    <label class="mode-card">
+
+
+
+                        <input
+
+                            type="radio"
+
+                            name="game-mode"
+
+                            id="mode-local"
+
+                            value="local"
+
+                        >
+
+
+
+
+
+                        <div class="mode-card-content">
+
+
+
+
+
+                            <!-- ICÔNE 2 JOUEURS -->
+
+
+
+                            <div class="mode-icon players-icon">
+
+
+
+                                <svg
+
+                                    viewBox="0 0 100 80"
+
+                                    aria-hidden="true"
+
+                                >
+
+
+
+                                    <defs>
+
+
+
+                                        <linearGradient
+
+                                            id="playersGradient"
+
+                                            x1="0"
+
+                                            y1="0"
+
+                                            x2="1"
+
+                                            y2="1"
+
+                                        >
+
+
+
+                                            <stop
+
+                                                offset="0%"
+
+                                                stop-color="#6C9AFF"
+
+                                            />
+
+
+
+                                            <stop
+
+                                                offset="100%"
+
+                                                stop-color="#7559F4"
+
+                                            />
+
+
+
+                                        </linearGradient>
+
+
+
+                                    </defs>
+
+
+
+
+
+                                    <circle
+
+                                        cx="36"
+
+                                        cy="25"
+
+                                        r="15"
+
+                                        fill="url(#playersGradient)"
+
+                                    />
+
+
+
+                                    <circle
+
+                                        cx="64"
+
+                                        cy="25"
+
+                                        r="15"
+
+                                        fill="url(#playersGradient)"
+
+                                    />
+
+
+
+                                    <path
+
+                                        d="M10 68C10 48 21 38 36 38C51 38 60 49 60 68Z"
+
+                                        fill="url(#playersGradient)"
+
+                                    />
+
+
+
+                                    <path
+
+                                        d="M40 68C40 49 50 38 64 38C79 38 90 48 90 68Z"
+
+                                        fill="url(#playersGradient)"
+
+                                    />
+
+
+
+                                </svg>
+
+
+
+                            </div>
+
+
+
+
+
+                            <h3>
+
+                                2 JOUEURS
+
+                            </h3>
+
+
+
+                            <p>
+
+                                Jouez avec un ami
+
+                                <br>
+
+                                sur le même appareil
+
+                            </p>
+
+
+
+
+
+                            <div class="selection-indicator">
+
+
+
+                                <svg
+
+                                    viewBox="0 0 24 24"
+
+                                    aria-hidden="true"
+
+                                >
+
+                                    <path d="M5 12L10 17L19 7"></path>
+
+                                </svg>
+
+
+
+                            </div>
+
+
+
+                        </div>
+
+
+
+                    </label>
+
+
+
+
+
+
+
+                    <!-- =========================================
+
+                         CONTRE IA
+
+                    ========================================== -->
+
+
+
+                    <label class="mode-card">
+
+
+
+                        <input
+
+                            type="radio"
+
+                            name="game-mode"
+
+                            id="mode-ai"
+
+                            value="ai"
+
+                        >
+
+
+
+
+
+                        <div class="mode-card-content">
+
+
+
+
+
+                            <!-- ROBOT -->
+
+
+
+                            <div class="mode-icon robot-icon">
+
+
+
+                                <svg
+
+                                    viewBox="0 0 100 90"
+
+                                    aria-hidden="true"
+
+                                >
+
+
+
+                                    <rect
+
+                                        x="23"
+
+                                        y="20"
+
+                                        width="54"
+
+                                        height="52"
+
+                                        rx="15"
+
+                                    />
+
+
+
+                                    <path d="M50 20V10"></path>
+
+
+
+                                    <circle
+
+                                        cx="50"
+
+                                        cy="7"
+
+                                        r="4"
+
+                                    />
+
+
+
+                                    <circle
+
+                                        cx="40"
+
+                                        cy="43"
+
+                                        r="5"
+
+                                    />
+
+
+
+                                    <circle
+
+                                        cx="60"
+
+                                        cy="43"
+
+                                        r="5"
+
+                                    />
+
+
+
+                                    <path
+
+                                        d="M39 58C45 63 55 63 61 58"
+
+                                    />
+
+
+
+                                    <path
+
+                                        d="M23 35H15C11 35 9 38 9 42V55C9 59 11 62 15 62H23"
+
+                                    />
+
+
+
+                                    <path
+
+                                        d="M77 35H85C89 35 91 38 91 42V55C91 59 89 62 85 62H77"
+
+                                    />
+
+
+
+                                </svg>
+
+
+
+                            </div>
+
+
+
+
+
+                            <h3>
+
+                                CONTRE L'IA
+
+                            </h3>
+
+
+
+                            <p>
+
+                                Affrontez l'ordinateur
+
+                                <br>
+
+                                et choisissez votre difficulté
+
+                            </p>
+
+
+
+
+
+                            <div class="selection-indicator">
+
+
+
+                                <svg
+
+                                    viewBox="0 0 24 24"
+
+                                    aria-hidden="true"
+
+                                >
+
+                                    <path d="M5 12L10 17L19 7"></path>
+
+                                </svg>
+
+
+
+                            </div>
+
+
+
+                        </div>
+
+
+
+                    </label>
+
+
+
+                </div>
+
+
+
+
+
+
+
+                <!-- =============================================
+
+                     DIFFICULTÉ IA
+
+                ============================================== -->
+
+
+
+                <div class="difficulty-area">
+
+
+
+                    <div class="difficulty-header">
+
+
+
+                        <h3>
+
+                            Difficulté de l'IA
+
+                        </h3>
+
+
+
+                        <p>
+
+                            Choisissez le niveau de votre adversaire.
+
+                        </p>
+
+
+
+                    </div>
+
+
+
+
+
+                    <div class="difficulty-options">
+
+
+
+
+
+                        <!-- FACILE -->
+
+
+
+                        <label class="difficulty-choice easy">
+
+
+
+                            <input
+
+                                type="radio"
+
+                                name="difficulty"
+
+                                value="easy"
+
+                            >
+
+
+
+                            <span>
+
+                                Facile
+
+                            </span>
+
+
+
+                        </label>
+
+
+
+
+
+
+
+                        <!-- NORMAL -->
+
+
+
+                        <label class="difficulty-choice normal">
+
+
+
+                            <input
+
+                                type="radio"
+
+                                name="difficulty"
+
+                                value="normal"
+
+                                checked
+
+                            >
+
+
+
+                            <span>
+
+                                Normal
+
+                            </span>
+
+
+
+                        </label>
+
+
+
+
+
+
+
+                        <!-- DIFFICILE -->
+
+
+
+                        <label class="difficulty-choice hard">
+
+
+
+                            <input
+
+                                type="radio"
+
+                                name="difficulty"
+
+                                value="hard"
+
+                            >
+
+
+
+                            <span>
+
+                                Difficile
+
+                            </span>
+
+
+
+                        </label>
+
+
+
+
+
+
+
+                        <!-- GOD -->
+
+
+
+                        <label class="difficulty-choice god">
+
+
+
+                            <input
+
+                                type="radio"
+
+                                name="difficulty"
+
+                                value="god"
+
+                            >
+
+
+
+                            <span>
+
+                                GOD
+
+                            </span>
+
+
+
+                        </label>
+
+
+
+                    </div>
+
+
+
+
+
+
+
+                    <!-- DESCRIPTION -->
+
+
+
+                    <div class="difficulty-description">
+
+
+
+                        <p class="description-easy">
+
+                            L'IA joue principalement de manière aléatoire.
+
+                        </p>
+
+
+
+                        <p class="description-normal">
+
+                            L'IA analyse les menaces et peut vous bloquer.
+
+                        </p>
+
+
+
+                        <p class="description-hard">
+
+                            L'IA anticipe plusieurs coups pour vous piéger.
+
+                        </p>
+
+
+
+                        <p class="description-god">
+
+                            L'IA joue parfaitement. Aucun faux pas permis.
+
+                        </p>
+
+
+
+                    </div>
+
+
+
+                </div>
+
+
+
+
+
+
+
+                <!-- =============================================
+
+                     CONTINUER VERS JOUEURS
+
+                ============================================== -->
+
+
+
+                <div class="step-actions">
+
+
+
+                    <a
+
+                        href="#step-players"
+
+                        class="primary-button continue-button"
+
+                    >
+
+
+
+                        <span>
+
+                            CONTINUER
+
+                        </span>
+
+
+
+                        <svg
+
+                            viewBox="0 0 24 24"
+
+                            aria-hidden="true"
+
+                        >
+
+                            <path d="M9 6L15 12L9 18"></path>
+
+                        </svg>
+
+
+
+                    </a>
+
+
+
+                </div>
+
+
+
+            </section>
+
+
+
+
+
+
+
+            <!-- =================================================
+
+                 ÉTAPE 2
+
+                 JOUEURS + SYMBOLES
+
+            ================================================== -->
+
+
+
+            <section
+
+                id="step-players"
+
+                class="step-panel"
+
+            >
+
+
+
+                <div class="step-heading">
+
+
+
+                    <span class="step-number">
+
+                        Étape 2
+
+                    </span>
+
+
+
+                    <h2>
+
+                        Préparez les joueurs
+
+                    </h2>
+
+
+
+                    <p>
+
+                        Configurez les participants et leurs symboles.
+
+                    </p>
+
+
+
+                </div>
+
+
+
+
+
+
+
+                <!-- =============================================
+
+                     MODE 2 JOUEURS
+
+                ============================================== -->
+
+
+
+                <div class="players-layout players-local">
+
+
+
+
+
+                    <!-- JOUEUR 1 -->
+
+
+
+                    <article class="player-card">
+
+
+
+
+
+                        <div class="player-avatar">
+
+
+
+                            <svg
+
+                                viewBox="0 0 24 24"
+
+                                aria-hidden="true"
+
+                            >
+
+
+
+                                <circle
+
+                                    cx="12"
+
+                                    cy="8"
+
+                                    r="4"
+
+                                ></circle>
+
+
+
+                                <path
+
+                                    d="M4 21C4 16 7 13 12 13C17 13 20 16 20 21"
+
+                                ></path>
+
+
+
+                            </svg>
+
+
+
+                        </div>
+
+
+
+
+
+                        <span class="player-label">
+
+                            JOUEUR A1
+
+                        </span>
+
+
+
+
+
+                        <input
+
+                            class="player-name-input"
+
+                            type="text"
+
+                            value="Joueur 1"
+
+                            aria-label="Nom du joueur 1"
+
+                        >
+
+
+
+
+
+
+
+                        <!-- SYMBOLE JOUEUR 1 -->
+
+
+
+                        <div class="player-symbol-zone">
+
+
+
+                            <span class="symbol-zone-title">
+
+                                Symbole
+
+                            </span>
+
+
+
+
+
+                            <div class="mini-symbol-selector">
+
+
+
+
+
+                                <label class="mini-symbol mini-x">
+
+
+
+                                    <input
+
+                                        type="radio"
+
+                                        name="player1-symbol"
+
+                                        value="x"
+
+                                        checked
+
+                                    >
+
+
+
+                                    <span>
+
+                                        X
+
+                                    </span>
+
+
+
+                                </label>
+
+
+
+
+
+
+
+                                <label class="mini-symbol mini-o">
+
+
+
+                                    <input
+
+                                        type="radio"
+
+                                        name="player1-symbol"
+
+                                        value="o"
+
+                                    >
+
+
+
+                                    <span>
+
+                                        O
+
+                                    </span>
+
+
+
+                                </label>
+
+
+
+                            </div>
+
+
+
+                        </div>
+
+
+
+                    </article>
+
+
+
+
+
+
+
+                    <!-- VS -->
+
+
+
+                    <div class="versus">
+
+
+
+                        <span>
+
+                            VS
+
+                        </span>
+
+
+
+                    </div>
+
+
+
+
+
+
+
+                    <!-- JOUEUR 2 -->
+
+
+
+                    <article class="player-card">
+
+
+
+
+
+                        <div class="player-avatar secondary">
+
+
+
+                            <svg
+
+                                viewBox="0 0 24 24"
+
+                                aria-hidden="true"
+
+                            >
+
+
+
+                                <circle
+
+                                    cx="12"
+
+                                    cy="8"
+
+                                    r="4"
+
+                                ></circle>
+
+
+
+                                <path
+
+                                    d="M4 21C4 16 7 13 12 13C17 13 20 16 20 21"
+
+                                ></path>
+
+
+
+                            </svg>
+
+
+
+                        </div>
+
+
+
+
+
+                        <span class="player-label">
+
+                            JOUEUR A2
+
+                        </span>
+
+
+
+
+
+                        <input
+
+                            class="player-name-input"
+
+                            type="text"
+
+                            value="Joueur 2"
+
+                            aria-label="Nom du joueur 2"
+
+                        >
+
+
+
+
+
+
+
+                        <!-- SYMBOLE JOUEUR 2 -->
+
+
+
+                        <div class="player-symbol-zone">
+
+
+
+                            <span class="symbol-zone-title">
+
+                                Symbole
+
+                            </span>
+
+
+
+
+
+                            <div class="mini-symbol-selector">
+
+
+
+
+
+                                <label class="mini-symbol mini-x">
+
+
+
+                                    <input
+
+                                        type="radio"
+
+                                        name="player2-symbol"
+
+                                        value="x"
+
+                                    >
+
+
+
+                                    <span>
+
+                                        X
+
+                                    </span>
+
+
+
+                                </label>
+
+
+
+
+
+
+
+                                <label class="mini-symbol mini-o">
+
+
+
+                                    <input
+
+                                        type="radio"
+
+                                        name="player2-symbol"
+
+                                        value="o"
+
+                                        checked
+
+                                    >
+
+
+
+                                    <span>
+
+                                        O
+
+                                    </span>
+
+
+
+                                </label>
+
+
+
+                            </div>
+
+
+
+                        </div>
+
+
+
+                    </article>
+
+
+
+                </div>
+
+
+
+
+
+
+
+                <!-- =============================================
+
+                     MODE CONTRE IA
+
+                ============================================== -->
+
+
+
+                <div class="players-layout players-ai">
+
+
+
+
+
+                    <!-- JOUEUR -->
+
+
+
+                    <article class="player-card">
+
+
+
+
+
+                        <div class="player-avatar">
+
+
+
+                            <svg
+
+                                viewBox="0 0 24 24"
+
+                                aria-hidden="true"
+
+                            >
+
+
+
+                                <circle
+
+                                    cx="12"
+
+                                    cy="8"
+
+                                    r="4"
+
+                                ></circle>
+
+
+
+                                <path
+
+                                    d="M4 21C4 16 7 13 12 13C17 13 20 16 20 21"
+
+                                ></path>
+
+
+
+                            </svg>
+
+
+
+                        </div>
+
+
+
+
+
+                        <span class="player-label">
+
+                            JOUEUR A1
+
+                        </span>
+
+
+
+
+
+                        <input
+
+                            class="player-name-input"
+
+                            type="text"
+
+                            value="Joueur 1"
+
+                            aria-label="Nom du joueur"
+
+                        >
+
+
+
+
+
+
+
+                        <!-- SEUL CHOIX DE SYMBOLE -->
+
+
+
+                        <div class="player-symbol-zone">
+
+
+
+                            <span class="symbol-zone-title">
+
+                                Votre symbole
+
+                            </span>
+
+
+
+
+
+                            <div class="mini-symbol-selector">
+
+
+
+
+
+                                <label class="mini-symbol mini-x">
+
+
+
+                                    <input
+
+                                        type="radio"
+
+                                        name="ai-player-symbol"
+
+                                        value="x"
+
+                                        checked
+
+                                    >
+
+
+
+                                    <span>
+
+                                        X
+
+                                    </span>
+
+
+
+                                </label>
+
+
+
+
+
+
+
+                                <label class="mini-symbol mini-o">
+
+
+
+                                    <input
+
+                                        type="radio"
+
+                                        name="ai-player-symbol"
+
+                                        value="o"
+
+                                    >
+
+
+
+                                    <span>
+
+                                        O
+
+                                    </span>
+
+
+
+                                </label>
+
+
+
+                            </div>
+
+
+
+                        </div>
+
+
+
+                    </article>
+
+
+
+
+
+
+
+                    <!-- VS -->
+
+
+
+                    <div class="versus">
+
+
+
+                        <span>
+
+                            VS
+
+                        </span>
+
+
+
+                    </div>
+
+
+
+
+
+
+
+                    <!-- IA -->
+
+
+
+                    <article class="player-card ai-player-card">
+
+
+
+
+
+                        <div class="player-avatar robot-small">
+
+
+
+                            <svg
+
+                                viewBox="0 0 24 24"
+
+                                aria-hidden="true"
+
+                            >
+
+
+
+                                <rect
+
+                                    x="5"
+
+                                    y="7"
+
+                                    width="14"
+
+                                    height="11"
+
+                                    rx="4"
+
+                                ></rect>
+
+
+
+                                <path d="M12 7V4"></path>
+
+
+
+                                <circle
+
+                                    cx="12"
+
+                                    cy="3"
+
+                                    r="1"
+
+                                ></circle>
+
+
+
+                                <circle
+
+                                    cx="9"
+
+                                    cy="12"
+
+                                    r="1"
+
+                                ></circle>
+
+
+
+                                <circle
+
+                                    cx="15"
+
+                                    cy="12"
+
+                                    r="1"
+
+                                ></circle>
+
+
+
+                            </svg>
+
+
+
+                        </div>
+
+
+
+
+
+                        <span class="player-label">
+
+                            INTELLIGENCE ARTIFICIELLE
+
+                        </span>
+
+
+
+                        <strong class="ai-opponent-name" id="ai-opponent-name">
+
+                            Olivier
+
+                        </strong>
+
+
+
+                        <span class="ai-level">
+
+                            DIFFICULTÉ SÉLECTIONNÉE
+
+                        </span>
+
+
+
+
+
+                        <div class="auto-symbol">
+
+
+
+                            <span class="auto-symbol-label">
+
+                                Symbole
+
+                            </span>
+
+
+
+                            <strong>
+
+                                AUTO
+
+                            </strong>
+
+
+
+                            <small>
+
+                                L'autre symbole sera attribué à l'IA.
+
+                            </small>
+
+
+
+                        </div>
+
+
+
+                    </article>
+
+
+
+                </div>
+
+
+
+
+
+
+
+                <!-- =============================================
+
+                     ACTIONS FINALES
+
+                ============================================== -->
+
+
+
+                <div class="step-actions final-actions">
+
+
+
+
+
+                    <a
+
+                        href="#step-mode"
+
+                        class="previous-button"
+
+                    >
+
+                        ← Précédent
+
+                    </a>
+
+
+
+
+
+                    <!--
+
+                        CONTINUER = VALIDATION FINALE
+
+                        Pas d'étape "PRÊT".
+
+                    -->
+
+
+
+                    <a
+
+                        href="../Gameplay/game.html"
+
+                        class="primary-button start-button"
+
+                    >
+
+
+
+                        <span>
+
+                            CONTINUER
+
+                        </span>
+
+
+
+                        <svg
+
+                            viewBox="0 0 24 24"
+
+                            aria-hidden="true"
+
+                        >
+
+                            <path d="M7 4L19 12L7 20V4Z"></path>
+
+                        </svg>
+
+
+
+                    </a>
+
+
+
+                </div>
+
+
+
+            </section>
+
+
+
+
+
+        </section>
+
+
+
+    </main>
+
+
+
+
+    <script src="../js/music.js" data-music-src="../Sounds/Super Smash Bros Brawl Music - Final Destination.mp3"></script>
+    <script src="../js/ai-names.js"></script>
+
+    <script>
+        (() => {
+            const PREPARATION_STORAGE_KEY = "tttPreparationState";
+            const SETTINGS_RETURN_KEY = "tttSettingsReturn";
+
+            const settingsButton = document.getElementById("settings-button");
+            const startButton = document.querySelector(".start-button");
+            const aiLevelDisplay = document.querySelector(".players-ai .ai-level");
+            const aiOpponentNameDisplay = document.getElementById("ai-opponent-name");
+            let aiOpponentName = null;
+
+            function checkedValue(name) {
+                return document.querySelector(`input[name="${name}"]:checked`)?.value || null;
+            }
+
+            function setCheckedValue(name, value) {
+                if (!value) return;
+                const input = document.querySelector(`input[name="${name}"][value="${value}"]`);
+                if (input) input.checked = true;
+            }
+
+            function getPreparationState() {
+                const localNames = document.querySelectorAll(".players-local .player-name-input");
+                const aiName = document.querySelector(".players-ai .player-name-input");
+                const selectedDifficulty = checkedValue("difficulty") || "normal";
+
+                if (!globalThis.TTTAiNames?.nomValide?.(aiOpponentName, selectedDifficulty)) {
+                    aiOpponentName = globalThis.TTTAiNames?.genererNom?.(selectedDifficulty)
+                        || (selectedDifficulty === "god" ? "Gojo" : "Olivier");
+                }
+
+                return {
+                    step: location.hash === "#step-players" ? "players" : "mode",
+                    gameMode: checkedValue("game-mode"),
+                    difficulty: selectedDifficulty,
+                    localPlayer1Name: localNames[0]?.value || "Joueur 1",
+                    localPlayer2Name: localNames[1]?.value || "Joueur 2",
+                    aiPlayerName: aiName?.value || "Joueur 1",
+                    aiOpponentName,
+                    player1Symbol: checkedValue("player1-symbol"),
+                    player2Symbol: checkedValue("player2-symbol"),
+                    aiPlayerSymbol: checkedValue("ai-player-symbol")
+                };
+            }
+
+            function savePreparationState() {
+                const state = getPreparationState();
+                sessionStorage.setItem(PREPARATION_STORAGE_KEY, JSON.stringify(state));
+
+                const returnTarget = state.step === "players"
+                    ? "rencontre.html#step-players"
+                    : "rencontre.html";
+
+                sessionStorage.setItem(SETTINGS_RETURN_KEY, returnTarget);
+            }
+
+            function restorePreparationState() {
+                const raw = sessionStorage.getItem(PREPARATION_STORAGE_KEY);
+                if (!raw) {
+                    updateAiIdentity(false);
+                    return;
+                }
+
+                try {
+                    const state = JSON.parse(raw);
+
+                    setCheckedValue("game-mode", state.gameMode);
+                    setCheckedValue("difficulty", state.difficulty);
+                    setCheckedValue("player1-symbol", state.player1Symbol);
+                    setCheckedValue("player2-symbol", state.player2Symbol);
+                    setCheckedValue("ai-player-symbol", state.aiPlayerSymbol);
+
+                    const localNames = document.querySelectorAll(".players-local .player-name-input");
+                    const aiName = document.querySelector(".players-ai .player-name-input");
+
+                    if (localNames[0] && state.localPlayer1Name) localNames[0].value = state.localPlayer1Name;
+                    if (localNames[1] && state.localPlayer2Name) localNames[1].value = state.localPlayer2Name;
+                    if (aiName && state.aiPlayerName) aiName.value = state.aiPlayerName;
+
+                    const selectedDifficulty = state.difficulty || checkedValue("difficulty") || "normal";
+                    if (globalThis.TTTAiNames?.nomValide?.(state.aiOpponentName, selectedDifficulty)) {
+                        aiOpponentName = state.aiOpponentName;
+                    }
+
+                    if (!location.hash && state.step === "players") {
+                        history.replaceState(null, "", "#step-players");
+                    }
+                } catch (error) {
+                    console.warn("Impossible de restaurer la préparation de partie.", error);
+                }
+
+                updateAiIdentity(false);
+            }
+
+            function updateAiLevelDisplay() {
+                if (!aiLevelDisplay) return;
+
+                const labels = {
+                    easy: "FACILE",
+                    normal: "NORMAL",
+                    hard: "DIFFICILE",
+                    god: "GOD"
+                };
+
+                const difficulty = checkedValue("difficulty") || "normal";
+                aiLevelDisplay.textContent = labels[difficulty] || "NORMAL";
+            }
+
+            function updateAiIdentity(forceNewName = false) {
+                updateAiLevelDisplay();
+
+                const selectedDifficulty = checkedValue("difficulty") || "normal";
+                const aiNames = globalThis.TTTAiNames;
+                const currentIsValid = aiNames?.nomValide?.(aiOpponentName, selectedDifficulty);
+
+                if (forceNewName || !currentIsValid) {
+                    aiOpponentName = aiNames?.genererNom
+                        ? aiNames.genererNom(selectedDifficulty, forceNewName ? aiOpponentName : null)
+                        : (selectedDifficulty === "god" ? "Gojo" : "Olivier");
+                }
+
+                if (aiOpponentNameDisplay) {
+                    aiOpponentNameDisplay.textContent = aiOpponentName;
+                }
+            }
+
+            settingsButton?.addEventListener("click", savePreparationState);
+            startButton?.addEventListener("click", savePreparationState);
+
+            document.querySelectorAll('input[name="difficulty"]').forEach((input) => {
+                input.addEventListener("change", () => {
+                    updateAiIdentity(true);
+                    savePreparationState();
+                });
+            });
+
+            document.querySelectorAll(
+                'input[name="game-mode"], input[name="difficulty"], input[name="player1-symbol"], input[name="player2-symbol"], input[name="ai-player-symbol"], .player-name-input'
+            ).forEach((control) => {
+                control.addEventListener("change", savePreparationState);
+                control.addEventListener("input", savePreparationState);
+            });
+
+            restorePreparationState();
+        })();
+    </script>
+
+</body>
+
+
+
+</html>
