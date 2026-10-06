@@ -46,6 +46,7 @@
         <a
             href="titre.html"
             class="back-button"
+            id="settings-back-button"
         >
 
             <svg
@@ -600,6 +601,16 @@
 
     <script>
 
+        const SETTINGS_RETURN_KEY = "tttSettingsReturn";
+        const SETTINGS_STORAGE_KEY = "tttSettings";
+
+        const settingsBackButton = document.getElementById("settings-back-button");
+        const sourcePage = new URLSearchParams(window.location.search).get("from");
+
+        if (sourcePage === "preparation") {
+            settingsBackButton.href = sessionStorage.getItem(SETTINGS_RETURN_KEY) || "rencontre.html";
+        }
+
         const volumeSlider =
             document.getElementById("volume-slider");
 
@@ -611,6 +622,47 @@
 
         const volumeSection =
             document.getElementById("volume-section");
+
+        const darkToggle = document.getElementById("dark-toggle");
+        const languageSelect = document.querySelector(".language-select");
+
+        function getCheckedSetting(name) {
+            return document.querySelector(`input[name="${name}"]:checked`)?.value || null;
+        }
+
+        function setCheckedSetting(name, value) {
+            if (!value) return;
+            const input = document.querySelector(`input[name="${name}"][value="${value}"]`);
+            if (input) input.checked = true;
+        }
+
+        function saveSettings() {
+            const settings = {
+                soundEnabled: soundToggle.checked,
+                volume: Number(volumeSlider.value),
+                darkMode: darkToggle.checked,
+                theme: getCheckedSetting("theme"),
+                defaultSymbol: getCheckedSetting("symbol"),
+                language: languageSelect.value
+            };
+            localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(settings));
+        }
+
+        function restoreSettings() {
+            const raw = localStorage.getItem(SETTINGS_STORAGE_KEY);
+            if (!raw) return;
+            try {
+                const settings = JSON.parse(raw);
+                if (typeof settings.soundEnabled === "boolean") soundToggle.checked = settings.soundEnabled;
+                if (Number.isFinite(settings.volume)) volumeSlider.value = settings.volume;
+                if (typeof settings.darkMode === "boolean") darkToggle.checked = settings.darkMode;
+                setCheckedSetting("theme", settings.theme);
+                setCheckedSetting("symbol", settings.defaultSymbol);
+                if (settings.language) languageSelect.value = settings.language;
+            } catch (error) {
+                console.warn("Impossible de restaurer les paramètres.", error);
+            }
+        }
 
 
         /*
@@ -704,6 +756,19 @@
             updateSoundState
         );
 
+        /*
+        =============================================
+        SAUVEGARDE DES PARAMÈTRES
+        =============================================
+        */
+
+        document.querySelectorAll(
+            '#sound-toggle, #dark-toggle, input[name="theme"], input[name="symbol"], .language-select'
+        ).forEach((control) => {
+            control.addEventListener("change", saveSettings);
+        });
+
+        volumeSlider.addEventListener("input", saveSettings);
 
         /*
         =============================================
@@ -711,6 +776,7 @@
         =============================================
         */
 
+        restoreSettings();
         updateVolumeSlider();
         updateSoundState();
 
