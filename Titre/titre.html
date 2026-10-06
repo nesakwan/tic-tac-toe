@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Tic Tac Toe</title>
+
+    <link rel="stylesheet" href="titre.css">
+</head>
+
+
+<body>
+
+    <main class="app-window">
+
+        <!-- =========================================
+             DÉCORATIONS D'ARRIÈRE-PLAN
+        ========================================== -->
+
+        <div
+            class="background-symbols"
+            aria-hidden="true"
+        >
+
+            <div class="decor-x decor-x-1"></div>
+            <div class="decor-x decor-x-2"></div>
+            <div class="decor-x decor-x-3"></div>
+            <div class="decor-x decor-x-4"></div>
+
+            <div class="decor-o decor-o-1"></div>
+            <div class="decor-o decor-o-2"></div>
+
+        </div>
+
+
+        <!-- =========================================
+             ÉCRAN D'ACCUEIL
+        ========================================== -->
+
+        <section class="home-screen">
+
+
+            <!-- =====================================
+                 TITRE
+            ====================================== -->
+
+            <div class="title-container">
+
+                <h1 class="game-title">
+
+                    <span class="title-tic">
+                        TIC
+                    </span>
+
+                    <span class="title-tac">
+                        TAC
+                    </span>
+
+                    <span class="title-toe">
+                        TOE
+                    </span>
+
+                </h1>
+
+
+                <p class="subtitle">
+                    Le jeu classique, revisité.
+                </p>
+
+            </div>
+
+
+            <!-- =====================================
+                 X ET O PRINCIPAUX
+            ====================================== -->
+
+            <div
+                class="main-symbols"
+                aria-hidden="true"
+            >
+
+                <!-- X -->
+                <div class="main-x">
+
+                    <span></span>
+                    <span></span>
+
+                </div>
+
+
+                <!-- O -->
+                <div class="main-o"></div>
+
+            </div>
+
+
+            <!-- =====================================
+                 BOUTON JOUER
+            ====================================== -->
+
+            <a
+                class="play-button"
+                href="../Rencontre/rencontre.html"
+                aria-label="Jouer"
+            >
+
+                <svg
+                    class="play-icon"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                >
+
+                    <path
+                        d="M7 4L19 12L7 20V4Z"
+                    ></path>
+
+                </svg>
+
+                <span>
+                    JOUER
+                </span>
+
+            </a>
+
+
+            <!-- =====================================
+                 BOUTONS SECONDAIRES
+            ====================================== -->
+
+            <div class="secondary-buttons">
+
+
+                <!-- COMMENT JOUER
+                     Présent mais sans fonction
+                     pour le moment
+                -->
+
+                <button
+                    class="secondary-button"
+                    type="button"
+                >
+
+                    <svg
+                        class="button-icon"
+                        viewBox="0 0 24 24"
+                        aria-hidden="true"
+                    >
+
+                        <path
+                            d="
+                            M4 5.5
+                            C4 4.67 4.67 4 5.5 4
+                            H10
+                            C11.1 4 12 4.9 12 6
+                            V19
+                            C12 17.9 11.1 17 10 17
+                            H4
+                            V5.5Z
+                            "
+                        ></path>
+
+                        <path
+                            d="
+                            M20 5.5
+                            C20 4.67 19.33 4 18.5 4
+                            H14
+                            C12.9 4 12 4.9 12 6
+                            V19
+                            C12 17.9 12.9 17 14 17
+                            H20
+                            V5.5Z
+                            "
+                        ></path>
+
+                    </svg>
+
+
+                    <span>
+                        COMMENT JOUER ?
+                    </span>
+
+                </button>
+
+
+                <!-- PARAMÈTRES -->
+
+                <a
+                    class="secondary-button"
+                    href="../Parametres/parametre.html"
+                >
+
+                    <svg
+                        class="button-icon settings-icon"
+                        viewBox="0 0 24 24"
+                        aria-hidden="true"
+                    >
+
+                        <path
+                            d="
+                            M12 8.5
+                            A3.5 3.5 0 1 0 12 15.5
+                            A3.5 3.5 0 0 0 12 8.5Z
+                            "
+                        ></path>
+
+                        <path
+                            d="
+                            M19.4 13
+                            A7.66 7.66 0 0 0 19.5 12
+                            A7.66 7.66 0 0 0 19.4 11
+
+                            L21.5 9.35
+                            L19.5 5.9
+                            L17 6.9
+
+                            A7.7 7.7 0 0 0 15.3 5.9
+
+                            L14.9 3.2
+                            H10.9
+                            L10.5 5.9
+
+                            A7.7 7.7 0 0 0 8.8 6.9
+
+                            L6.3 5.9
+                            L4.3 9.35
+                            L6.4 11
+
+                            A7.66 7.66 0 0 0 6.3 12
+                            A7.66 7.66 0 0 0 6.4 13
+
+                            L4.3 14.65
+                            L6.3 18.1
+                            L8.8 17.1
+
+                            A7.7 7.7 0 0 0 10.5 18.1
+
+                            L10.9 20.8
+                            H14.9
+                            L15.3 18.1
+
+                            A7.7 7.7 0 0 0 17 17.1
+
+                            L19.5 18.1
+                            L21.5 14.65
+                            L19.4 13Z
+                            "
+                        ></path>
+
+                    </svg>
+
+
+                    <span>
+                        PARAMÈTRES
+                    </span>
+
+                </a>
+
+            </div>
+
+        </section>
+
+    </main>
+
+    <script src="../js/music.js" data-music-src="../Sounds/Super Smash Bros Brawl Music - Final Destination.mp3"></script>
+</body>
+
+</html>
