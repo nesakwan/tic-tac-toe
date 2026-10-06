@@ -998,7 +998,7 @@ function quitterReplay() {
 function ouvrirParametres() {
     sauvegarderEtatMatch();
     sessionStorage.setItem(RESUME_MATCH_KEY, "1");
-    sessionStorage.setItem(SETTINGS_RETURN_KEY, "../game.html");
+    sessionStorage.setItem(SETTINGS_RETURN_KEY, "../Gameplay/game.html");
     location.href = "../Parametres/parametre.html?from=game";
 }
 
