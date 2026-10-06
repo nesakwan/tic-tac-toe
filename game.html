@@ -76,12 +76,52 @@
                     ↻ Rejouer
                 </button>
 
+                <div id="end-actions" class="end-actions">
+                    <button id="end-replay-button">▶ Replay</button>
+                    <button id="end-restart-button">↻ Rejouer</button>
+                    <button id="end-change-mode-button">⇄ Changer de mode</button>
+                </div>
+
             </section>
+
+
+            <div id="replay-panel" class="replay-panel" aria-live="polite">
+                <div class="replay-header">
+                    <div>
+                        <span class="replay-kicker">REPLAY</span>
+                        <h2>Revisionnez la partie</h2>
+                    </div>
+                    <button id="replay-exit-button" class="replay-exit-button" aria-label="Quitter le replay">×</button>
+                </div>
+
+                <div class="replay-mode-selector">
+                    <label>
+                        <input id="replay-mode-action" type="radio" name="replay-mode" value="action" checked>
+                        <span>Action par action</span>
+                    </label>
+                    <label>
+                        <input id="replay-mode-turn" type="radio" name="replay-mode" value="turn">
+                        <span>Tour par tour</span>
+                    </label>
+                </div>
+
+                <div class="replay-controls">
+                    <button id="replay-start-button">|&lt; Début</button>
+                    <button id="replay-prev-button">← Précédent</button>
+                    <strong id="replay-progress">Action 0 / 0</strong>
+                    <button id="replay-next-button">Suivant →</button>
+                    <button id="replay-end-button">Fin &gt;|</button>
+                </div>
+
+                <button id="replay-exit-button-bottom" class="replay-quit-button" type="button">Quitter le replay</button>
+            </div>
 
 
             <div id="result-popup" class="popup-overlay">
 
                 <div class="popup">
+
+                    <button id="close-result-button" class="popup-close" aria-label="Fermer le résultat">×</button>
 
                     <div id="result-icon">🏆</div>
 
@@ -90,7 +130,9 @@
                     <p id="result-message">Félicitations !</p>
 
                     <div class="popup-buttons">
-                        <button id="replay-button">↻ Rejouer</button>
+                        <button id="popup-restart-button" class="primary-result-action">↻ Rejouer</button>
+                        <button id="popup-replay-button">▶ Replay</button>
+                        <button id="change-mode-button">⇄ Changer de mode</button>
                         <button id="home-button">⌂ Retour à l'accueil</button>
                     </div>
 

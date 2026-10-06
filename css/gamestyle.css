@@ -380,3 +380,276 @@ body {
     background: #1b2638;
     color: white;
 }
+/* =========================
+   ACTIONS DE FIN
+========================= */
+
+.end-actions {
+    width: min(94%, 560px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 4px;
+}
+
+.end-actions button {
+    min-height: 42px;
+    padding: 10px 16px;
+    border: 1px solid #2d3b55;
+    border-radius: 10px;
+    background: #111a29;
+    color: #dbe4f1;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease;
+}
+
+.end-actions button:hover {
+    transform: translateY(-1px);
+    border-color: #4f6b94;
+    background: #182338;
+}
+
+#end-replay-button {
+    border-color: rgba(79, 156, 255, 0.45);
+    color: #8fc0ff;
+}
+
+#end-change-mode-button {
+    border-color: rgba(112, 103, 255, 0.42);
+}
+
+
+/* =========================
+   REPLAY
+========================= */
+
+.replay-panel {
+    width: min(92%, 680px);
+    display: none;
+    margin: 0 auto 24px;
+    padding: 18px;
+    border: 1px solid #2d3b55;
+    border-radius: 16px;
+    background: linear-gradient(180deg, #101827, #0d1523);
+    box-shadow: 0 16px 42px rgba(0, 0, 0, 0.24);
+}
+
+.replay-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+.replay-header h2 {
+    margin: 3px 0 0;
+    color: #f7f9fc;
+    font-size: 20px;
+}
+
+.replay-kicker {
+    color: #6c9aff;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 1.4px;
+}
+
+.replay-exit-button,
+.replay-quit-button {
+    border: 1px solid #2d3b55;
+    background: #111a29;
+    color: #b9c4d6;
+    cursor: pointer;
+}
+
+.replay-exit-button {
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
+    border-radius: 10px;
+    font-size: 24px;
+    line-height: 1;
+}
+
+.replay-mode-selector {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+    margin-bottom: 16px;
+}
+
+.replay-mode-selector label {
+    position: relative;
+    cursor: pointer;
+}
+
+.replay-mode-selector input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.replay-mode-selector span {
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 9px 12px;
+    border: 1px solid #2d3b55;
+    border-radius: 10px;
+    background: #111a29;
+    color: #9eabbf;
+    font-size: 13px;
+    font-weight: 700;
+    transition: 0.18s ease;
+}
+
+.replay-mode-selector input:checked + span {
+    border-color: #4f9cff;
+    background: rgba(79, 156, 255, 0.13);
+    color: #ffffff;
+    box-shadow: 0 0 0 1px rgba(79, 156, 255, 0.13);
+}
+
+.replay-controls {
+    display: grid;
+    grid-template-columns: auto auto minmax(130px, 1fr) auto auto;
+    align-items: center;
+    gap: 8px;
+}
+
+.replay-controls button,
+.replay-quit-button {
+    min-height: 40px;
+    padding: 9px 12px;
+    border-radius: 9px;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.replay-controls button {
+    border: 1px solid #2d3b55;
+    background: #141f31;
+    color: #dbe4f1;
+    cursor: pointer;
+}
+
+.replay-controls button:hover:not(:disabled),
+.replay-quit-button:hover {
+    border-color: #4f6b94;
+    background: #1b2940;
+}
+
+.replay-controls button:disabled {
+    opacity: 0.35;
+    cursor: default;
+}
+
+#replay-progress {
+    color: #f7f9fc;
+    text-align: center;
+    font-size: 13px;
+}
+
+.replay-quit-button {
+    display: block;
+    margin: 14px auto 0;
+}
+
+
+/* =========================
+   POPUP RESULTAT - ACTIONS
+========================= */
+
+.popup {
+    position: relative;
+}
+
+.popup-close {
+    position: absolute;
+    top: 13px;
+    right: 13px;
+    width: 36px;
+    height: 36px;
+    border: 1px solid #2d3b55;
+    border-radius: 10px;
+    background: #111a29;
+    color: #b9c4d6;
+    font-size: 24px;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.popup-close:hover {
+    color: #ffffff;
+    background: #182338;
+}
+
+#popup-restart-button,
+#popup-replay-button,
+#change-mode-button,
+#home-button {
+    padding: 13px 25px;
+    border: 1px solid transparent;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+#popup-restart-button {
+    background: linear-gradient(90deg, #4f9cff, #7067ff);
+    color: white;
+}
+
+#popup-replay-button {
+    border-color: rgba(79, 156, 255, 0.42);
+    background: #15233a;
+    color: #90c2ff;
+}
+
+#change-mode-button {
+    border-color: rgba(112, 103, 255, 0.36);
+    background: #171d35;
+    color: #c4c0ff;
+}
+
+
+/* =========================
+   REPLAY RESPONSIVE
+========================= */
+
+@media (max-width: 700px) {
+    .replay-controls {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    #replay-progress {
+        grid-column: 1 / -1;
+        grid-row: 1;
+        padding-bottom: 5px;
+    }
+}
+
+@media (max-width: 500px) {
+    .replay-mode-selector {
+        grid-template-columns: 1fr;
+    }
+
+    .end-actions {
+        flex-direction: column;
+    }
+
+    .end-actions button {
+        width: min(100%, 320px);
+    }
+
+    .popup {
+        padding: 34px 22px 26px;
+    }
+}

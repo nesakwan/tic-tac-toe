@@ -10,10 +10,30 @@ const resultIcon = document.getElementById("result-icon");
 const cells = document.querySelectorAll(".cell");
 
 const restartButton = document.getElementById("restart-button");
-const replayButton = document.getElementById("replay-button");
 const homeButton = document.getElementById("home-button");
 const backButton = document.getElementById("back-button");
 const settingsButton = document.getElementById("settings-button");
+
+const closeResultButton = document.getElementById("close-result-button");
+const popupRestartButton = document.getElementById("popup-restart-button");
+const popupReplayButton = document.getElementById("popup-replay-button");
+const changeModeButton = document.getElementById("change-mode-button");
+
+const endActions = document.getElementById("end-actions");
+const endReplayButton = document.getElementById("end-replay-button");
+const endRestartButton = document.getElementById("end-restart-button");
+const endChangeModeButton = document.getElementById("end-change-mode-button");
+
+const replayPanel = document.getElementById("replay-panel");
+const replayModeAction = document.getElementById("replay-mode-action");
+const replayModeTurn = document.getElementById("replay-mode-turn");
+const replayStartButton = document.getElementById("replay-start-button");
+const replayPrevButton = document.getElementById("replay-prev-button");
+const replayProgress = document.getElementById("replay-progress");
+const replayNextButton = document.getElementById("replay-next-button");
+const replayEndButton = document.getElementById("replay-end-button");
+const replayExitButton = document.getElementById("replay-exit-button");
+const replayExitButtonBottom = document.getElementById("replay-exit-button-bottom");
 
 
 // ==========================================================
@@ -197,6 +217,15 @@ let isAiThinking = false;
 
 let gameFinished = false;
 
+// Historique des vrais coups visibles sur le plateau.
+// Les simulations Minimax n'utilisent jamais cette liste.
+let moveHistory = [];
+
+let finalBoard = Array(9).fill("");
+let isReplayMode = false;
+let replayPosition = 0;
+let replayMode = "action";
+
 
 // ==========================================================
 // COMBINAISONS GAGNANTES
@@ -259,13 +288,30 @@ function afficherTour(
 // PLACER UN SYMBOLE
 // ==========================================================
 
+function enregistrerCoup(
+    index,
+    symbole,
+    actor
+) {
+
+    moveHistory.push({
+        index,
+        symbol: symbole,
+        actor
+    });
+}
+
+
 function placerSymbole(
     index,
-    symbole
+    symbole,
+    actor = null,
+    recordMove = true
 ) {
 
     if (
         gameFinished ||
+        isReplayMode ||
         gameBoard[index] !== ""
     ) {
 
@@ -287,6 +333,19 @@ function placerSymbole(
 
         cell.textContent =
             symbole;
+    }
+
+
+    if (
+        recordMove &&
+        actor
+    ) {
+
+        enregistrerCoup(
+            index,
+            symbole,
+            actor
+        );
     }
 
 
@@ -443,7 +502,10 @@ function jouerLocal(
     if (
         !placerSymbole(
             index,
-            symbole
+            symbole,
+            currentLocalPlayer === 1
+                ? "player1"
+                : "player2"
         )
     ) {
 
@@ -496,7 +558,8 @@ function jouerContreIA(
     if (
         !placerSymbole(
             index,
-            humanSymbol
+            humanSymbol,
+            "human"
         )
     ) {
 
@@ -559,7 +622,8 @@ function lancerTourIA() {
 
                 placerSymbole(
                     coupIA,
-                    aiSymbol
+                    aiSymbol,
+                    "ai"
                 );
             }
 
@@ -1444,9 +1508,29 @@ function iaGod(
 // AFFICHAGE DU RÉSULTAT
 // ==========================================================
 
+function afficherActionsFin(
+    visible = true
+) {
+
+    if (!endActions) {
+        return;
+    }
+
+    endActions.style.display =
+        visible
+            ? "flex"
+            : "none";
+}
+
+
 function showResult(
     gagnant
 ) {
+
+    finalBoard =
+        [...gameBoard];
+
+    afficherActionsFin(true);
 
     if (
         !resultPopup
@@ -1546,6 +1630,441 @@ function showResult(
 }
 
 
+function fermerResultat() {
+
+    if (
+        resultPopup
+    ) {
+
+        resultPopup.style.display =
+            "none";
+    }
+
+    afficherActionsFin(true);
+}
+
+
+// ==========================================================
+// REPLAY
+// ==========================================================
+
+function afficherGrille(
+    grille
+) {
+
+    cells.forEach(
+        (cell, index) => {
+
+            cell.textContent =
+                grille[index] || "";
+        }
+    );
+}
+
+
+function grilleReplayJusqua(
+    position
+) {
+
+    const grille =
+        Array(9).fill("");
+
+    moveHistory
+        .slice(0, position)
+        .forEach(move => {
+
+            grille[move.index] =
+                move.symbol;
+        });
+
+    return grille;
+}
+
+
+function obtenirLimitesToursReplay() {
+
+    const limites = [0];
+    const total = moveHistory.length;
+
+    if (total === 0) {
+        return limites;
+    }
+
+    let position = 0;
+
+    // Si l'IA possède X, elle ouvre la partie seule.
+    if (
+        gameMode === "ai" &&
+        moveHistory[0]?.actor === "ai"
+    ) {
+
+        limites.push(1);
+        position = 1;
+    }
+
+    while (position < total) {
+
+        if (gameMode === "ai") {
+
+            // Un tour normal contre l'IA = humain puis réponse IA.
+            let prochainePosition =
+                position + 1;
+
+            if (
+                moveHistory[position]?.actor === "human" &&
+                prochainePosition < total &&
+                moveHistory[prochainePosition]?.actor === "ai"
+            ) {
+
+                prochainePosition += 1;
+            }
+
+            position =
+                Math.min(
+                    total,
+                    prochainePosition
+                );
+
+        } else {
+
+            // En local, un tour = deux actions successives X/O.
+            position =
+                Math.min(
+                    total,
+                    position + 2
+                );
+        }
+
+        if (
+            limites[limites.length - 1] !== position
+        ) {
+
+            limites.push(position);
+        }
+    }
+
+    return limites;
+}
+
+
+function positionTourSuivante(
+    position
+) {
+
+    const limites =
+        obtenirLimitesToursReplay();
+
+    return limites.find(
+        limite => limite > position
+    ) ?? moveHistory.length;
+}
+
+
+function positionTourPrecedente(
+    position
+) {
+
+    const limites =
+        obtenirLimitesToursReplay();
+
+    for (
+        let index = limites.length - 1;
+        index >= 0;
+        index--
+    ) {
+
+        if (
+            limites[index] < position
+        ) {
+
+            return limites[index];
+        }
+    }
+
+    return 0;
+}
+
+
+function mettreAJourProgressionReplay() {
+
+    if (
+        replayProgress
+    ) {
+
+        if (
+            replayMode === "turn"
+        ) {
+
+            const limites =
+                obtenirLimitesToursReplay();
+
+            const totalTours =
+                Math.max(
+                    0,
+                    limites.length - 1
+                );
+
+            const tourActuel =
+                Math.max(
+                    0,
+                    limites.findIndex(
+                        limite => limite >= replayPosition
+                    )
+                );
+
+            replayProgress.textContent =
+                `Tour ${tourActuel} / ${totalTours}`;
+
+        } else {
+
+            replayProgress.textContent =
+                `Action ${replayPosition} / ${moveHistory.length}`;
+        }
+    }
+
+
+    if (
+        replayStartButton
+    ) {
+
+        replayStartButton.disabled =
+            replayPosition === 0;
+    }
+
+
+    if (
+        replayPrevButton
+    ) {
+
+        replayPrevButton.disabled =
+            replayPosition === 0;
+    }
+
+
+    if (
+        replayNextButton
+    ) {
+
+        replayNextButton.disabled =
+            replayPosition >=
+            moveHistory.length;
+    }
+
+
+    if (
+        replayEndButton
+    ) {
+
+        replayEndButton.disabled =
+            replayPosition >=
+            moveHistory.length;
+    }
+}
+
+
+function afficherPositionReplay(
+    position
+) {
+
+    replayPosition =
+        Math.max(
+            0,
+            Math.min(
+                moveHistory.length,
+                position
+            )
+        );
+
+    afficherGrille(
+        grilleReplayJusqua(
+            replayPosition
+        )
+    );
+
+    mettreAJourProgressionReplay();
+}
+
+
+function changerModeReplay(
+    mode
+) {
+
+    replayMode =
+        mode === "turn"
+            ? "turn"
+            : "action";
+
+    if (
+        replayMode === "turn"
+    ) {
+
+        const limites =
+            obtenirLimitesToursReplay();
+
+        replayPosition =
+            limites.find(
+                limite => limite >= replayPosition
+            ) ?? moveHistory.length;
+    }
+
+    afficherPositionReplay(
+        replayPosition
+    );
+}
+
+
+function demarrerReplay() {
+
+    if (
+        !gameFinished ||
+        moveHistory.length === 0
+    ) {
+
+        return;
+    }
+
+    isReplayMode = true;
+    replayPosition = 0;
+    replayMode =
+        replayModeTurn?.checked
+            ? "turn"
+            : "action";
+
+    if (
+        resultPopup
+    ) {
+
+        resultPopup.style.display =
+            "none";
+    }
+
+    afficherActionsFin(false);
+
+    if (
+        replayPanel
+    ) {
+
+        replayPanel.style.display =
+            "block";
+    }
+
+    afficherPositionReplay(0);
+}
+
+
+function replayDebut() {
+
+    if (!isReplayMode) {
+        return;
+    }
+
+    afficherPositionReplay(0);
+}
+
+
+function replayPrecedent() {
+
+    if (!isReplayMode) {
+        return;
+    }
+
+    const positionPrecedente =
+        replayMode === "turn"
+            ? positionTourPrecedente(
+                replayPosition
+            )
+            : replayPosition - 1;
+
+    afficherPositionReplay(
+        positionPrecedente
+    );
+}
+
+
+function replaySuivant() {
+
+    if (!isReplayMode) {
+        return;
+    }
+
+    const positionSuivante =
+        replayMode === "turn"
+            ? positionTourSuivante(
+                replayPosition
+            )
+            : replayPosition + 1;
+
+    afficherPositionReplay(
+        positionSuivante
+    );
+}
+
+
+function replayFin() {
+
+    if (!isReplayMode) {
+        return;
+    }
+
+    afficherPositionReplay(
+        moveHistory.length
+    );
+}
+
+
+function quitterReplay() {
+
+    if (!isReplayMode) {
+        return;
+    }
+
+    isReplayMode = false;
+    replayPosition = 0;
+
+    if (
+        replayPanel
+    ) {
+
+        replayPanel.style.display =
+            "none";
+    }
+
+    afficherGrille(
+        finalBoard
+    );
+
+    afficherActionsFin(true);
+
+    if (
+        resultPopup
+    ) {
+
+        resultPopup.style.display =
+            "none";
+    }
+
+    afficherTour(
+        "",
+        "Partie terminée"
+    );
+}
+
+
+// ==========================================================
+// CHANGER DE MODE
+// ==========================================================
+
+function changerMode() {
+
+    sessionStorage.removeItem(
+        PREPARATION_STORAGE_KEY
+    );
+
+    location.href =
+        "Akatsuki/rencontre.html";
+}
+
+
 // ==========================================================
 // REJOUER
 // ==========================================================
@@ -1562,18 +2081,25 @@ function resetGame() {
 
     ];
 
+    finalBoard =
+        Array(9).fill("");
+
+    moveHistory = [];
 
     currentLocalPlayer =
         1;
 
-
     isAiThinking =
         false;
-
 
     gameFinished =
         false;
 
+    isReplayMode =
+        false;
+
+    replayPosition =
+        0;
 
     cells.forEach(
         cell => {
@@ -1586,7 +2112,6 @@ function resetGame() {
         }
     );
 
-
     if (
         resultPopup
     ) {
@@ -1595,6 +2120,15 @@ function resetGame() {
             "none";
     }
 
+    if (
+        replayPanel
+    ) {
+
+        replayPanel.style.display =
+            "none";
+    }
+
+    afficherActionsFin(false);
 
     demarrerPartie();
 }
@@ -1609,12 +2143,100 @@ restartButton?.addEventListener(
     resetGame
 );
 
-
-replayButton?.addEventListener(
+popupRestartButton?.addEventListener(
     "click",
     resetGame
 );
 
+endRestartButton?.addEventListener(
+    "click",
+    resetGame
+);
+
+closeResultButton?.addEventListener(
+    "click",
+    fermerResultat
+);
+
+popupReplayButton?.addEventListener(
+    "click",
+    demarrerReplay
+);
+
+endReplayButton?.addEventListener(
+    "click",
+    demarrerReplay
+);
+
+changeModeButton?.addEventListener(
+    "click",
+    changerMode
+);
+
+endChangeModeButton?.addEventListener(
+    "click",
+    changerMode
+);
+
+replayModeAction?.addEventListener(
+    "change",
+    () => {
+
+        if (
+            replayModeAction.checked
+        ) {
+
+            changerModeReplay(
+                "action"
+            );
+        }
+    }
+);
+
+replayModeTurn?.addEventListener(
+    "change",
+    () => {
+
+        if (
+            replayModeTurn.checked
+        ) {
+
+            changerModeReplay(
+                "turn"
+            );
+        }
+    }
+);
+
+replayStartButton?.addEventListener(
+    "click",
+    replayDebut
+);
+
+replayPrevButton?.addEventListener(
+    "click",
+    replayPrecedent
+);
+
+replayNextButton?.addEventListener(
+    "click",
+    replaySuivant
+);
+
+replayEndButton?.addEventListener(
+    "click",
+    replayFin
+);
+
+replayExitButton?.addEventListener(
+    "click",
+    quitterReplay
+);
+
+replayExitButtonBottom?.addEventListener(
+    "click",
+    quitterReplay
+);
 
 homeButton?.addEventListener(
     "click",
@@ -1624,7 +2246,6 @@ homeButton?.addEventListener(
             "Akatsuki/titre.html";
     }
 );
-
 
 backButton?.addEventListener(
     "click",
