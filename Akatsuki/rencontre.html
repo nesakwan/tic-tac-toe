@@ -1870,6 +1870,12 @@
 
 
 
+                        <strong class="ai-opponent-name" id="ai-opponent-name">
+
+                            Olivier
+
+                        </strong>
+
 
 
                         <span class="ai-level">
@@ -2021,6 +2027,9 @@
 
 
 
+    <script src="../js/music.js" data-music-src="../Sounds/Super Smash Bros Brawl Music - Final Destination.mp3"></script>
+    <script src="../js/ai-names.js"></script>
+
     <script>
         (() => {
             const PREPARATION_STORAGE_KEY = "tttPreparationState";
@@ -2029,6 +2038,8 @@
             const settingsButton = document.getElementById("settings-button");
             const startButton = document.querySelector(".start-button");
             const aiLevelDisplay = document.querySelector(".players-ai .ai-level");
+            const aiOpponentNameDisplay = document.getElementById("ai-opponent-name");
+            let aiOpponentName = null;
 
             function checkedValue(name) {
                 return document.querySelector(`input[name="${name}"]:checked`)?.value || null;
@@ -2043,14 +2054,21 @@
             function getPreparationState() {
                 const localNames = document.querySelectorAll(".players-local .player-name-input");
                 const aiName = document.querySelector(".players-ai .player-name-input");
+                const selectedDifficulty = checkedValue("difficulty") || "normal";
+
+                if (!globalThis.TTTAiNames?.nomValide?.(aiOpponentName, selectedDifficulty)) {
+                    aiOpponentName = globalThis.TTTAiNames?.genererNom?.(selectedDifficulty)
+                        || (selectedDifficulty === "god" ? "Gojo" : "Olivier");
+                }
 
                 return {
                     step: location.hash === "#step-players" ? "players" : "mode",
                     gameMode: checkedValue("game-mode"),
-                    difficulty: checkedValue("difficulty"),
+                    difficulty: selectedDifficulty,
                     localPlayer1Name: localNames[0]?.value || "Joueur 1",
                     localPlayer2Name: localNames[1]?.value || "Joueur 2",
                     aiPlayerName: aiName?.value || "Joueur 1",
+                    aiOpponentName,
                     player1Symbol: checkedValue("player1-symbol"),
                     player2Symbol: checkedValue("player2-symbol"),
                     aiPlayerSymbol: checkedValue("ai-player-symbol")
@@ -2071,7 +2089,7 @@
             function restorePreparationState() {
                 const raw = sessionStorage.getItem(PREPARATION_STORAGE_KEY);
                 if (!raw) {
-                    updateAiLevelDisplay();
+                    updateAiIdentity(false);
                     return;
                 }
 
@@ -2091,6 +2109,11 @@
                     if (localNames[1] && state.localPlayer2Name) localNames[1].value = state.localPlayer2Name;
                     if (aiName && state.aiPlayerName) aiName.value = state.aiPlayerName;
 
+                    const selectedDifficulty = state.difficulty || checkedValue("difficulty") || "normal";
+                    if (globalThis.TTTAiNames?.nomValide?.(state.aiOpponentName, selectedDifficulty)) {
+                        aiOpponentName = state.aiOpponentName;
+                    }
+
                     if (!location.hash && state.step === "players") {
                         history.replaceState(null, "", "#step-players");
                     }
@@ -2098,7 +2121,7 @@
                     console.warn("Impossible de restaurer la préparation de partie.", error);
                 }
 
-                updateAiLevelDisplay();
+                updateAiIdentity(false);
             }
 
             function updateAiLevelDisplay() {
@@ -2115,11 +2138,32 @@
                 aiLevelDisplay.textContent = labels[difficulty] || "NORMAL";
             }
 
+            function updateAiIdentity(forceNewName = false) {
+                updateAiLevelDisplay();
+
+                const selectedDifficulty = checkedValue("difficulty") || "normal";
+                const aiNames = globalThis.TTTAiNames;
+                const currentIsValid = aiNames?.nomValide?.(aiOpponentName, selectedDifficulty);
+
+                if (forceNewName || !currentIsValid) {
+                    aiOpponentName = aiNames?.genererNom
+                        ? aiNames.genererNom(selectedDifficulty, forceNewName ? aiOpponentName : null)
+                        : (selectedDifficulty === "god" ? "Gojo" : "Olivier");
+                }
+
+                if (aiOpponentNameDisplay) {
+                    aiOpponentNameDisplay.textContent = aiOpponentName;
+                }
+            }
+
             settingsButton?.addEventListener("click", savePreparationState);
             startButton?.addEventListener("click", savePreparationState);
 
             document.querySelectorAll('input[name="difficulty"]').forEach((input) => {
-                input.addEventListener("change", updateAiLevelDisplay);
+                input.addEventListener("change", () => {
+                    updateAiIdentity(true);
+                    savePreparationState();
+                });
             });
 
             document.querySelectorAll(

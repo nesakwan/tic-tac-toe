@@ -3968,6 +3968,30 @@ body:has(#mode-ai:checked)
 
 
 
+.ai-opponent-name {
+    margin-top: 8px;
+    color: var(--text-primary);
+    font-size: 1.15rem;
+    font-weight: 800;
+    letter-spacing: 0.2px;
+    text-shadow: 0 0 14px rgba(117, 89, 244, 0.15);
+}
+
+.ai-player-card:has(.ai-level) .ai-opponent-name {
+    animation: aiNameAppear 0.28s ease-out both;
+}
+
+@keyframes aiNameAppear {
+    from {
+        opacity: 0;
+        transform: translateY(4px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
 .ai-level {
 
 

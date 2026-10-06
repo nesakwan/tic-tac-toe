@@ -1,218 +1,68 @@
 <!DOCTYPE html>
 <html lang="fr">
-
 <head>
     <meta charset="UTF-8">
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Paramètres - Tic Tac Toe</title>
-
     <link rel="stylesheet" href="parametre.css">
 </head>
-
-
 <body>
-
     <main class="settings-screen">
-
-
-        <!-- =====================================================
-             DÉCORATIONS D'ARRIÈRE-PLAN
-        ====================================================== -->
-
-        <div
-            class="background-symbols"
-            aria-hidden="true"
-        >
-
+        <div class="background-symbols" aria-hidden="true">
             <div class="decor-x decor-x-1"></div>
             <div class="decor-x decor-x-2"></div>
-            <div class="decor-x decor-x-3"></div>
-
             <div class="decor-o decor-o-1"></div>
             <div class="decor-o decor-o-2"></div>
-
         </div>
 
-
-        <!-- =====================================================
-             RETOUR
-        ====================================================== -->
-
-        <a
-            href="titre.html"
-            class="back-button"
-            id="settings-back-button"
-        >
-
-            <svg
-                viewBox="0 0 24 24"
-                aria-hidden="true"
-            >
+        <a href="titre.html" class="back-button" id="settings-back-button">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
                 <path d="M15 18L9 12L15 6"></path>
             </svg>
-
-            <span>
-                Retour
-            </span>
-
+            <span>Retour</span>
         </a>
 
-
-        <!-- =====================================================
-             CONTENU
-        ====================================================== -->
-
         <section class="settings-content">
-
-
-            <!-- TITRE -->
-
             <header class="settings-header">
-
-                <h1>
-                    PARAMÈTRES
-                </h1>
-
-                <p>
-                    Personnalisez votre expérience de jeu.
-                </p>
-
+                <span class="settings-kicker">TIC TAC TOE</span>
+                <h1>PARAMÈTRES</h1>
+                <p>Réglez le son et la langue du jeu.</p>
             </header>
 
-
-            <!-- =================================================
-                 PANNEAU PRINCIPAL
-            ================================================== -->
-
             <div class="settings-panel">
-
-
-                <!-- =================================================
-                     SON
-                ================================================== -->
-
                 <section class="setting-group sound-group">
-
-
                     <div class="setting-row">
-
                         <div class="setting-info">
-
-
-                            <!-- ICÔNE -->
-
                             <div class="icon-box">
-
-                                <svg
-                                    viewBox="0 0 24 24"
-                                    aria-hidden="true"
-                                >
-
-                                    <path
-                                        d="M11 5L6 9H3V15H6L11 19V5Z"
-                                    ></path>
-
-                                    <path
-                                        d="M15 9C16.3 10.6 16.3 13.4 15 15"
-                                    ></path>
-
-                                    <path
-                                        d="M18 6C21 9.2 21 14.8 18 18"
-                                    ></path>
-
+                                <svg viewBox="0 0 24 24" aria-hidden="true">
+                                    <path d="M11 5L6 9H3V15H6L11 19V5Z"></path>
+                                    <path d="M15 9C16.3 10.6 16.3 13.4 15 15"></path>
+                                    <path d="M18 6C21 9.2 21 14.8 18 18"></path>
                                 </svg>
-
                             </div>
-
-
-                            <!-- TEXTE -->
-
                             <div class="setting-text">
-
-                                <span class="setting-name">
-                                    Son
-                                </span>
-
-                                <span class="setting-description">
-                                    Activer ou désactiver les sons du jeu
-                                </span>
-
+                                <span class="setting-name">Son</span>
+                                <span class="setting-description">Activer ou désactiver les sons du jeu</span>
                             </div>
-
                         </div>
-
-
-                        <!-- SWITCH SON -->
 
                         <label class="switch">
-
-                            <input
-                                type="checkbox"
-                                id="sound-toggle"
-                                checked
-                            >
-
+                            <input type="checkbox" id="sound-toggle" checked>
                             <span class="switch-slider"></span>
-
                         </label>
-
                     </div>
 
-
-                    <!-- =================================================
-                         VOLUME
-                    ================================================== -->
-
-                    <div
-                        class="volume-row"
-                        id="volume-section"
-                    >
-
+                    <div class="volume-row" id="volume-section">
                         <div class="volume-top">
-
-                            <span>
-                                Volume
-                            </span>
-
-                            <span
-                                class="volume-value"
-                                id="volume-value"
-                            >
-                                70 %
-                            </span>
-
+                            <span>Volume</span>
+                            <span class="volume-value" id="volume-value">70 %</span>
                         </div>
 
-
                         <div class="volume-control">
-
-
-                            <!-- PETITE ICÔNE VOLUME -->
-
-                            <svg
-                                class="volume-small-icon"
-                                viewBox="0 0 24 24"
-                                aria-hidden="true"
-                            >
-
-                                <path
-                                    d="M11 5L6 9H3V15H6L11 19V5Z"
-                                ></path>
-
-                                <path
-                                    d="M15 9C16.3 10.6 16.3 13.4 15 15"
-                                ></path>
-
+                            <svg class="volume-small-icon" viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M11 5L6 9H3V15H6L11 19V5Z"></path>
+                                <path d="M15 9C16.3 10.6 16.3 13.4 15 15"></path>
                             </svg>
-
-
-                            <!-- SLIDER VOLUME -->
-
                             <input
                                 class="volume-slider"
                                 id="volume-slider"
@@ -222,567 +72,153 @@
                                 value="70"
                                 aria-label="Volume"
                             >
-
                         </div>
-
                     </div>
-
                 </section>
-
-
-                <!-- =================================================
-                     MODE SOMBRE
-                ================================================== -->
-
-                <section class="setting-row">
-
-                    <div class="setting-info">
-
-
-                        <div class="icon-box">
-
-                            <svg
-                                viewBox="0 0 24 24"
-                                aria-hidden="true"
-                            >
-
-                                <path
-                                    d="M20 15.5A8 8 0 0 1 8.5 4A8 8 0 1 0 20 15.5Z"
-                                ></path>
-
-                            </svg>
-
-                        </div>
-
-
-                        <div class="setting-text">
-
-                            <span class="setting-name">
-                                Mode sombre
-                            </span>
-
-                            <span class="setting-description">
-                                Utiliser l'apparence sombre
-                            </span>
-
-                        </div>
-
-                    </div>
-
-
-                    <label class="switch">
-
-                        <input
-                            type="checkbox"
-                            id="dark-toggle"
-                            checked
-                        >
-
-                        <span class="switch-slider"></span>
-
-                    </label>
-
-                </section>
-
-
-                <!-- =================================================
-                     THÈME
-                ================================================== -->
-
-                <section class="setting-row theme-row">
-
-                    <div class="setting-info">
-
-
-                        <div class="icon-box">
-
-                            <svg
-                                viewBox="0 0 24 24"
-                                aria-hidden="true"
-                            >
-
-                                <path
-                                    d="M12 3C7 3 3 6.6 3 11C3 15.4 6.6 19 11 19H12.2C13.2 19 13.8 17.8 13.2 17C12.5 16 13.2 14.5 14.5 14.5H17C19.2 14.5 21 12.7 21 10.5C21 6.5 17 3 12 3Z"
-                                ></path>
-
-                                <circle cx="8" cy="9" r="1"></circle>
-                                <circle cx="12" cy="7" r="1"></circle>
-                                <circle cx="16" cy="9" r="1"></circle>
-
-                            </svg>
-
-                        </div>
-
-
-                        <div class="setting-text">
-
-                            <span class="setting-name">
-                                Thème
-                            </span>
-
-                            <span class="setting-description">
-                                Choisir la couleur principale
-                            </span>
-
-                        </div>
-
-                    </div>
-
-
-                    <!-- COULEURS -->
-
-                    <div class="theme-options">
-
-
-                        <label class="theme-option theme-blue">
-
-                            <input
-                                type="radio"
-                                name="theme"
-                                value="blue"
-                                checked
-                            >
-
-                            <span></span>
-
-                        </label>
-
-
-                        <label class="theme-option theme-pink">
-
-                            <input
-                                type="radio"
-                                name="theme"
-                                value="pink"
-                            >
-
-                            <span></span>
-
-                        </label>
-
-
-                        <label class="theme-option theme-green">
-
-                            <input
-                                type="radio"
-                                name="theme"
-                                value="green"
-                            >
-
-                            <span></span>
-
-                        </label>
-
-
-                        <label class="theme-option theme-purple">
-
-                            <input
-                                type="radio"
-                                name="theme"
-                                value="purple"
-                            >
-
-                            <span></span>
-
-                        </label>
-
-
-                        <label class="theme-option theme-orange">
-
-                            <input
-                                type="radio"
-                                name="theme"
-                                value="orange"
-                            >
-
-                            <span></span>
-
-                        </label>
-
-                    </div>
-
-                </section>
-
-
-                <!-- =================================================
-                     SYMBOLE PAR DÉFAUT
-                ================================================== -->
-
-                <section class="setting-row symbol-row">
-
-                    <div class="setting-info">
-
-
-                        <div class="icon-box">
-
-                            <svg
-                                viewBox="0 0 24 24"
-                                aria-hidden="true"
-                            >
-
-                                <path
-                                    d="M6 6L11 11M11 6L6 11"
-                                ></path>
-
-                                <circle
-                                    cx="16.5"
-                                    cy="15.5"
-                                    r="3.5"
-                                ></circle>
-
-                            </svg>
-
-                        </div>
-
-
-                        <div class="setting-text">
-
-                            <span class="setting-name">
-                                Symbole par défaut
-                            </span>
-
-                            <span class="setting-description">
-                                Choisir votre symbole préféré
-                            </span>
-
-                        </div>
-
-                    </div>
-
-
-                    <!-- X / O -->
-
-                    <div class="symbol-selector">
-
-
-                        <label class="symbol-choice symbol-x">
-
-                            <input
-                                type="radio"
-                                name="symbol"
-                                value="x"
-                                checked
-                            >
-
-                            <span>
-                                X
-                            </span>
-
-                        </label>
-
-
-                        <label class="symbol-choice symbol-o">
-
-                            <input
-                                type="radio"
-                                name="symbol"
-                                value="o"
-                            >
-
-                            <span>
-                                O
-                            </span>
-
-                        </label>
-
-                    </div>
-
-                </section>
-
-
-                <!-- =================================================
-                     LANGUE
-                ================================================== -->
 
                 <section class="setting-row language-row">
-
                     <div class="setting-info">
-
-
                         <div class="icon-box">
-
-                            <svg
-                                viewBox="0 0 24 24"
-                                aria-hidden="true"
-                            >
-
-                                <circle
-                                    cx="12"
-                                    cy="12"
-                                    r="9"
-                                ></circle>
-
-                                <path
-                                    d="M3 12H21"
-                                ></path>
-
-                                <path
-                                    d="M12 3C14.5 5.5 15.5 8.5 15.5 12C15.5 15.5 14.5 18.5 12 21"
-                                ></path>
-
-                                <path
-                                    d="M12 3C9.5 5.5 8.5 8.5 8.5 12C8.5 15.5 9.5 18.5 12 21"
-                                ></path>
-
+                            <svg viewBox="0 0 24 24" aria-hidden="true">
+                                <circle cx="12" cy="12" r="9"></circle>
+                                <path d="M3 12H21"></path>
+                                <path d="M12 3C14.5 5.5 15.5 8.5 15.5 12C15.5 15.5 14.5 18.5 12 21"></path>
+                                <path d="M12 3C9.5 5.5 8.5 8.5 8.5 12C8.5 15.5 9.5 18.5 12 21"></path>
                             </svg>
-
                         </div>
-
-
                         <div class="setting-text">
-
-                            <span class="setting-name">
-                                Langue
-                            </span>
-
-                            <span class="setting-description">
-                                Choisir la langue du jeu
-                            </span>
-
+                            <span class="setting-name">Langue</span>
+                            <span class="setting-description">Choisir la langue du jeu</span>
                         </div>
-
                     </div>
-
 
                     <div class="language-select-wrapper">
-
-                        <select
-                            class="language-select"
-                            aria-label="Langue"
-                        >
-
-                            <option value="fr">
-                                Français
-                            </option>
-
-                            <option value="en">
-                                English
-                            </option>
-
-                            <option value="es">
-                                Español
-                            </option>
-
-                            <option value="de">
-                                Deutsch
-                            </option>
-
+                        <select class="language-select" id="language-select" aria-label="Langue">
+                            <option value="fr">Français</option>
+                            <option value="en">English</option>
+                            <option value="es">Español</option>
+                            <option value="de">Deutsch</option>
                         </select>
-
-
-                        <svg
-                            class="select-arrow"
-                            viewBox="0 0 24 24"
-                            aria-hidden="true"
-                        >
-
-                            <path
-                                d="M7 9L12 14L17 9"
-                            ></path>
-
+                        <svg class="select-arrow" viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M7 9L12 14L17 9"></path>
                         </svg>
-
                     </div>
-
                 </section>
-
-
             </div>
 
+            <p class="settings-note">
+                Les réglages sont enregistrés automatiquement.
+            </p>
         </section>
-
     </main>
 
-
-    <!-- =====================================================
-         PETIT JAVASCRIPT :
-         BARRE DE VOLUME DYNAMIQUE
-    ====================================================== -->
+    <script src="../js/music.js" data-music-src="../Sounds/Super Smash Bros Brawl Music - Final Destination.mp3"></script>
 
     <script>
+        (() => {
+            const SETTINGS_RETURN_KEY = "tttSettingsReturn";
+            const SETTINGS_STORAGE_KEY = "tttSettings";
+            const RESUME_MATCH_KEY = "tttResumeMatch";
 
-        const SETTINGS_RETURN_KEY = "tttSettingsReturn";
-        const SETTINGS_STORAGE_KEY = "tttSettings";
+            const settingsBackButton = document.getElementById("settings-back-button");
+            const sourcePage = new URLSearchParams(window.location.search).get("from");
 
-        const settingsBackButton = document.getElementById("settings-back-button");
-        const sourcePage = new URLSearchParams(window.location.search).get("from");
-
-        if (sourcePage === "preparation") {
-            settingsBackButton.href = sessionStorage.getItem(SETTINGS_RETURN_KEY) || "rencontre.html";
-        }
-
-        const volumeSlider =
-            document.getElementById("volume-slider");
-
-        const volumeValue =
-            document.getElementById("volume-value");
-
-        const soundToggle =
-            document.getElementById("sound-toggle");
-
-        const volumeSection =
-            document.getElementById("volume-section");
-
-        const darkToggle = document.getElementById("dark-toggle");
-        const languageSelect = document.querySelector(".language-select");
-
-        function getCheckedSetting(name) {
-            return document.querySelector(`input[name="${name}"]:checked`)?.value || null;
-        }
-
-        function setCheckedSetting(name, value) {
-            if (!value) return;
-            const input = document.querySelector(`input[name="${name}"][value="${value}"]`);
-            if (input) input.checked = true;
-        }
-
-        function saveSettings() {
-            const settings = {
-                soundEnabled: soundToggle.checked,
-                volume: Number(volumeSlider.value),
-                darkMode: darkToggle.checked,
-                theme: getCheckedSetting("theme"),
-                defaultSymbol: getCheckedSetting("symbol"),
-                language: languageSelect.value
-            };
-            localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(settings));
-        }
-
-        function restoreSettings() {
-            const raw = localStorage.getItem(SETTINGS_STORAGE_KEY);
-            if (!raw) return;
-            try {
-                const settings = JSON.parse(raw);
-                if (typeof settings.soundEnabled === "boolean") soundToggle.checked = settings.soundEnabled;
-                if (Number.isFinite(settings.volume)) volumeSlider.value = settings.volume;
-                if (typeof settings.darkMode === "boolean") darkToggle.checked = settings.darkMode;
-                setCheckedSetting("theme", settings.theme);
-                setCheckedSetting("symbol", settings.defaultSymbol);
-                if (settings.language) languageSelect.value = settings.language;
-            } catch (error) {
-                console.warn("Impossible de restaurer les paramètres.", error);
-            }
-        }
-
-
-        /*
-        =============================================
-        MET À JOUR LA BARRE ET LE POURCENTAGE
-        =============================================
-        */
-
-        function updateVolumeSlider() {
-
-            const min =
-                Number(volumeSlider.min);
-
-            const max =
-                Number(volumeSlider.max);
-
-            const value =
-                Number(volumeSlider.value);
-
-
-            const percentage =
-                ((value - min) / (max - min))
-                * 100;
-
-
-            /*
-                Modifie dynamiquement
-                la partie bleue du slider
-            */
-
-            volumeSlider.style.setProperty(
-                "--volume-progress",
-                `${percentage}%`
-            );
-
-
-            /*
-                Texte à droite
-            */
-
-            volumeValue.textContent =
-                `${Math.round(value)} %`;
-
-        }
-
-
-        /*
-        =============================================
-        QUAND LE CURSEUR BOUGE
-        =============================================
-        */
-
-        volumeSlider.addEventListener(
-            "input",
-            updateVolumeSlider
-        );
-
-
-        /*
-        =============================================
-        ACTIVER / DÉSACTIVER LE VOLUME
-        VISUELLEMENT
-        =============================================
-        */
-
-        function updateSoundState() {
-
-            if (soundToggle.checked) {
-
-                volumeSection.classList.remove(
-                    "volume-disabled"
-                );
-
-                volumeSlider.disabled = false;
-
-            } else {
-
-                volumeSection.classList.add(
-                    "volume-disabled"
-                );
-
-                volumeSlider.disabled = true;
-
+            if (sourcePage === "preparation") {
+                settingsBackButton.href =
+                    sessionStorage.getItem(SETTINGS_RETURN_KEY) || "rencontre.html";
             }
 
-        }
+            if (sourcePage === "game") {
+                settingsBackButton.href =
+                    sessionStorage.getItem(SETTINGS_RETURN_KEY) || "../game.html";
 
+                // Le retour vers game.html doit restaurer l'état sauvegardé.
+                settingsBackButton.addEventListener("click", () => {
+                    sessionStorage.setItem(RESUME_MATCH_KEY, "1");
+                });
+            }
 
-        soundToggle.addEventListener(
-            "change",
-            updateSoundState
-        );
+            const volumeSlider = document.getElementById("volume-slider");
+            const volumeValue = document.getElementById("volume-value");
+            const soundToggle = document.getElementById("sound-toggle");
+            const volumeSection = document.getElementById("volume-section");
+            const languageSelect = document.getElementById("language-select");
 
-        /*
-        =============================================
-        SAUVEGARDE DES PARAMÈTRES
-        =============================================
-        */
+            function saveSettings() {
+                const settings = {
+                    soundEnabled: soundToggle.checked,
+                    volume: Number(volumeSlider.value),
+                    language: languageSelect.value
+                };
 
-        document.querySelectorAll(
-            '#sound-toggle, #dark-toggle, input[name="theme"], input[name="symbol"], .language-select'
-        ).forEach((control) => {
-            control.addEventListener("change", saveSettings);
-        });
+                localStorage.setItem(
+                    SETTINGS_STORAGE_KEY,
+                    JSON.stringify(settings)
+                );
 
-        volumeSlider.addEventListener("input", saveSettings);
+                window.dispatchEvent(
+                    new CustomEvent("ttt-settings-changed", {
+                        detail: settings
+                    })
+                );
+            }
 
-        /*
-        =============================================
-        INITIALISATION
-        =============================================
-        */
+            function restoreSettings() {
+                const raw = localStorage.getItem(SETTINGS_STORAGE_KEY);
+                if (!raw) return;
 
-        restoreSettings();
-        updateVolumeSlider();
-        updateSoundState();
+                try {
+                    const settings = JSON.parse(raw);
+                    if (typeof settings.soundEnabled === "boolean") {
+                        soundToggle.checked = settings.soundEnabled;
+                    }
+                    if (Number.isFinite(settings.volume)) {
+                        volumeSlider.value = settings.volume;
+                    }
+                    if (settings.language) {
+                        languageSelect.value = settings.language;
+                    }
+                } catch (error) {
+                    console.warn("Impossible de restaurer les paramètres.", error);
+                }
+            }
 
+            function updateVolumeSlider() {
+                const min = Number(volumeSlider.min);
+                const max = Number(volumeSlider.max);
+                const value = Number(volumeSlider.value);
+                const percentage = ((value - min) / (max - min)) * 100;
+
+                volumeSlider.style.setProperty(
+                    "--volume-progress",
+                    `${percentage}%`
+                );
+
+                volumeValue.textContent = `${Math.round(value)} %`;
+            }
+
+            function updateSoundState() {
+                const enabled = soundToggle.checked;
+                volumeSection.classList.toggle("volume-disabled", !enabled);
+                volumeSlider.disabled = !enabled;
+            }
+
+            soundToggle.addEventListener("change", () => {
+                updateSoundState();
+                saveSettings();
+            });
+
+            volumeSlider.addEventListener("input", () => {
+                updateVolumeSlider();
+                saveSettings();
+            });
+
+            languageSelect.addEventListener("change", saveSettings);
+
+            restoreSettings();
+            updateVolumeSlider();
+            updateSoundState();
+        })();
     </script>
-
-
 </body>
-
 </html>
