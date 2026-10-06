@@ -1,13 +1,8 @@
-// ============================================================
-// TIC TAC TOE — GAMEPAGE.JS
-// ============================================================
+// ==========================================================
+// ELEMENTS HTML
+// ==========================================================
 
-// ------------------------------------------------------------
-// RÉCUPÉRATION DES ÉLÉMENTS HTML
-// ------------------------------------------------------------
-
-const gamepage = document.getElementById("gamepage");
-
+const gamePage = document.getElementById("gamepage");
 const turnPlayer = document.getElementById("turn-player");
 
 const resultPopup = document.getElementById("result-popup");
@@ -16,78 +11,33 @@ const resultMessage = document.getElementById("result-message");
 const resultIcon = document.getElementById("result-icon");
 
 
-// ------------------------------------------------------------
-// RÉCUPÉRATION DE LA PRÉPARATION DE PARTIE
-// ------------------------------------------------------------
+// ==========================================================
+// MODE DE JEU
+// ==========================================================
 
-// On récupère exactement les choix faits dans rencontre.html.
-// IMPORTANT : on ne réécrit PAS tttPreparationState ici.
+const gameMode = localStorage.getItem("gameMode");
+const difficulty = localStorage.getItem("difficulty");
 
-const storedPreparation = sessionStorage.getItem(
-    "tttPreparationState"
-);
-
-if (!storedPreparation) {
-    console.warn(
-        "Aucune préparation de partie trouvée dans sessionStorage. " +
-        "Les valeurs par défaut seront utilisées."
-    );
-}
-
-let preparationState = {};
-
-try {
-    preparationState = storedPreparation
-        ? JSON.parse(storedPreparation)
-        : {};
-} catch (error) {
-    console.error(
-        "Impossible de lire tttPreparationState :",
-        error
-    );
-
-    preparationState = {};
-}
+console.log("Mode de jeu :", gameMode);
+console.log("Difficulté :", difficulty);
 
 
-// ------------------------------------------------------------
-// CONFIGURATION DE LA PARTIE
-// ------------------------------------------------------------
+// ==========================================================
+// JOUEURS
+// ==========================================================
 
-const gameMode = preparationState.gameMode || "2players";
+let currentPlayer1 = "X";
+let currentPlayer2 = "O";
 
-const difficulty = preparationState.difficulty || "normal";
+let player1HasPlayed = false;
 
-const player1Name =
-    preparationState.player1Name ||
-    preparationState.localPlayer1Name ||
-    "Joueur 1";
-
-const player2Name =
-    preparationState.player2Name ||
-    preparationState.localPlayer2Name ||
-    "Joueur 2";
+let player1Won = false;
+let player2Won = false;
 
 
-// ------------------------------------------------------------
-// SYMBOLES DES JOUEURS
-// ------------------------------------------------------------
-
-let currentPlayer1 =
-    preparationState.player1Symbol || "X";
-
-let currentPlayer2 =
-    preparationState.player2Symbol ||
-    (
-        currentPlayer1 === "X"
-            ? "O"
-            : "X"
-    );
-
-
-// ------------------------------------------------------------
-// VARIABLES DE JEU
-// ------------------------------------------------------------
+// ==========================================================
+// GRILLE
+// ==========================================================
 
 let gameBoard = [
     "", "", "",
@@ -95,432 +45,213 @@ let gameBoard = [
     "", "", ""
 ];
 
-let currentPlayer = currentPlayer1;
 
-let gameOver = false;
+// ==========================================================
+// COMBINAISONS GAGNANTES
+// ==========================================================
 
-let player1HasPlayed = false;
+const winningCombinations = [
+    [0, 1, 2],
+    [3, 4, 5],
+    [6, 7, 8],
 
-// Empêche le joueur de cliquer pendant que l'IA réfléchit.
-let aiThinking = false;
+    [0, 3, 6],
+    [1, 4, 7],
+    [2, 5, 8],
 
-
-// ------------------------------------------------------------
-// INFORMATIONS DE DEBUG
-// ------------------------------------------------------------
-
-console.log("=================================");
-console.log(" TIC TAC TOE");
-console.log("=================================");
-console.log("Mode :", gameMode);
-console.log("Difficulté :", difficulty);
-console.log("Joueur 1 :", player1Name);
-console.log("Joueur 2 :", player2Name);
-console.log("Symbole joueur 1 :", currentPlayer1);
-console.log("Symbole joueur 2 :", currentPlayer2);
-console.log("=================================");
+    [0, 4, 8],
+    [2, 4, 6]
+];
 
 
-// ------------------------------------------------------------
-// INITIALISATION
-// ------------------------------------------------------------
+// ==========================================================
+// AFFICHAGE DU TOUR
+// ==========================================================
 
-document.addEventListener(
-    "DOMContentLoaded",
-    () => {
-
-        initialiserPlateau();
-
-        mettreAJourTour();
-
-    }
-);
+turnPlayer.innerHTML = `<p>Tour de : ${currentPlayer1}</p>`;
 
 
-// ------------------------------------------------------------
-// CRÉATION DU PLATEAU
-// ------------------------------------------------------------
+// ==========================================================
+// CASES DU PLATEAU
+// ==========================================================
 
-function initialiserPlateau() {
+const cells = document.querySelectorAll(".cell");
 
-    const cells = document.querySelectorAll(
-        ".cell"
-    );
+cells.forEach(cell => {
 
-    cells.forEach(
-        (cell, index) => {
+    cell.addEventListener("click", function (event) {
 
-            cell.dataset.index = index;
+        const cellBack = event.target.id;
 
-            cell.textContent = "";
+        // Exemple :
+        // cellBack = "cell4"
 
-            cell.classList.remove(
-                "x",
-                "o",
-                "winner"
-            );
+        const cellId = parseInt(
+            cellBack.charAt(cellBack.length - 1)
+        );
 
-            cell.addEventListener(
-                "click",
-                () => {
-
-                    jouerCase(index);
-
-                }
-            );
-
-        }
-    );
-}
+        console.log(`Cell clicked: ${cellId}`);
 
 
-// ------------------------------------------------------------
-// CLIC SUR UNE CASE
-// ------------------------------------------------------------
+        // ==================================================
+        // MODE CONTRE IA
+        // ==================================================
 
-function jouerCase(index) {
+        if (gameMode === "ai") {
 
-    if (gameOver) {
-        return;
-    }
+            jouerContreIA(cellId);
 
-    if (gameBoard[index] !== "") {
-        return;
-    }
-
-    // --------------------------------------------------------
-    // MODE IA
-    // --------------------------------------------------------
-
-    if (gameMode === "ai") {
-
-        if (aiThinking) {
             return;
         }
 
-        jouerContreIA(index);
 
-        return;
-    }
+        // ==================================================
+        // MODE 2 JOUEURS
+        // ==================================================
 
-    // --------------------------------------------------------
-    // MODE 2 JOUEURS
-    // --------------------------------------------------------
+        if (player1HasPlayed) {
 
-    jouerDeuxJoueurs(index);
-}
+            const coupJoue = playO(cellId);
 
-
-// ------------------------------------------------------------
-// MODE 2 JOUEURS
-// ------------------------------------------------------------
-
-function jouerDeuxJoueurs(index) {
-
-    gameBoard[index] = currentPlayer;
-
-    afficherCase(
-        index,
-        currentPlayer
-    );
-
-    const victoire = checkWinner(
-        gameBoard,
-        currentPlayer
-    );
-
-    if (victoire) {
-
-        terminerPartie(
-            currentPlayer
-        );
-
-        return;
-    }
-
-    if (checkDraw()) {
-
-        terminerPartie(
-            "draw"
-        );
-
-        return;
-    }
-
-    changerJoueur();
-
-}
-
-
-// ------------------------------------------------------------
-// MODE CONTRE IA
-// ------------------------------------------------------------
-
-function jouerContreIA(index) {
-
-    if (gameOver || aiThinking) {
-        return;
-    }
-
-    aiThinking = true;
-
-    // --------------------------------------------------------
-    // COUP DU JOUEUR
-    // --------------------------------------------------------
-
-    gameBoard[index] = currentPlayer1;
-
-    player1HasPlayed = true;
-
-    afficherCase(
-        index,
-        currentPlayer1
-    );
-
-    const victoireJoueur = checkWinner(
-        gameBoard,
-        currentPlayer1
-    );
-
-    if (victoireJoueur) {
-
-        aiThinking = false;
-
-        terminerPartie(
-            currentPlayer1
-        );
-
-        return;
-    }
-
-    if (checkDraw()) {
-
-        aiThinking = false;
-
-        terminerPartie(
-            "draw"
-        );
-
-        return;
-    }
-
-    mettreAJourTourIA();
-
-    // --------------------------------------------------------
-    // TEMPS DE RÉFLEXION DE L'IA
-    // --------------------------------------------------------
-
-    setTimeout(
-        () => {
-
-            if (gameOver) {
-                aiThinking = false;
+            if (!coupJoue) {
                 return;
             }
-
-            const coupIA = choisirCoupIA();
-
-            if (
-                coupIA === null ||
-                coupIA === undefined
-            ) {
-
-                aiThinking = false;
-
-                return;
-            }
-
-            gameBoard[coupIA] = currentPlayer2;
-
-            afficherCase(
-                coupIA,
-                currentPlayer2
-            );
-
-            const victoireIA = checkWinner(
-                gameBoard,
-                currentPlayer2
-            );
-
-            if (victoireIA) {
-
-                aiThinking = false;
-
-                terminerPartie(
-                    currentPlayer2
-                );
-
-                return;
-            }
-
-            if (checkDraw()) {
-
-                aiThinking = false;
-
-                terminerPartie(
-                    "draw"
-                );
-
-                return;
-            }
-
-            aiThinking = false;
-
-            mettreAJourTour();
-
-        },
-        500
-    );
-}
-
-
-// ------------------------------------------------------------
-// AFFICHAGE D'UNE CASE
-// ------------------------------------------------------------
-
-function afficherCase(
-    index,
-    symbol
-) {
-
-    const cell = document.querySelector(
-        `.cell[data-index="${index}"]`
-    );
-
-    if (!cell) {
-        return;
-    }
-
-    cell.textContent = symbol;
-
-    cell.classList.remove(
-        "x",
-        "o"
-    );
-
-    if (symbol === "X") {
-
-        cell.classList.add("x");
-
-    } else if (symbol === "O") {
-
-        cell.classList.add("o");
-
-    }
-}
-
-
-// ------------------------------------------------------------
-// CHANGEMENT DE JOUEUR
-// ------------------------------------------------------------
-
-function changerJoueur() {
-
-    if (
-        currentPlayer === currentPlayer1
-    ) {
-
-        currentPlayer = currentPlayer2;
-
-    } else {
-
-        currentPlayer = currentPlayer1;
-
-    }
-
-    mettreAJourTour();
-
-}
-
-
-// ------------------------------------------------------------
-// AFFICHAGE DU TOUR
-// ------------------------------------------------------------
-
-function mettreAJourTour() {
-
-    if (!turnPlayer) {
-        return;
-    }
-
-    if (gameMode === "ai") {
-
-        if (
-            currentPlayer === currentPlayer1
-        ) {
-
-            turnPlayer.textContent =
-                `${player1Name} (${currentPlayer1})`;
 
         } else {
 
-            turnPlayer.textContent =
-                "IA réfléchit...";
+            const coupJoue = playX(cellId);
 
+            if (!coupJoue) {
+                return;
+            }
         }
 
+
+        // Vérifier victoire
+        checkWinner();
+
+
+        if (player1Won || player2Won) {
+
+            showResult();
+
+            return;
+        }
+
+
+        // Vérifier match nul
+        if (checkDraw()) {
+
+            showResult();
+
+            return;
+        }
+
+    });
+
+});
+
+
+// ==========================================================
+// JEU CONTRE L'IA
+// ==========================================================
+
+function jouerContreIA(cellId) {
+
+    // ------------------------------------------------------
+    // Le joueur joue X
+    // ------------------------------------------------------
+
+    const coupJoueur = playX(cellId);
+
+
+    // La case est déjà occupée
+    if (!coupJoueur) {
         return;
     }
 
-    if (
-        currentPlayer === currentPlayer1
-    ) {
 
-        turnPlayer.textContent =
-            `${player1Name} (${currentPlayer1})`;
+    // Vérifier si le joueur a gagné
+    checkWinner();
 
-    } else {
+    if (player1Won) {
 
-        turnPlayer.textContent =
-            `${player2Name} (${currentPlayer2})`;
+        showResult();
 
-    }
-}
-
-
-// ------------------------------------------------------------
-// AFFICHAGE TOUR IA
-// ------------------------------------------------------------
-
-function mettreAJourTourIA() {
-
-    if (!turnPlayer) {
         return;
     }
 
-    turnPlayer.textContent =
-        "IA réfléchit...";
+
+    // Vérifier match nul
+    if (checkDraw()) {
+
+        showResult();
+
+        return;
+    }
+
+
+    // ------------------------------------------------------
+    // L'IA joue après un petit délai
+    // ------------------------------------------------------
+
+    setTimeout(() => {
+
+        const coupIA = choisirCoupIA();
+
+
+        // Plus aucune case disponible
+        if (coupIA === null) {
+
+            return;
+        }
+
+
+        // L'IA joue O
+        playO(coupIA);
+
+
+        // Vérifier victoire de l'IA
+        checkWinner();
+
+        if (player2Won) {
+
+            showResult();
+
+            return;
+        }
+
+
+        // Vérifier match nul
+        if (checkDraw()) {
+
+            showResult();
+
+            return;
+        }
+
+    }, 500);
+
 }
 
 
-// ------------------------------------------------------------
-// CHOISIR LE COUP DE L'IA
-// ------------------------------------------------------------
+// ==========================================================
+// CHOIX DE L'ALGORITHME IA
+// ==========================================================
 
 function choisirCoupIA() {
 
-    if (gameMode !== "ai") {
+    console.log("Difficulté sélectionnée :", difficulty);
 
-        console.warn(
-            "choisirCoupIA() appelée alors que le mode n'est pas IA."
-        );
 
-        return null;
-    }
-
-    console.log(
-        "IA — difficulté :",
-        difficulty
-    );
-
+    // FACILE
     if (difficulty === "easy") {
 
-        return iaFacile(
-            gameBoard
-        );
-
+        return iaFacile(gameBoard);
     }
 
+
+    // NORMAL
     if (difficulty === "normal") {
 
         return iaNormale(
@@ -528,9 +259,10 @@ function choisirCoupIA() {
             currentPlayer2,
             currentPlayer1
         );
-
     }
 
+
+    // DIFFICILE
     if (difficulty === "hard") {
 
         return iaDifficile(
@@ -538,9 +270,10 @@ function choisirCoupIA() {
             currentPlayer2,
             currentPlayer1
         );
-
     }
 
+
+    // GOD
     if (difficulty === "god") {
 
         return iaGod(
@@ -548,838 +281,703 @@ function choisirCoupIA() {
             currentPlayer2,
             currentPlayer1
         );
-
     }
 
-    console.warn(
-        "Difficulté inconnue :",
-        difficulty,
-        "→ difficulté normal utilisée."
-    );
 
-    return iaNormale(
-        gameBoard,
-        currentPlayer2,
-        currentPlayer1
-    );
+    // Si aucune difficulté n'a été trouvée
+    console.warn("Difficulté IA inconnue :", difficulty);
+
+    return iaFacile(gameBoard);
 }
 
 
-// ============================================================
-// IA FACILE
-// ============================================================
+// ==========================================================
+// JOUER X
+// ==========================================================
 
-function trouverCasesLibres(
-    board
-) {
+function playX(c) {
 
-    const libres = [];
+    // Vérifier que la case est libre
+    if (gameBoard[c] !== "") {
 
-    for (
-        let i = 0;
-        i < board.length;
-        i++
-    ) {
+        return false;
+    }
 
-        if (board[i] === "") {
 
-            libres.push(i);
+    gameBoard[c] = currentPlayer1;
 
+
+    const cell = document.getElementById(`cell${c}`);
+
+    cell.textContent = currentPlayer1;
+
+
+    turnPlayer.innerHTML =
+        `<p>Tour de : ${currentPlayer2}</p>`;
+
+
+    player1HasPlayed = true;
+
+
+    return true;
+}
+
+
+// ==========================================================
+// JOUER O
+// ==========================================================
+
+function playO(c) {
+
+    // Vérifier que la case est libre
+    if (gameBoard[c] !== "") {
+
+        return false;
+    }
+
+
+    gameBoard[c] = currentPlayer2;
+
+
+    const cell = document.getElementById(`cell${c}`);
+
+    cell.textContent = currentPlayer2;
+
+
+    turnPlayer.innerHTML =
+        `<p>Tour de : ${currentPlayer1}</p>`;
+
+
+    player1HasPlayed = false;
+
+
+    return true;
+}
+
+
+// ==========================================================
+// VERIFIER LE GAGNANT
+// ==========================================================
+
+function checkWinner() {
+
+    // On remet les résultats à false
+    player1Won = false;
+    player2Won = false;
+
+
+    for (let combination of winningCombinations) {
+
+        for (let player of [
+            currentPlayer1,
+            currentPlayer2
+        ]) {
+
+            if (
+                combination.every(
+                    index => gameBoard[index] === player
+                )
+            ) {
+
+                if (player === currentPlayer1) {
+
+                    player1Won = true;
+
+                } else {
+
+                    player2Won = true;
+                }
+
+                return;
+            }
         }
-
     }
-
-    return libres;
 }
 
 
-function iaFacile(
-    board
-) {
+// ==========================================================
+// MATCH NUL
+// ==========================================================
+
+function checkDraw() {
+
+    return gameBoard.every(
+        cell => cell !== ""
+    );
+}
+
+
+// ==========================================================
+// AFFICHER LE RESULTAT
+// ==========================================================
+
+function showResult() {
+
+    if (player1Won) {
+
+        resultTitle.textContent = "Victoire !";
+
+        resultMessage.textContent =
+            `Le joueur ${currentPlayer1} a gagné !`;
+
+        resultIcon.textContent = "🏆";
+
+    } else if (player2Won) {
+
+        resultTitle.textContent = "Victoire !";
+
+        resultMessage.textContent =
+            `Le joueur ${currentPlayer2} a gagné !`;
+
+        resultIcon.textContent = "🏆";
+
+    } else {
+
+        resultTitle.textContent = "Match nul !";
+
+        resultMessage.textContent =
+            "Aucun joueur n'a gagné.";
+
+        resultIcon.textContent = "🤝";
+    }
+
+
+    resultPopup.style.display = "flex";
+}
+
+
+// ==========================================================
+// ==========================================================
+//                    IA - FACILE
+// ==========================================================
+// ==========================================================
+
+function trouverCasesLibres(grille) {
+
+    return grille
+        .map(
+            (caseActuelle, index) =>
+                caseActuelle === "" ? index : null
+        )
+        .filter(
+            index => index !== null
+        );
+}
+
+
+function iaFacile(grille) {
 
     const casesLibres =
-        trouverCasesLibres(board);
+        trouverCasesLibres(grille);
 
-    if (
-        casesLibres.length === 0
-    ) {
+
+    if (casesLibres.length === 0) {
 
         return null;
-
     }
 
-    const indexAleatoire =
+
+    const choixAleatoire =
         Math.floor(
-            Math.random() *
-            casesLibres.length
+            Math.random() * casesLibres.length
         );
 
-    return casesLibres[
-        indexAleatoire
-    ];
+
+    return casesLibres[choixAleatoire];
 }
 
 
-// ============================================================
-// IA NORMALE
-// ============================================================
+// ==========================================================
+// ==========================================================
+//                    IA - NORMAL
+// ==========================================================
+// ==========================================================
 
-function trouverCoupGagnant(
-    board,
-    symbol
-) {
+function trouverCoupGagnant(grille, symbole) {
 
-    const casesLibres =
-        trouverCasesLibres(board);
+    for (let i = 0; i < grille.length; i++) {
 
-    for (
-        const index of casesLibres
-    ) {
+        // Case déjà occupée
+        if (grille[i] !== "") {
 
-        board[index] = symbol;
+            continue;
+        }
+
+
+        // On simule le coup
+        grille[i] = symbole;
+
 
         const gagne =
-            verifierGagnant(
-                board,
-                symbol
+            winningCombinations.some(
+                ([a, b, c]) =>
+                    grille[a] === symbole &&
+                    grille[b] === symbole &&
+                    grille[c] === symbole
             );
 
-        board[index] = "";
+
+        // On remet la case vide
+        grille[i] = "";
+
 
         if (gagne) {
 
-            return index;
-
+            return i;
         }
-
     }
+
 
     return null;
 }
 
 
 function iaNormale(
-    board,
-    aiSymbol,
-    playerSymbol
+    grille,
+    symboleIA,
+    symboleJoueur
 ) {
 
-    // --------------------------------------------------------
-    // 1. L'IA peut gagner
-    // --------------------------------------------------------
+    // ------------------------------------------------------
+    // 1. L'IA peut-elle gagner ?
+    // ------------------------------------------------------
 
-    const coupGagnant =
+    let coup =
         trouverCoupGagnant(
-            board,
-            aiSymbol
+            grille,
+            symboleIA
         );
 
-    if (
-        coupGagnant !== null
-    ) {
 
-        return coupGagnant;
+    if (coup !== null) {
 
+        return coup;
     }
 
-    // --------------------------------------------------------
-    // 2. Bloquer le joueur
-    // --------------------------------------------------------
 
-    const coupBlocage =
+    // ------------------------------------------------------
+    // 2. Le joueur peut-il gagner ?
+    // ------------------------------------------------------
+
+    coup =
         trouverCoupGagnant(
-            board,
-            playerSymbol
+            grille,
+            symboleJoueur
         );
 
-    if (
-        coupBlocage !== null
-    ) {
 
-        return coupBlocage;
+    if (coup !== null) {
 
+        return coup;
     }
 
-    // --------------------------------------------------------
+
+    // ------------------------------------------------------
     // 3. Prendre le centre
-    // --------------------------------------------------------
+    // ------------------------------------------------------
 
-    if (
-        board[4] === ""
-    ) {
+    if (grille[4] === "") {
 
         return 4;
-
     }
 
-    // --------------------------------------------------------
-    // 4. Prendre un coin
-    // --------------------------------------------------------
 
-    const coins = [
-        0,
-        2,
-        6,
-        8
-    ];
+    // ------------------------------------------------------
+    // 4. Sinon choix aléatoire
+    // ------------------------------------------------------
 
-    const coinsLibres =
-        coins.filter(
-            index =>
-                board[index] === ""
-        );
-
-    if (
-        coinsLibres.length > 0
-    ) {
-
-        return coinsLibres[
-            Math.floor(
-                Math.random() *
-                coinsLibres.length
-            )
-        ];
-
-    }
-
-    // --------------------------------------------------------
-    // 5. Sinon n'importe quelle case
-    // --------------------------------------------------------
-
-    return iaFacile(
-        board
-    );
+    return iaFacile(grille);
 }
 
 
-// ============================================================
-// IA DIFFICILE
-// ============================================================
+// ==========================================================
+// ==========================================================
+//                   IA - DIFFICILE
+// ==========================================================
+// ==========================================================
 
 function verifierGagnant(
-    board,
-    symbol
+    grille,
+    symbole
 ) {
 
-    const combinaisons = [
-
-        [0, 1, 2],
-        [3, 4, 5],
-        [6, 7, 8],
-
-        [0, 3, 6],
-        [1, 4, 7],
-        [2, 5, 8],
-
-        [0, 4, 8],
-        [2, 4, 6]
-
-    ];
-
-    return combinaisons.some(
-        combinaison =>
-
-            combinaison.every(
-                index =>
-                    board[index] === symbol
-            )
-
+    return winningCombinations.some(
+        ([a, b, c]) =>
+            grille[a] === symbole &&
+            grille[b] === symbole &&
+            grille[c] === symbole
     );
 }
 
 
 function minimaxLimite(
-    board,
-    depth,
-    maximizing,
-    aiSymbol,
-    playerSymbol
+    grille,
+    profondeur,
+    estMaximisation,
+    symboleIA,
+    symboleJoueur,
+    profondeurMax
 ) {
 
+    // IA gagne
     if (
         verifierGagnant(
-            board,
-            aiSymbol
+            grille,
+            symboleIA
         )
     ) {
 
-        return 10 - depth;
-
+        return 10 - profondeur;
     }
 
+
+    // Joueur gagne
     if (
         verifierGagnant(
-            board,
-            playerSymbol
+            grille,
+            symboleJoueur
         )
     ) {
 
-        return depth - 10;
-
+        return profondeur - 10;
     }
 
-    const libres =
-        trouverCasesLibres(board);
 
-    if (
-        libres.length === 0
-    ) {
+    // Cases disponibles
+    const casesLibres =
+        trouverCasesLibres(grille);
+
+
+    // Match nul
+    if (casesLibres.length === 0) {
 
         return 0;
-
     }
 
-    if (
-        depth >= 4
-    ) {
+
+    // Limite de profondeur
+    if (profondeur >= profondeurMax) {
 
         return 0;
-
     }
 
-    if (maximizing) {
+
+    // ------------------------------------------------------
+    // MAXIMISATION = IA
+    // ------------------------------------------------------
+
+    if (estMaximisation) {
 
         let meilleurScore = -Infinity;
 
-        for (
-            const index of libres
-        ) {
 
-            board[index] = aiSymbol;
+        for (const index of casesLibres) {
+
+            grille[index] = symboleIA;
+
 
             const score =
                 minimaxLimite(
-                    board,
-                    depth + 1,
+                    grille,
+                    profondeur + 1,
                     false,
-                    aiSymbol,
-                    playerSymbol
+                    symboleIA,
+                    symboleJoueur,
+                    profondeurMax
                 );
 
-            board[index] = "";
+
+            grille[index] = "";
+
 
             meilleurScore =
                 Math.max(
                     meilleurScore,
                     score
                 );
-
         }
 
-        return meilleurScore;
 
+        return meilleurScore;
     }
+
+
+    // ------------------------------------------------------
+    // MINIMISATION = JOUEUR
+    // ------------------------------------------------------
 
     let meilleurScore = Infinity;
 
-    for (
-        const index of libres
-    ) {
 
-        board[index] = playerSymbol;
+    for (const index of casesLibres) {
+
+        grille[index] = symboleJoueur;
+
 
         const score =
             minimaxLimite(
-                board,
-                depth + 1,
+                grille,
+                profondeur + 1,
                 true,
-                aiSymbol,
-                playerSymbol
+                symboleIA,
+                symboleJoueur,
+                profondeurMax
             );
 
-        board[index] = "";
+
+        grille[index] = "";
+
 
         meilleurScore =
             Math.min(
                 meilleurScore,
                 score
             );
-
     }
+
 
     return meilleurScore;
 }
 
 
 function iaDifficile(
-    board,
-    aiSymbol,
-    playerSymbol
+    grille,
+    symboleIA,
+    symboleJoueur
 ) {
 
     const casesLibres =
-        trouverCasesLibres(board);
+        trouverCasesLibres(grille);
 
-    if (
-        casesLibres.length === 0
-    ) {
+
+    if (casesLibres.length === 0) {
 
         return null;
-
     }
 
-    let meilleurScore = -Infinity;
 
-    let meilleursCoups = [];
+    const coupsScores = [];
 
-    for (
-        const index of casesLibres
-    ) {
 
-        board[index] = aiSymbol;
+    for (const index of casesLibres) {
+
+        grille[index] = symboleIA;
+
 
         const score =
             minimaxLimite(
-                board,
+                grille,
                 0,
                 false,
-                aiSymbol,
-                playerSymbol
+                symboleIA,
+                symboleJoueur,
+                4
             );
 
-        board[index] = "";
 
-        if (
-            score > meilleurScore
-        ) {
+        grille[index] = "";
 
-            meilleurScore = score;
 
-            meilleursCoups = [
-                index
-            ];
-
-        } else if (
-            score === meilleurScore
-        ) {
-
-            meilleursCoups.push(
-                index
-            );
-
-        }
-
+        coupsScores.push({
+            index: index,
+            score: score
+        });
     }
 
-    // Petite part d'aléatoire
-    // pour rendre l'IA moins prévisible.
 
+    // Meilleur score en premier
+    coupsScores.sort(
+        (a, b) => b.score - a.score
+    );
+
+
+    // 10% de chance de prendre
+    // le deuxième meilleur coup
     if (
+        coupsScores.length > 1 &&
         Math.random() < 0.10
     ) {
 
-        return iaNormale(
-            board,
-            aiSymbol,
-            playerSymbol
-        );
-
+        return coupsScores[1].index;
     }
 
-    return meilleursCoups[
-        Math.floor(
-            Math.random() *
-            meilleursCoups.length
-        )
-    ];
+
+    return coupsScores[0].index;
 }
 
 
-// ============================================================
-// IA GOD — MINIMAX COMPLET
-// ============================================================
+// ==========================================================
+// ==========================================================
+//                       IA - GOD
+// ==========================================================
+// ==========================================================
 
 function minimaxGod(
-    board,
-    maximizing,
-    aiSymbol,
-    playerSymbol
+    grille,
+    profondeur,
+    estMaximisation,
+    symboleIA,
+    symboleJoueur
 ) {
 
+    // IA gagne
     if (
         verifierGagnant(
-            board,
-            aiSymbol
+            grille,
+            symboleIA
         )
     ) {
 
-        return 1;
-
+        return 10 - profondeur;
     }
 
+
+    // Joueur gagne
     if (
         verifierGagnant(
-            board,
-            playerSymbol
+            grille,
+            symboleJoueur
         )
     ) {
 
-        return -1;
-
+        return profondeur - 10;
     }
 
-    const libres =
-        trouverCasesLibres(board);
 
-    if (
-        libres.length === 0
-    ) {
+    const casesLibres =
+        trouverCasesLibres(grille);
+
+
+    // Match nul
+    if (casesLibres.length === 0) {
 
         return 0;
-
     }
 
-    if (maximizing) {
+
+    // ------------------------------------------------------
+    // MAXIMISATION = IA
+    // ------------------------------------------------------
+
+    if (estMaximisation) {
 
         let meilleurScore = -Infinity;
 
-        for (
-            const index of libres
-        ) {
 
-            board[index] = aiSymbol;
+        for (const index of casesLibres) {
+
+            grille[index] = symboleIA;
+
 
             const score =
                 minimaxGod(
-                    board,
+                    grille,
+                    profondeur + 1,
                     false,
-                    aiSymbol,
-                    playerSymbol
+                    symboleIA,
+                    symboleJoueur
                 );
 
-            board[index] = "";
+
+            grille[index] = "";
+
 
             meilleurScore =
                 Math.max(
                     meilleurScore,
                     score
                 );
-
         }
 
-        return meilleurScore;
 
+        return meilleurScore;
     }
+
+
+    // ------------------------------------------------------
+    // MINIMISATION = JOUEUR
+    // ------------------------------------------------------
 
     let meilleurScore = Infinity;
 
-    for (
-        const index of libres
-    ) {
 
-        board[index] = playerSymbol;
+    for (const index of casesLibres) {
+
+        grille[index] = symboleJoueur;
+
 
         const score =
             minimaxGod(
-                board,
+                grille,
+                profondeur + 1,
                 true,
-                aiSymbol,
-                playerSymbol
+                symboleIA,
+                symboleJoueur
             );
 
-        board[index] = "";
+
+        grille[index] = "";
+
 
         meilleurScore =
             Math.min(
                 meilleurScore,
                 score
             );
-
     }
+
 
     return meilleurScore;
 }
 
 
 function iaGod(
-    board,
-    aiSymbol,
-    playerSymbol
+    grille,
+    symboleIA,
+    symboleJoueur
 ) {
 
     const casesLibres =
-        trouverCasesLibres(board);
+        trouverCasesLibres(grille);
 
-    if (
-        casesLibres.length === 0
-    ) {
+
+    if (casesLibres.length === 0) {
 
         return null;
-
     }
+
 
     let meilleurScore = -Infinity;
 
     let meilleurCoup = null;
 
-    for (
-        const index of casesLibres
-    ) {
 
-        board[index] = aiSymbol;
+    for (const index of casesLibres) {
+
+        grille[index] = symboleIA;
+
 
         const score =
             minimaxGod(
-                board,
+                grille,
+                0,
                 false,
-                aiSymbol,
-                playerSymbol
+                symboleIA,
+                symboleJoueur
             );
 
-        board[index] = "";
 
-        if (
-            score > meilleurScore
-        ) {
+        grille[index] = "";
+
+
+        if (score > meilleurScore) {
 
             meilleurScore = score;
 
             meilleurCoup = index;
-
         }
-
     }
+
 
     return meilleurCoup;
-}
-
-
-// ============================================================
-// VÉRIFICATION DU GAGNANT
-// ============================================================
-
-function checkWinner(
-    board,
-    symbol
-) {
-
-    const combinaisons = [
-
-        [0, 1, 2],
-        [3, 4, 5],
-        [6, 7, 8],
-
-        [0, 3, 6],
-        [1, 4, 7],
-        [2, 5, 8],
-
-        [0, 4, 8],
-        [2, 4, 6]
-
-    ];
-
-    for (
-        const combinaison of combinaisons
-    ) {
-
-        if (
-            combinaison.every(
-                index =>
-                    board[index] === symbol
-            )
-        ) {
-
-            afficherLigneGagnante(
-                combinaison
-            );
-
-            return true;
-
-        }
-
-    }
-
-    return false;
-}
-
-
-// ============================================================
-// AFFICHER LA LIGNE GAGNANTE
-// ============================================================
-
-function afficherLigneGagnante(
-    combinaison
-) {
-
-    combinaison.forEach(
-        index => {
-
-            const cell =
-                document.querySelector(
-                    `.cell[data-index="${index}"]`
-                );
-
-            if (cell) {
-
-                cell.classList.add(
-                    "winner"
-                );
-
-            }
-
-        }
-    );
-}
-
-
-// ============================================================
-// MATCH NUL
-// ============================================================
-
-function checkDraw() {
-
-    return gameBoard.every(
-        cell =>
-            cell !== ""
-    );
-}
-
-
-// ============================================================
-// FIN DE PARTIE
-// ============================================================
-
-function terminerPartie(
-    result
-) {
-
-    gameOver = true;
-
-    setTimeout(
-        () => {
-
-            showResult(
-                result
-            );
-
-        },
-        300
-    );
-}
-
-
-// ============================================================
-// POPUP DE RÉSULTAT
-// ============================================================
-
-function showResult(
-    result
-) {
-
-    if (!resultPopup) {
-        return;
-    }
-
-    resultPopup.classList.add(
-        "show"
-    );
-
-    if (
-        result === "draw"
-    ) {
-
-        if (resultTitle) {
-
-            resultTitle.textContent =
-                "MATCH NUL";
-
-        }
-
-        if (resultMessage) {
-
-            resultMessage.textContent =
-                "Personne ne gagne cette fois.";
-
-        }
-
-        if (resultIcon) {
-
-            resultIcon.textContent =
-                "🤝";
-
-        }
-
-        return;
-    }
-
-    // --------------------------------------------------------
-    // VICTOIRE
-    // --------------------------------------------------------
-
-    const joueurGagnant =
-        result === currentPlayer1
-            ? player1Name
-            : (
-                gameMode === "ai"
-                    ? "IA"
-                    : player2Name
-            );
-
-    if (resultTitle) {
-
-        resultTitle.textContent =
-            "VICTOIRE !";
-
-    }
-
-    if (resultMessage) {
-
-        resultMessage.textContent =
-            `${joueurGagnant} gagne la partie !`;
-
-    }
-
-    if (resultIcon) {
-
-        resultIcon.textContent =
-            result;
-
-    }
-}
-
-
-// ============================================================
-// BOUTON REJOUER
-// ============================================================
-
-const replayButton =
-    document.getElementById(
-        "replay-button"
-    );
-
-if (replayButton) {
-
-    replayButton.addEventListener(
-        "click",
-        () => {
-
-            window.location.reload();
-
-        }
-    );
-
-}
-
-
-// ============================================================
-// BOUTON RETOUR
-// ============================================================
-
-const backButton =
-    document.getElementById(
-        "back-button"
-    );
-
-if (backButton) {
-
-    backButton.addEventListener(
-        "click",
-        () => {
-
-            window.location.href =
-                "rencontre.html";
-
-        }
-    );
-
 }
