@@ -1,148 +1,154 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TIC TAC TOE</title>
     <link rel="stylesheet" href="css/gamestyle.css">
 </head>
-
 <body>
     <main id="main-app">
         <div id="gamepage">
             <nav id="game-nav">
-
-                <button id="back-button">
-                    ← Accueil
+                <button id="back-button" type="button" aria-label="Retour à l'accueil">
+                    <span aria-hidden="true">←</span> Accueil
                 </button>
 
-                <h1>TIC TAC TOE</h1>
+                <h1><span>TIC</span> <span>TAC</span> <span>TOE</span></h1>
 
-                <button id="settings-button">
-                    ⚙
+                <button id="settings-button" type="button" aria-label="Ouvrir les paramètres" title="Paramètres">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <circle cx="12" cy="12" r="3"></circle>
+                        <path d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06-2.12 2.12-.06-.06a1.7 1.7 0 0 0-1.88-.34 1.7 1.7 0 0 0-1.03 1.55V20.3h-3v-.09a1.7 1.7 0 0 0-1.03-1.55 1.7 1.7 0 0 0-1.88.34l-.06.06-2.12-2.12.06-.06A1.7 1.7 0 0 0 7 15a1.7 1.7 0 0 0-1.55-1.03H5.3v-3h.15A1.7 1.7 0 0 0 7 9.94a1.7 1.7 0 0 0-.34-1.88L6.6 8l2.12-2.12.06.06a1.7 1.7 0 0 0 1.88.34A1.7 1.7 0 0 0 11.69 4.7V4.6h3v.1a1.7 1.7 0 0 0 1.03 1.55 1.7 1.7 0 0 0 1.88-.34l.06-.06L19.8 8l-.06.06a1.7 1.7 0 0 0-.34 1.88 1.7 1.7 0 0 0 1.55 1.03h.15v3h-.15A1.7 1.7 0 0 0 19.4 15Z"></path>
+                    </svg>
                 </button>
-
             </nav>
 
+            <section class="game-stage" aria-label="Partie de Tic Tac Toe">
+                <div class="match-shell">
+                    <div class="match-topbar">
+                        <article class="participant-card participant-one">
+                            <div class="participant-copy">
+                                <span class="participant-role">JOUEUR</span>
+                                <strong id="player-one-name">Joueur 1</strong>
+                            </div>
+                            <span id="player-one-symbol" class="player-symbol">X</span>
+                        </article>
 
-            <div id="turn-player"></div>
+                        <div class="match-status">
+                            <span class="status-kicker">MATCH EN COURS</span>
+                            <div id="turn-player" aria-live="polite"></div>
+                        </div>
 
-            <section id="gameplay">
+                        <article class="participant-card participant-two">
+                            <span id="player-two-symbol" class="player-symbol">O</span>
+                            <div class="participant-copy participant-copy-right">
+                                <span id="player-two-meta" class="participant-role">JOUEUR 2</span>
+                                <strong id="player-two-name">Joueur 2</strong>
+                            </div>
+                        </article>
+                    </div>
 
-                <div id="game-board">
+                    <section id="gameplay">
+                        <div class="board-aura" aria-hidden="true"></div>
+                        <div id="game-board" aria-label="Plateau Tic Tac Toe">
+                            <button id="cell0" class="cell" data-index="0" type="button" aria-label="Case 1"></button>
+                            <button id="cell1" class="cell" data-index="1" type="button" aria-label="Case 2"></button>
+                            <button id="cell2" class="cell" data-index="2" type="button" aria-label="Case 3"></button>
+                            <button id="cell3" class="cell" data-index="3" type="button" aria-label="Case 4"></button>
+                            <button id="cell4" class="cell" data-index="4" type="button" aria-label="Case 5"></button>
+                            <button id="cell5" class="cell" data-index="5" type="button" aria-label="Case 6"></button>
+                            <button id="cell6" class="cell" data-index="6" type="button" aria-label="Case 7"></button>
+                            <button id="cell7" class="cell" data-index="7" type="button" aria-label="Case 8"></button>
+                            <button id="cell8" class="cell" data-index="8" type="button" aria-label="Case 9"></button>
+                        </div>
+                    </section>
 
-                    <button id="cell0" class="cell" data-index="0"></button>
-                    <button id="cell1" class="cell" data-index="1"></button>
-                    <button id="cell2" class="cell" data-index="2"></button>
+                    <section id="game-result" aria-label="Score du match">
+                        <div class="score-dock">
+                            <div class="score-card score-card-player">
+                                <span id="score-player-one-name" class="score-name">Joueur 1 · X</span>
+                                <strong id="score-player-one">0</strong>
+                            </div>
 
-                    <button id="cell3" class="cell" data-index="3"></button>
-                    <button id="cell4" class="cell" data-index="4"></button>
-                    <button id="cell5" class="cell" data-index="5"></button>
+                            <div class="score-card score-card-draw">
+                                <span class="score-name">Matchs nuls</span>
+                                <strong id="score-draw">0</strong>
+                            </div>
 
-                    <button id="cell6" class="cell" data-index="6"></button>
-                    <button id="cell7" class="cell" data-index="7"></button>
-                    <button id="cell8" class="cell" data-index="8"></button>
+                            <div class="score-card score-card-player">
+                                <span id="score-player-two-name" class="score-name">Joueur 2 · O</span>
+                                <strong id="score-player-two">0</strong>
+                            </div>
+                        </div>
 
+                        <button id="restart-button" class="primary-game-action" type="button">↻ Rejouer</button>
 
-
+                        <div id="end-actions" class="end-actions">
+                            <button id="end-replay-button" type="button">▶ Replay</button>
+                            <button id="end-change-mode-button" type="button">⇄ Changer de mode</button>
+                        </div>
+                    </section>
                 </div>
 
+                <section id="replay-panel" class="replay-panel" aria-live="polite">
+                    <div class="replay-header">
+                        <div>
+                            <span class="replay-kicker">REPLAY</span>
+                            <h2>Revisionnez la partie</h2>
+                            <p id="replay-action-label">Début de la partie</p>
+                        </div>
+                        <button id="replay-exit-button" class="replay-exit-button" type="button" aria-label="Quitter le replay">×</button>
+                    </div>
+
+                    <div class="replay-mode-selector">
+                        <label>
+                            <input id="replay-mode-action" type="radio" name="replay-mode" value="action" checked>
+                            <span>Action par action</span>
+                        </label>
+                        <label>
+                            <input id="replay-mode-turn" type="radio" name="replay-mode" value="turn">
+                            <span>Tour par tour</span>
+                        </label>
+                    </div>
+
+                    <div class="replay-controls">
+                        <button id="replay-start-button" type="button">|&lt; Début</button>
+                        <button id="replay-prev-button" type="button">← Précédent</button>
+                        <strong id="replay-progress">Action 0 / 0</strong>
+                        <button id="replay-next-button" type="button">Suivant →</button>
+                        <button id="replay-end-button" type="button">Fin &gt;|</button>
+                    </div>
+
+                    <button id="replay-exit-button-bottom" class="replay-quit-button" type="button">Quitter le replay</button>
+                </section>
             </section>
 
-
-            <section id="game-result">
-
-                <div class="score">
-
-                    <div class="score-player">
-                        <span class="score-symbol x">Player X</span>
-                        <span id="score-x">0</span>
-                    </div>
-
-                    <div class="score-draw">
-                        <span>Matchs nuls</span>
-                        <span id="score-draw">0</span>
-                    </div>
-
-                    <div class="score-player">
-                        <span class="score-symbol o">Player O</span>
-                        <span id="score-o">0</span>
-                    </div>
-
+            <div id="result-popup" class="popup-overlay" role="dialog" aria-modal="true" aria-labelledby="result-title">
+                <div class="result-effects" aria-hidden="true">
+                    <span></span><span></span><span></span><span></span><span></span><span></span>
+                    <span></span><span></span><span></span><span></span><span></span><span></span>
                 </div>
-
-                <button id="restart-button">
-                    ↻ Rejouer
-                </button>
-
-                <div id="end-actions" class="end-actions">
-                    <button id="end-replay-button">▶ Replay</button>
-                    <button id="end-restart-button">↻ Rejouer</button>
-                    <button id="end-change-mode-button">⇄ Changer de mode</button>
-                </div>
-
-            </section>
-
-
-            <div id="replay-panel" class="replay-panel" aria-live="polite">
-                <div class="replay-header">
-                    <div>
-                        <span class="replay-kicker">REPLAY</span>
-                        <h2>Revisionnez la partie</h2>
-                    </div>
-                    <button id="replay-exit-button" class="replay-exit-button" aria-label="Quitter le replay">×</button>
-                </div>
-
-                <div class="replay-mode-selector">
-                    <label>
-                        <input id="replay-mode-action" type="radio" name="replay-mode" value="action" checked>
-                        <span>Action par action</span>
-                    </label>
-                    <label>
-                        <input id="replay-mode-turn" type="radio" name="replay-mode" value="turn">
-                        <span>Tour par tour</span>
-                    </label>
-                </div>
-
-                <div class="replay-controls">
-                    <button id="replay-start-button">|&lt; Début</button>
-                    <button id="replay-prev-button">← Précédent</button>
-                    <strong id="replay-progress">Action 0 / 0</strong>
-                    <button id="replay-next-button">Suivant →</button>
-                    <button id="replay-end-button">Fin &gt;|</button>
-                </div>
-
-                <button id="replay-exit-button-bottom" class="replay-quit-button" type="button">Quitter le replay</button>
-            </div>
-
-
-            <div id="result-popup" class="popup-overlay">
-
                 <div class="popup">
-
-                    <button id="close-result-button" class="popup-close" aria-label="Fermer le résultat">×</button>
-
-                    <div id="result-icon">🏆</div>
-
-                    <h2 id="result-title">X A GAGNÉ !</h2>
-
+                    <button id="close-result-button" class="popup-close" type="button" aria-label="Fermer le résultat">×</button>
+                    <div id="result-icon" class="result-icon">🏆</div>
+                    <span class="result-kicker">RÉSULTAT DU MATCH</span>
+                    <h2 id="result-title">VICTOIRE !</h2>
                     <p id="result-message">Félicitations !</p>
 
                     <div class="popup-buttons">
-                        <button id="popup-restart-button" class="primary-result-action">↻ Rejouer</button>
-                        <button id="popup-replay-button">▶ Replay</button>
-                        <button id="change-mode-button">⇄ Changer de mode</button>
-                        <button id="home-button">⌂ Retour à l'accueil</button>
+                        <button id="popup-restart-button" class="primary-result-action" type="button">↻ Rejouer</button>
+                        <button id="popup-replay-button" type="button">▶ Replay</button>
+                        <button id="change-mode-button" type="button">⇄ Changer de mode</button>
+                        <button id="home-button" type="button">⌂ Retour à l'accueil</button>
                     </div>
-
                 </div>
-
             </div>
-
         </div>
     </main>
+
+    <script src="js/music.js" data-music-src="Sounds/Super Smash Bros Brawl Music - Final Destination.mp3"></script>
+    <script src="js/ai-names.js"></script>
     <script src="js/gamepage.js"></script>
 </body>
-
 </html>

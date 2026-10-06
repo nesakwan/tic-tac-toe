@@ -92,6 +92,10 @@ function loadGame(preparationState, options = {}) {
     const elements = new Map();
     const ids = [
         'gamepage', 'turn-player', 'result-popup', 'result-title',
+        'player-one-name', 'player-one-symbol', 'player-two-name',
+        'player-two-symbol', 'player-two-meta', 'replay-action-label',
+        'score-player-one', 'score-player-two',
+        'score-player-one-name', 'score-player-two-name',
         'result-message', 'result-icon', 'restart-button', 'replay-button',
         'home-button', 'back-button', 'settings-button', 'score-x',
         'score-o', 'score-draw',
@@ -127,7 +131,8 @@ function loadGame(preparationState, options = {}) {
     };
 
     const sessionStorage = createStorage({
-        tttPreparationState: JSON.stringify(preparationState)
+        tttPreparationState: JSON.stringify(preparationState),
+        ...(options.sessionStorage || {})
     });
     const localStorage = createStorage(options.localStorage || {});
 
@@ -143,10 +148,17 @@ function loadGame(preparationState, options = {}) {
             return 1;
         },
         clearTimeout() {},
-        location: { href: '' }
+        location: { href: '', search: options.locationSearch || '' }
     };
 
     vm.createContext(context);
+
+    const aiNamesSource = fs.readFileSync(
+        path.join(__dirname, '..', 'js', 'ai-names.js'),
+        'utf8'
+    );
+    vm.runInContext(aiNamesSource, context);
+
     const source = fs.readFileSync(
         path.join(__dirname, '..', 'js', 'gamepage.js'),
         'utf8'
@@ -434,4 +446,269 @@ test('replay tour par tour garde le premier coup IA seul quand l IA commence', (
     const shown = game.cells.filter(cell => cell.textContent !== '');
     assert.equal(shown.length, 1);
     assert.equal(shown[0].textContent, 'X');
+});
+
+
+test('les noms et symboles choisis sont affichés pendant un match local', () => {
+    const game = loadGame({
+        gameMode: 'local',
+        localPlayer1Name: 'Roosevelt',
+        localPlayer2Name: 'Jefferson',
+        player1Symbol: 'X',
+        player2Symbol: 'O'
+    });
+
+    assert.equal(game.elements.get('player-one-name').textContent, 'Roosevelt');
+    assert.equal(game.elements.get('player-one-symbol').textContent, 'X');
+    assert.equal(game.elements.get('player-two-name').textContent, 'Jefferson');
+    assert.equal(game.elements.get('player-two-symbol').textContent, 'O');
+    assert.match(game.elements.get('turn-player').innerHTML, /Roosevelt/);
+});
+
+test('contre IA la fiche adversaire affiche son nom, difficulté et bon symbole', () => {
+    const game = loadGame({
+        gameMode: 'ai',
+        difficulty: 'god',
+        aiPlayerName: 'Roosevelt',
+        aiOpponentName: 'Gojo',
+        aiPlayerSymbol: 'X'
+    });
+
+    assert.equal(game.elements.get('player-one-name').textContent, 'Roosevelt');
+    assert.equal(game.elements.get('player-two-name').textContent, 'Gojo');
+    assert.equal(game.elements.get('player-two-symbol').textContent, 'O');
+    assert.match(game.elements.get('player-two-meta').textContent, /GOD/);
+});
+
+test('le résultat local annonce le nom et le symbole du gagnant', () => {
+    const game = loadGame({
+        gameMode: 'local',
+        localPlayer1Name: 'Roosevelt',
+        localPlayer2Name: 'Jefferson',
+        player1Symbol: 'X',
+        player2Symbol: 'O'
+    });
+
+    finishLocalWin(game);
+
+    assert.equal(game.elements.get('result-title').textContent, 'ROOSEVELT (X) A GAGNÉ !');
+    assert.match(game.elements.get('result-message').textContent, /Jefferson/);
+});
+
+test('le replay décrit chaque action avec le vrai nom du participant', () => {
+    const game = loadGame({
+        gameMode: 'local',
+        localPlayer1Name: 'Roosevelt',
+        localPlayer2Name: 'Jefferson',
+        player1Symbol: 'X',
+        player2Symbol: 'O'
+    });
+    finishLocalWin(game);
+
+    game.elements.get('popup-replay-button').click();
+    game.elements.get('replay-next-button').click();
+
+    assert.match(game.elements.get('replay-action-label').textContent, /Roosevelt/);
+    assert.match(game.elements.get('replay-action-label').textContent, /X/);
+});
+
+test('ouvrir les paramètres sauvegarde le match courant et prépare le retour exact', () => {
+    const game = loadGame({
+        gameMode: 'local',
+        localPlayer1Name: 'Roosevelt',
+        localPlayer2Name: 'Jefferson',
+        player1Symbol: 'X',
+        player2Symbol: 'O'
+    });
+
+    game.cells[0].click();
+    game.cells[4].click();
+    game.elements.get('settings-button').click();
+
+    const saved = JSON.parse(game.sessionStorage.getItem('tttMatchState'));
+    assert.deepEqual(saved.gameBoard, ['X', '', '', '', 'O', '', '', '', '']);
+    assert.equal(saved.moveHistory.length, 2);
+    assert.equal(game.sessionStorage.getItem('tttResumeMatch'), '1');
+    assert.equal(game.sessionStorage.getItem('tttSettingsReturn'), '../game.html');
+    assert.equal(game.context.location.href, 'Akatsuki/parametre.html?from=game');
+});
+
+test('le retour des paramètres restaure grille, tour, historique et scores', () => {
+    const matchState = {
+        gameBoard: ['X', '', '', '', 'O', '', '', '', ''],
+        currentLocalPlayer: 1,
+        isAiThinking: false,
+        gameFinished: false,
+        moveHistory: [
+            { index: 0, symbol: 'X', actor: 'player1' },
+            { index: 4, symbol: 'O', actor: 'player2' }
+        ],
+        finalBoard: Array(9).fill(''),
+        scores: { player1: 2, player2: 1, draw: 1 },
+        isReplayMode: false,
+        replayPosition: 0,
+        replayMode: 'action'
+    };
+
+    const game = loadGame({
+        gameMode: 'local',
+        localPlayer1Name: 'Roosevelt',
+        localPlayer2Name: 'Jefferson',
+        player1Symbol: 'X',
+        player2Symbol: 'O'
+    }, {
+        sessionStorage: {
+            tttMatchState: JSON.stringify(matchState),
+            tttResumeMatch: '1'
+        }
+    });
+
+    assert.equal(game.cells[0].textContent, 'X');
+    assert.equal(game.cells[4].textContent, 'O');
+    assert.equal(game.evaluate('moveHistory.length'), 2);
+    assert.equal(game.elements.get('score-player-one').textContent, '2');
+    assert.equal(game.elements.get('score-player-two').textContent, '1');
+    assert.equal(game.elements.get('score-draw').textContent, '1');
+    assert.match(game.elements.get('turn-player').innerHTML, /Roosevelt/);
+    assert.equal(game.sessionStorage.getItem('tttResumeMatch'), null);
+});
+
+test('changer de mode efface aussi l état du match sans toucher aux paramètres globaux', () => {
+    const game = loadGame(
+        { gameMode: 'local', player1Symbol: 'X', player2Symbol: 'O' },
+        {
+            localStorage: { tttSettings: JSON.stringify({ volume: 70, language: 'fr' }) },
+            sessionStorage: {
+                tttMatchState: JSON.stringify({ gameBoard: ['X'] }),
+                tttResumeMatch: '1'
+            }
+        }
+    );
+    finishLocalWin(game);
+
+    game.elements.get('change-mode-button').click();
+
+    assert.equal(game.sessionStorage.getItem('tttPreparationState'), null);
+    assert.equal(game.sessionStorage.getItem('tttMatchState'), null);
+    assert.equal(game.sessionStorage.getItem('tttResumeMatch'), null);
+    assert.notEqual(game.localStorage.getItem('tttSettings'), null);
+});
+
+test('la page paramètres ne contient plus thème, mode sombre ni symbole par défaut', () => {
+    const html = fs.readFileSync(
+        path.join(__dirname, '..', 'Akatsuki', 'parametre.html'),
+        'utf8'
+    );
+
+    assert.doesNotMatch(html, /Mode sombre/i);
+    assert.doesNotMatch(html, /Symbole par défaut/i);
+    assert.doesNotMatch(html, /name="theme"/i);
+    assert.match(html, />\s*Son\s*</i);
+    assert.match(html, />\s*Volume\s*</i);
+    assert.match(html, />\s*Langue\s*</i);
+});
+
+test('les quatre difficultés sélectionnées déclenchent réellement une réponse IA', () => {
+    for (const difficulty of ['easy', 'normal', 'hard', 'god']) {
+        const game = loadGame({
+            gameMode: 'ai',
+            difficulty,
+            aiPlayerName: 'Roosevelt',
+            aiPlayerSymbol: 'X'
+        });
+
+        game.cells[0].click();
+
+        const played = game.cells.filter(cell => cell.textContent !== '');
+        assert.equal(played.length, 2, `aucune réponse IA correcte pour ${difficulty}`);
+        assert.equal(game.cells[0].textContent, 'X');
+        assert.ok(played.some(cell => cell.textContent === 'O'));
+    }
+});
+
+test('une défaite contre IA annonce le nom du bot et utilise le style défaite', () => {
+    const game = loadGame({
+        gameMode: 'ai',
+        difficulty: 'god',
+        aiPlayerName: 'Roosevelt',
+        aiOpponentName: 'Sukuna',
+        aiPlayerSymbol: 'X'
+    });
+
+    game.evaluate(`
+        gameBoard = ['O', 'O', 'O', 'X', 'X', '', '', '', ''];
+        gameFinished = true;
+    `);
+    game.context.showResult('O');
+
+    assert.equal(game.elements.get('result-title').textContent, 'DÉFAITE');
+    assert.match(game.elements.get('result-message').textContent, /Sukuna/);
+    assert.match(game.elements.get('result-message').textContent, /GOD/);
+    assert.equal(game.elements.get('result-icon').textContent, '🤖');
+    assert.ok(game.elements.get('result-popup').classList.contains('result-defeat'));
+});
+
+test('un match nul affiche les deux noms et symboles', () => {
+    const game = loadGame({
+        gameMode: 'local',
+        localPlayer1Name: 'Roosevelt',
+        localPlayer2Name: 'Jefferson',
+        player1Symbol: 'X',
+        player2Symbol: 'O'
+    });
+
+    game.context.showResult(null);
+
+    assert.equal(game.elements.get('result-title').textContent, 'MATCH NUL !');
+    assert.ok(game.elements.get('result-popup').classList.contains('result-draw'));
+    assert.match(game.elements.get('result-message').textContent, /Roosevelt \(X\)/);
+    assert.match(game.elements.get('result-message').textContent, /Jefferson \(O\)/);
+});
+
+
+test('les noms GOD sont limités à Gojo et Sukuna', () => {
+    const game = loadGame({ gameMode: 'local' });
+    const api = game.context.TTTAiNames;
+
+    assert.deepEqual(Array.from(api.GOD_NAMES), ['Gojo', 'Sukuna']);
+    for (let i = 0; i < 20; i++) {
+        assert.ok(['Gojo', 'Sukuna'].includes(api.genererNom('god')));
+    }
+});
+
+test('les difficultés non GOD utilisent le pool de prénoms classiques', () => {
+    const game = loadGame({ gameMode: 'local' });
+    const api = game.context.TTTAiNames;
+
+    for (const difficulty of ['easy', 'normal', 'hard']) {
+        const name = api.genererNom(difficulty, null, () => 0);
+        assert.equal(name, 'Thome');
+        assert.equal(['Gojo', 'Sukuna'].includes(name), false);
+    }
+});
+
+test('le nom IA sauvegardé est conservé pendant la partie', () => {
+    const game = loadGame({
+        gameMode: 'ai',
+        difficulty: 'normal',
+        aiPlayerName: 'Roosevelt',
+        aiOpponentName: 'Olivier',
+        aiPlayerSymbol: 'X'
+    });
+
+    assert.equal(game.elements.get('player-two-name').textContent, 'Olivier');
+    assert.equal(JSON.parse(game.sessionStorage.getItem('tttPreparationState')).aiOpponentName, 'Olivier');
+});
+
+test('une victoire utilise le style victoire', () => {
+    const game = loadGame({
+        gameMode: 'local',
+        localPlayer1Name: 'Roosevelt',
+        localPlayer2Name: 'Jefferson',
+        player1Symbol: 'X',
+        player2Symbol: 'O'
+    });
+
+    finishLocalWin(game);
+    assert.ok(game.elements.get('result-popup').classList.contains('result-victory'));
 });
