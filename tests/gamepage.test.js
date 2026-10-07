@@ -404,7 +404,7 @@ test('changer de mode efface seulement la préparation et revient à étape 1', 
     assert.equal(game.sessionStorage.getItem('tttPreparationState'), null);
     assert.equal(game.localStorage.getItem('theme'), 'purple');
     assert.equal(game.localStorage.getItem('volume'), '70');
-    assert.equal(game.context.location.href, 'Akatsuki/rencontre.html');
+    assert.equal(game.context.location.href, 'Rencontre/rencontre.html');
 });
 
 test('replay tour par tour revient au tour précédent depuis une fin impaire', () => {
@@ -530,7 +530,7 @@ test('ouvrir les paramètres sauvegarde le match courant et prépare le retour e
     assert.equal(saved.moveHistory.length, 2);
     assert.equal(game.sessionStorage.getItem('tttResumeMatch'), '1');
     assert.equal(game.sessionStorage.getItem('tttSettingsReturn'), '../game.html');
-    assert.equal(game.context.location.href, 'Akatsuki/parametre.html?from=game');
+    assert.equal(game.context.location.href, 'Parametres/parametre.html?from=game');
 });
 
 test('le retour des paramètres restaure grille, tour, historique et scores', () => {
@@ -596,7 +596,7 @@ test('changer de mode efface aussi l état du match sans toucher aux paramètres
 
 test('la page paramètres ne contient plus thème, mode sombre ni symbole par défaut', () => {
     const html = fs.readFileSync(
-        path.join(__dirname, '..', 'Akatsuki', 'parametre.html'),
+        path.join(__dirname, '..', 'Parametres', 'parametre.html'),
         'utf8'
     );
 

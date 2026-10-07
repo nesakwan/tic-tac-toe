@@ -1,10 +1,11 @@
 {
   "name": "tic-tac-boom",
   "version": "1.0.0",
-  "description": "Tic Tac Toe multijoueur",
+  "description": "",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "test": "node --test"
   },
   "dependencies": {
     "express": "^5.2.1",

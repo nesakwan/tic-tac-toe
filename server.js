@@ -5,26 +5,12 @@ const { Server } = require("socket.io");
 
 const app = express();
 const server = http.createServer(app);
-
-// Socket.IO : le CORS reste ouvert pour permettre plus tard
-// un front Netlify séparé du serveur Render si nécessaire.
-const io = new Server(server, {
-    cors: {
-        origin: "*",
-        methods: ["GET", "POST"]
-    }
-});
+const io = new Server(server);
 
 const PORT = process.env.PORT || 3000;
 const rooms = new Map();
 
-// Sert les fichiers HTML / CSS / JS du projet.
-app.use(express.static(path.join(__dirname)));
-
-// Route très simple pour vérifier que Render répond.
-app.get("/health", (req, res) => {
-    res.send("Serveur TIC TAC BOOM actif");
-});
+app.use(express.static(__dirname));
 
 function generateRoomCode() {
     const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
