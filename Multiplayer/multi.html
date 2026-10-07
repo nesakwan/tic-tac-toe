@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Multijoueur - Tic Tac Toe</title>
+
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+
+        body {
+
+            margin: 0;
+
+            min-height: 100vh;
+
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            color: white;
+
+            font-family:
+                Arial,
+                sans-serif;
+
+            background:
+                #0b111b;
+
+        }
+
+
+        .container {
+
+            width: min(90%, 500px);
+
+            text-align: center;
+
+        }
+
+
+        h1 {
+
+            margin-bottom: 35px;
+
+        }
+
+
+        button,
+        input {
+
+            padding: 14px 20px;
+
+            border-radius: 8px;
+
+            border: 1px solid #354861;
+
+            font-size: 16px;
+
+        }
+
+
+        button {
+
+            cursor: pointer;
+
+            color: white;
+
+            background:
+                #4d8eff;
+
+        }
+
+
+        input {
+
+            color: white;
+
+            background:
+                #182333;
+
+        }
+
+
+        .join-area {
+
+            margin-top: 30px;
+
+        }
+
+
+        #room-info {
+
+            margin-top: 30px;
+
+        }
+
+
+        #room-code {
+
+            display: block;
+
+            margin: 15px;
+
+            color:
+                #6c9aff;
+
+            font-size: 40px;
+
+            letter-spacing: 8px;
+
+        }
+
+
+        #board {
+
+            width: 320px;
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(3, 100px);
+
+            gap: 10px;
+
+            margin:
+                30px
+                auto;
+
+        }
+
+
+        .cell {
+
+            width: 100px;
+            height: 100px;
+
+            padding: 0;
+
+            color: white;
+
+            background:
+                #182333;
+
+            border:
+                1px solid #354861;
+
+            font-size:
+                50px;
+
+        }
+
+
+        .cell:disabled {
+
+            cursor: default;
+
+            opacity: 1;
+
+        }
+
+
+        #game-status {
+
+            min-height: 25px;
+
+            margin-top: 20px;
+
+        }
+
+
+        .error {
+
+            color:
+                #e4586d;
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+    <main class="container">
+
+
+        <!-- ===========================================
+             LOBBY
+        ============================================ -->
+
+        <section id="lobby">
+
+            <h1>
+                MULTIJOUEUR
+            </h1>
+
+
+            <button id="create-room">
+
+                CRÉER UNE PARTIE
+
+            </button>
+
+
+            <div class="join-area">
+
+                <p>
+                    OU
+                </p>
+
+
+                <input
+                    id="room-code-input"
+                    type="text"
+                    maxlength="4"
+                    placeholder="Code"
+                >
+
+
+                <button id="join-room">
+
+                    REJOINDRE
+
+                </button>
+
+            </div>
+
+
+            <p
+                id="lobby-message"
+                class="error"
+            ></p>
+
+
+            <div
+                id="room-info"
+                hidden
+            >
+
+                <p>
+                    Code de la partie :
+                </p>
+
+
+                <strong id="room-code">
+
+                    ----
+
+                </strong>
+
+
+                <p id="waiting-message">
+
+                    En attente d'un adversaire...
+
+                </p>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- ===========================================
+             JEU
+        ============================================ -->
+
+        <section
+            id="game"
+            hidden
+        >
+
+            <h1>
+                TIC TAC TOE
+            </h1>
+
+
+            <h2 id="player-symbol">
+
+                Vous êtes ?
+
+            </h2>
+
+
+            <p id="game-status"></p>
+
+
+            <div id="board">
+
+                <button class="cell"></button>
+                <button class="cell"></button>
+                <button class="cell"></button>
+
+                <button class="cell"></button>
+                <button class="cell"></button>
+                <button class="cell"></button>
+
+                <button class="cell"></button>
+                <button class="cell"></button>
+                <button class="cell"></button>
+
+            </div>
+
+
+            <p
+                id="game-message"
+                class="error"
+            ></p>
+
+        </section>
+
+
+    </main>
+
+
+    <!-- Socket.IO vient automatiquement du serveur -->
+
+    <script src="/socket.io/socket.io.js"></script>
+
+    <script src="multiplayer.js"></script>
+
+
+</body>
+
+</html>
