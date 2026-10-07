@@ -770,6 +770,108 @@
 
 
 
+                    <!-- =========================================
+
+                         MULTIJOUEUR EN LIGNE
+
+                    ========================================== -->
+
+
+
+                    <label class="mode-card">
+
+                        <input
+                            type="radio"
+                            name="game-mode"
+                            id="mode-multi"
+                            value="multi"
+                        >
+
+                        <div class="mode-card-content">
+
+                            <div class="mode-icon multi-icon">
+
+                                <svg
+                                    viewBox="0 0 100 90"
+                                    aria-hidden="true"
+                                >
+                                    <defs>
+                                        <linearGradient
+                                            id="multiGradient"
+                                            x1="0"
+                                            y1="0"
+                                            x2="1"
+                                            y2="1"
+                                        >
+                                            <stop offset="0%" stop-color="#6C9AFF" />
+                                            <stop offset="55%" stop-color="#4D8EFF" />
+                                            <stop offset="100%" stop-color="#E66AB5" />
+                                        </linearGradient>
+                                    </defs>
+
+                                    <rect
+                                        x="17" y="16" width="66" height="46" rx="11"
+                                        fill="none"
+                                        stroke="url(#multiGradient)"
+                                        stroke-width="5"
+                                    ></rect>
+
+                                    <path
+                                        d="M39 75H61M50 62V74"
+                                        fill="none"
+                                        stroke="url(#multiGradient)"
+                                        stroke-width="5"
+                                        stroke-linecap="round"
+                                    ></path>
+
+                                    <circle cx="36" cy="35" r="6" fill="url(#multiGradient)"></circle>
+                                    <circle cx="64" cy="35" r="6" fill="url(#multiGradient)"></circle>
+
+                                    <path
+                                        d="M27 51C28 44 31 41 36 41C41 41 44 44 45 51"
+                                        fill="none"
+                                        stroke="url(#multiGradient)"
+                                        stroke-width="4"
+                                        stroke-linecap="round"
+                                    ></path>
+
+                                    <path
+                                        d="M55 51C56 44 59 41 64 41C69 41 72 44 73 51"
+                                        fill="none"
+                                        stroke="url(#multiGradient)"
+                                        stroke-width="4"
+                                        stroke-linecap="round"
+                                    ></path>
+                                </svg>
+
+                            </div>
+
+                            <h3>
+                                MULTIJOUEUR
+                            </h3>
+
+                            <p>
+                                Jouez en ligne
+                                <br>
+                                avec un autre joueur
+                            </p>
+
+                            <div class="selection-indicator">
+                                <svg
+                                    viewBox="0 0 24 24"
+                                    aria-hidden="true"
+                                >
+                                    <path d="M5 12L10 17L19 7"></path>
+                                </svg>
+                            </div>
+
+                        </div>
+
+                    </label>
+
+
+
+
                 </div>
 
 
@@ -2036,6 +2138,7 @@
             const SETTINGS_RETURN_KEY = "tttSettingsReturn";
 
             const settingsButton = document.getElementById("settings-button");
+            const continueButton = document.querySelector(".continue-button");
             const startButton = document.querySelector(".start-button");
             const aiLevelDisplay = document.querySelector(".players-ai .ai-level");
             const aiOpponentNameDisplay = document.getElementById("ai-opponent-name");
@@ -2157,6 +2260,20 @@
             }
 
             settingsButton?.addEventListener("click", savePreparationState);
+
+            continueButton?.addEventListener("click", (event) => {
+                const selectedMode = checkedValue("game-mode");
+
+                if (selectedMode !== "multi") {
+                    savePreparationState();
+                    return;
+                }
+
+                event.preventDefault();
+                savePreparationState();
+                window.location.href = "../Multiplayer/multi.html";
+            });
+
             startButton?.addEventListener("click", savePreparationState);
 
             document.querySelectorAll('input[name="difficulty"]').forEach((input) => {

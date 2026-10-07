@@ -1,340 +1,190 @@
 <!DOCTYPE html>
 <html lang="fr">
-
 <head>
-
     <meta charset="UTF-8">
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Multijoueur - Tic Tac Toe</title>
-
-
-    <style>
-
-        * {
-            box-sizing: border-box;
-        }
-
-
-        body {
-
-            margin: 0;
-
-            min-height: 100vh;
-
-            display: flex;
-
-            align-items: center;
-            justify-content: center;
-
-            color: white;
-
-            font-family:
-                Arial,
-                sans-serif;
-
-            background:
-                #0b111b;
-
-        }
-
-
-        .container {
-
-            width: min(90%, 500px);
-
-            text-align: center;
-
-        }
-
-
-        h1 {
-
-            margin-bottom: 35px;
-
-        }
-
-
-        button,
-        input {
-
-            padding: 14px 20px;
-
-            border-radius: 8px;
-
-            border: 1px solid #354861;
-
-            font-size: 16px;
-
-        }
-
-
-        button {
-
-            cursor: pointer;
-
-            color: white;
-
-            background:
-                #4d8eff;
-
-        }
-
-
-        input {
-
-            color: white;
-
-            background:
-                #182333;
-
-        }
-
-
-        .join-area {
-
-            margin-top: 30px;
-
-        }
-
-
-        #room-info {
-
-            margin-top: 30px;
-
-        }
-
-
-        #room-code {
-
-            display: block;
-
-            margin: 15px;
-
-            color:
-                #6c9aff;
-
-            font-size: 40px;
-
-            letter-spacing: 8px;
-
-        }
-
-
-        #board {
-
-            width: 320px;
-
-            display: grid;
-
-            grid-template-columns:
-                repeat(3, 100px);
-
-            gap: 10px;
-
-            margin:
-                30px
-                auto;
-
-        }
-
-
-        .cell {
-
-            width: 100px;
-            height: 100px;
-
-            padding: 0;
-
-            color: white;
-
-            background:
-                #182333;
-
-            border:
-                1px solid #354861;
-
-            font-size:
-                50px;
-
-        }
-
-
-        .cell:disabled {
-
-            cursor: default;
-
-            opacity: 1;
-
-        }
-
-
-        #game-status {
-
-            min-height: 25px;
-
-            margin-top: 20px;
-
-        }
-
-
-        .error {
-
-            color:
-                #e4586d;
-
-        }
-
-    </style>
-
+    <link rel="stylesheet" href="multi.css">
 </head>
-
-
 <body>
+    <main id="multi-app">
+        <nav class="multi-nav">
+            <a class="nav-back" href="../Akatsuki/rencontre.html" aria-label="Retour à la préparation">
+                <span aria-hidden="true">←</span>
+                <span>Préparation</span>
+            </a>
 
-    <main class="container">
-
-
-        <!-- ===========================================
-             LOBBY
-        ============================================ -->
-
-        <section id="lobby">
-
-            <h1>
-                MULTIJOUEUR
+            <h1 class="brand-title" aria-label="Tic Tac Toe">
+                <span>TIC</span> <span>TAC</span> <span>TOE</span>
             </h1>
 
+            <a id="settings-button" class="settings-button" href="../Akatsuki/parametre.html?from=multiplayer" aria-label="Ouvrir les paramètres" title="Paramètres">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <circle cx="12" cy="12" r="3"></circle>
+                    <path d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06-2.12 2.12-.06-.06a1.7 1.7 0 0 0-1.88-.34 1.7 1.7 0 0 0-1.03 1.55V20.3h-3v-.09a1.7 1.7 0 0 0-1.03-1.55 1.7 1.7 0 0 0-1.88.34l-.06.06-2.12-2.12.06-.06A1.7 1.7 0 0 0 7 15a1.7 1.7 0 0 0-1.55-1.03H5.3v-3h.15A1.7 1.7 0 0 0 7 9.94a1.7 1.7 0 0 0-.34-1.88L6.6 8l2.12-2.12.06.06a1.7 1.7 0 0 0 1.88.34A1.7 1.7 0 0 0 11.69 4.7V4.6h3v.1a1.7 1.7 0 0 0 1.03 1.55 1.7 1.7 0 0 0 1.88-.34l.06-.06L19.8 8l-.06.06a1.7 1.7 0 0 0-.34 1.88 1.7 1.7 0 0 0 1.55 1.03h.15v3h-.15A1.7 1.7 0 0 0 19.4 15Z"></path>
+                </svg>
+            </a>
+        </nav>
 
-            <button id="create-room">
+        <div class="background-symbols" aria-hidden="true">
+            <span class="decor-x decor-x-one"></span>
+            <span class="decor-o decor-o-one"></span>
+            <span class="decor-x decor-x-two"></span>
+        </div>
 
-                CRÉER UNE PARTIE
+        <section id="lobby" class="lobby-stage">
+            <header class="lobby-heading">
+                <span class="eyebrow">MODE EN LIGNE</span>
+                <h2>MULTIJOUEUR</h2>
+                <p>Créez une partie privée ou rejoignez un ami avec son code.</p>
 
-            </button>
+                <div class="server-state" aria-live="polite">
+                    <span id="connection-dot" class="connection-dot"></span>
+                    <span id="connection-status">Connexion au serveur...</span>
+                </div>
+            </header>
 
-
-            <div class="join-area">
-
-                <p>
-                    OU
-                </p>
-
+            <section class="player-name-panel" aria-label="Votre identité en ligne">
+                <div class="name-copy">
+                    <span class="card-kicker">VOTRE PROFIL</span>
+                    <label for="player-name-input">Choisissez votre nom</label>
+                    <small>Ce nom sera affiché à votre adversaire pendant la partie.</small>
+                </div>
 
                 <input
-                    id="room-code-input"
+                    id="player-name-input"
+                    class="player-name-input"
                     type="text"
-                    maxlength="4"
-                    placeholder="Code"
+                    maxlength="18"
+                    autocomplete="nickname"
+                    placeholder="Joueur 1"
+                    aria-label="Votre nom de joueur"
                 >
+            </section>
 
+            <section id="lobby-actions" class="lobby-actions" aria-label="Choix multijoueur">
+                <article class="lobby-card create-card">
+                    <div class="card-icon card-icon-create" aria-hidden="true">
+                        <svg viewBox="0 0 64 64">
+                            <rect x="10" y="13" width="44" height="36" rx="9"></rect>
+                            <path d="M32 23V39M24 31H40"></path>
+                        </svg>
+                    </div>
 
-                <button id="join-room">
+                    <div class="card-copy">
+                        <span class="card-kicker">NOUVELLE SALLE</span>
+                        <h3>Créer une partie</h3>
+                        <p>Générez un code privé et envoyez-le à votre adversaire.</p>
+                    </div>
 
-                    REJOINDRE
+                    <button id="create-room" class="primary-action" type="button">
+                        <span>CRÉER UNE PARTIE</span>
+                        <span aria-hidden="true">→</span>
+                    </button>
+                </article>
 
-                </button>
+                <article class="lobby-card join-card">
+                    <div class="card-icon card-icon-join" aria-hidden="true">
+                        <svg viewBox="0 0 64 64">
+                            <circle cx="23" cy="25" r="8"></circle>
+                            <circle cx="42" cy="25" r="8"></circle>
+                            <path d="M10 47C11 37 16 33 23 33C30 33 35 37 36 47"></path>
+                            <path d="M30 47C31 37 35 33 42 33C49 33 54 37 55 47"></path>
+                        </svg>
+                    </div>
 
-            </div>
+                    <div class="card-copy">
+                        <span class="card-kicker">CODE PRIVÉ</span>
+                        <h3>Rejoindre une partie</h3>
+                        <p>Entrez le code à 4 caractères reçu de votre ami.</p>
+                    </div>
 
+                    <div class="join-controls">
+                        <label class="sr-only" for="room-code-input">Code de partie</label>
+                        <input
+                            id="room-code-input"
+                            type="text"
+                            maxlength="4"
+                            autocomplete="off"
+                            spellcheck="false"
+                            placeholder="ABCD"
+                            aria-label="Code de partie"
+                        >
 
-            <p
-                id="lobby-message"
-                class="error"
-            ></p>
+                        <button id="join-room" class="secondary-action" type="button">
+                            REJOINDRE
+                        </button>
+                    </div>
+                </article>
+            </section>
 
+            <p id="lobby-message" class="feedback-message error" role="alert"></p>
 
-            <div
-                id="room-info"
-                hidden
-            >
+            <section id="room-info" class="waiting-panel" hidden>
+                <div class="waiting-pulse" aria-hidden="true">
+                    <span></span><span></span><span></span>
+                </div>
 
-                <p>
-                    Code de la partie :
-                </p>
+                <span class="waiting-kicker">SALLE CRÉÉE</span>
+                <h3>Invitez votre adversaire</h3>
+                <p>Envoyez-lui ce code. La partie commencera automatiquement dès qu'il vous rejoint.</p>
 
+                <div class="room-code-box">
+                    <span>CODE DE LA PARTIE</span>
+                    <strong id="room-code">----</strong>
+                    <button id="copy-room-code" type="button">Copier le code</button>
+                </div>
 
-                <strong id="room-code">
-
-                    ----
-
-                </strong>
-
-
-                <p id="waiting-message">
-
-                    En attente d'un adversaire...
-
-                </p>
-
-            </div>
-
+                <p id="waiting-message" class="waiting-message">En attente d'un adversaire...</p>
+            </section>
         </section>
 
+        <section id="coin-toss" class="coin-toss-overlay" hidden aria-live="polite">
+            <div class="coin-toss-card">
+                <span class="eyebrow">TIRAGE AU SORT</span>
+                <h2>Qui commence ?</h2>
+                <p id="coin-toss-subtitle">Le serveur lance la pièce...</p>
 
+                <div class="coin-scene" aria-hidden="true">
+                    <div id="coin" class="coin">
+                        <span class="coin-face coin-x">X</span>
+                        <span class="coin-face coin-o">O</span>
+                    </div>
+                </div>
 
-        <!-- ===========================================
-             JEU
-        ============================================ -->
-
-        <section
-            id="game"
-            hidden
-        >
-
-            <h1>
-                TIC TAC TOE
-            </h1>
-
-
-            <h2 id="player-symbol">
-
-                Vous êtes ?
-
-            </h2>
-
-
-            <p id="game-status"></p>
-
-
-            <div id="board">
-
-                <button class="cell"></button>
-                <button class="cell"></button>
-                <button class="cell"></button>
-
-                <button class="cell"></button>
-                <button class="cell"></button>
-                <button class="cell"></button>
-
-                <button class="cell"></button>
-                <button class="cell"></button>
-                <button class="cell"></button>
-
+                <strong id="coin-toss-result" class="coin-toss-result">TIRAGE...</strong>
             </div>
-
-
-            <p
-                id="game-message"
-                class="error"
-            ></p>
-
         </section>
 
+        <!-- Plateau temporaire. À l'étape 3 il sera remplacé par le vrai game.html. -->
+        <section id="game" class="temporary-game-stage" hidden>
+            <div class="temporary-game-shell">
+                <header class="temporary-game-header">
+                    <span class="eyebrow">MATCH EN LIGNE</span>
+                    <h2 id="player-symbol">Vous êtes ?</h2>
+                    <p id="online-players" class="online-players">Joueur 1 VS Joueur 2</p>
+                    <p id="game-status">Connexion...</p>
+                </header>
 
+                <div id="board" class="temporary-board" aria-label="Plateau multijoueur">
+                    <button class="cell" type="button" aria-label="Case 1"></button>
+                    <button class="cell" type="button" aria-label="Case 2"></button>
+                    <button class="cell" type="button" aria-label="Case 3"></button>
+                    <button class="cell" type="button" aria-label="Case 4"></button>
+                    <button class="cell" type="button" aria-label="Case 5"></button>
+                    <button class="cell" type="button" aria-label="Case 6"></button>
+                    <button class="cell" type="button" aria-label="Case 7"></button>
+                    <button class="cell" type="button" aria-label="Case 8"></button>
+                    <button class="cell" type="button" aria-label="Case 9"></button>
+                </div>
+
+                <p id="game-message" class="feedback-message error" role="alert"></p>
+            </div>
+        </section>
     </main>
 
-
-    <!-- Socket.IO vient automatiquement du serveur -->
-
+    <script src="../js/music.js" data-music-src="../Sounds/Super Smash Bros Brawl Music - Final Destination.mp3"></script>
     <script src="/socket.io/socket.io.js"></script>
-
     <script src="multiplayer.js"></script>
-
-
 </body>
-
 </html>

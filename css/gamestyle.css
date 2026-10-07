@@ -1067,3 +1067,146 @@ button {
         animation-duration: 0.01ms !important;
     }
 }
+
+/* =========================================================
+   TIRAGE AU SORT — DÉBUT DE MANCHE
+   ========================================================= */
+
+.start-toss-overlay[hidden] {
+    display: none !important;
+}
+
+.start-toss-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 120;
+    display: grid;
+    place-items: center;
+    padding: 24px;
+    background:
+        radial-gradient(circle at 50% 42%, rgba(77, 142, 255, 0.14), transparent 34%),
+        rgba(7, 12, 20, 0.88);
+    backdrop-filter: blur(12px);
+}
+
+.start-toss-card {
+    width: min(92vw, 470px);
+    padding: 34px 30px 30px;
+    border: 1px solid rgba(77, 142, 255, 0.28);
+    border-radius: 22px;
+    text-align: center;
+    background:
+        radial-gradient(circle at 50% 0%, rgba(77, 142, 255, 0.10), transparent 46%),
+        linear-gradient(180deg, rgba(24, 35, 51, 0.98), rgba(13, 22, 34, 0.98));
+    box-shadow: 0 30px 90px rgba(0, 0, 0, 0.4);
+}
+
+.start-toss-kicker {
+    color: #89a9d8;
+    font-size: 0.72rem;
+    font-weight: 850;
+    letter-spacing: 0.15em;
+}
+
+.start-toss-card h2 {
+    margin-top: 8px;
+    font-size: clamp(1.65rem, 4vw, 2.05rem);
+}
+
+.start-toss-card > p {
+    margin-top: 8px;
+    color: var(--muted);
+    font-size: 0.88rem;
+}
+
+.start-coin-scene {
+    width: 128px;
+    height: 128px;
+    display: grid;
+    place-items: center;
+    margin: 28px auto 22px;
+    perspective: 900px;
+}
+
+.start-coin {
+    position: relative;
+    width: 108px;
+    height: 108px;
+    transform-style: preserve-3d;
+}
+
+.start-coin-face {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    border: 2px solid rgba(255, 255, 255, 0.13);
+    border-radius: 50%;
+    backface-visibility: hidden;
+    font-size: 3.25rem;
+    font-weight: 900;
+    box-shadow:
+        inset 0 0 28px rgba(255, 255, 255, 0.04),
+        0 16px 38px rgba(0, 0, 0, 0.30);
+}
+
+.start-coin-x {
+    color: var(--blue-light);
+    background: radial-gradient(circle at 35% 28%, #223d66, #132136 72%);
+}
+
+.start-coin-o {
+    color: var(--pink);
+    background: radial-gradient(circle at 35% 28%, #4a2748, #23172c 72%);
+    transform: rotateY(180deg);
+}
+
+.start-coin.is-tossing {
+    animation: start-coin-toss 1.55s cubic-bezier(.22,.68,.25,1) both;
+}
+
+.start-coin.lands-x {
+    transform: rotateY(0deg);
+}
+
+.start-coin.lands-o {
+    transform: rotateY(180deg);
+}
+
+.start-toss-result {
+    display: block;
+    min-height: 28px;
+    color: #dfe7f3;
+    font-size: 1rem;
+    opacity: 0.62;
+    transform: translateY(4px);
+    transition: opacity 0.24s ease, transform 0.24s ease, color 0.24s ease;
+}
+
+.start-toss-result.revealed {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.start-toss-result.result-x {
+    color: var(--blue-light);
+}
+
+.start-toss-result.result-o {
+    color: var(--pink);
+}
+
+@keyframes start-coin-toss {
+    0% {
+        transform: translateY(0) rotateY(0deg) rotateZ(0deg) scale(1);
+    }
+    28% {
+        transform: translateY(-48px) rotateY(540deg) rotateZ(12deg) scale(1.08);
+    }
+    72% {
+        transform: translateY(-8px) rotateY(1260deg) rotateZ(-7deg) scale(1.03);
+    }
+    100% {
+        transform: translateY(0) rotateY(1800deg) rotateZ(0deg) scale(1);
+    }
+}
