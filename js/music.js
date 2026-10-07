@@ -9,7 +9,7 @@
 
     const DEFAULT_SETTINGS = {
         soundEnabled: true,
-        volume: 2,
+        volume: 0.5,
         language: "fr"
     };
 
