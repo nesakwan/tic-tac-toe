@@ -125,6 +125,23 @@
                 </section>
             </section>
 
+            <section id="start-toss" class="start-toss-overlay" hidden aria-live="polite">
+                <div class="start-toss-card">
+                    <span class="start-toss-kicker">TIRAGE AU SORT</span>
+                    <h2>Qui commence ?</h2>
+                    <p id="start-toss-subtitle">La pièce est lancée...</p>
+
+                    <div class="start-coin-scene" aria-hidden="true">
+                        <div id="start-coin" class="start-coin">
+                            <span class="start-coin-face start-coin-x">X</span>
+                            <span class="start-coin-face start-coin-o">O</span>
+                        </div>
+                    </div>
+
+                    <strong id="start-toss-result" class="start-toss-result">TIRAGE...</strong>
+                </div>
+            </section>
+
             <div id="result-popup" class="popup-overlay" role="dialog" aria-modal="true" aria-labelledby="result-title">
                 <div class="result-effects" aria-hidden="true">
                     <span></span><span></span><span></span><span></span><span></span><span></span>

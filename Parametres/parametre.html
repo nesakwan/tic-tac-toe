@@ -138,6 +138,11 @@
                 });
             }
 
+            if (sourcePage === "multiplayer") {
+                settingsBackButton.href =
+                    sessionStorage.getItem(SETTINGS_RETURN_KEY) || "../Multiplayer/multi.html";
+            }
+
             const volumeSlider = document.getElementById("volume-slider");
             const volumeValue = document.getElementById("volume-value");
             const soundToggle = document.getElementById("sound-toggle");

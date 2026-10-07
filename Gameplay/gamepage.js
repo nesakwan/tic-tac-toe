@@ -52,6 +52,11 @@ const scorePlayerOne = document.getElementById("score-player-one");
 const scorePlayerTwo = document.getElementById("score-player-two");
 const scoreDraw = document.getElementById("score-draw");
 
+const startTossOverlay = document.getElementById("start-toss");
+const startCoin = document.getElementById("start-coin");
+const startTossSubtitle = document.getElementById("start-toss-subtitle");
+const startTossResult = document.getElementById("start-toss-result");
+
 
 // ----------------------------------------------------------
 // STOCKAGE
@@ -228,6 +233,8 @@ function afficherIdentiteParticipants() {
 let gameBoard = Array(9).fill("");
 let currentLocalPlayer = 1;
 let isAiThinking = false;
+let isStartingToss = false;
+let startTossSequence = 0;
 let gameFinished = false;
 let resultScored = false;
 
@@ -389,6 +396,7 @@ function placerSymbole(index, symbole, actor = null, recordMove = true) {
     if (
         gameFinished ||
         isReplayMode ||
+        isStartingToss ||
         !Number.isInteger(index) ||
         index < 0 ||
         index > 8 ||
@@ -467,6 +475,95 @@ function trouverCasesLibres(grille) {
 
 
 // ----------------------------------------------------------
+// TIRAGE AU SORT DU PREMIER JOUEUR
+// ----------------------------------------------------------
+
+function definirInteractiviteGrille(active) {
+    cells.forEach((cell, index) => {
+        cell.disabled = !active || gameBoard[index] !== "";
+    });
+}
+
+function participantDepartAleatoire() {
+    return Math.random() < 0.5 ? playerOne : playerTwo;
+}
+
+function terminerTirageAuSort(participant, sequence) {
+    if (sequence !== startTossSequence) return;
+
+    const symbole = participant.symbol;
+
+    if (startCoin) {
+        startCoin.classList.remove("is-tossing", "lands-x", "lands-o");
+        startCoin.classList.add(symbole === "X" ? "lands-x" : "lands-o");
+    }
+
+    if (startTossSubtitle) startTossSubtitle.textContent = "Le tirage est terminé";
+    if (startTossResult) {
+        startTossResult.textContent = `${participant.name} commence — ${symbole}`;
+        startTossResult.classList.remove("result-x", "result-o");
+        startTossResult.classList.add(symbole === "X" ? "result-x" : "result-o", "revealed");
+    }
+
+    setTimeout(() => {
+        if (sequence !== startTossSequence) return;
+
+        isStartingToss = false;
+        if (startTossOverlay) startTossOverlay.hidden = true;
+
+        if (gameMode === "ai") {
+            if (participant.actor === "ai") {
+                definirInteractiviteGrille(false);
+                lancerTourIA();
+            } else {
+                definirInteractiviteGrille(true);
+                afficherTour(humanSymbol);
+                sauvegarderEtatMatch();
+            }
+            return;
+        }
+
+        currentLocalPlayer = participant.actor === "player2" ? 2 : 1;
+        definirInteractiviteGrille(true);
+        afficherTour(symboleActuelLocal());
+        sauvegarderEtatMatch();
+    }, 650);
+}
+
+function lancerTirageAuSort() {
+    // Fallback pour les anciens tests / environnements sans l'overlay HTML.
+    if (!startTossOverlay) return false;
+
+    const participant = participantDepartAleatoire();
+    const sequence = ++startTossSequence;
+
+    isStartingToss = true;
+    definirInteractiviteGrille(false);
+    startTossOverlay.hidden = false;
+
+    if (startTossSubtitle) startTossSubtitle.textContent = "La pièce est lancée...";
+    if (startTossResult) {
+        startTossResult.textContent = "TIRAGE...";
+        startTossResult.classList.remove("result-x", "result-o", "revealed");
+    }
+
+    if (startCoin) {
+        startCoin.classList.remove("is-tossing", "lands-x", "lands-o");
+        // Force le navigateur à relancer l'animation à chaque manche.
+        void startCoin.offsetWidth;
+        startCoin.classList.add("is-tossing");
+    }
+
+    afficherTour("", "Tirage au sort...");
+
+    setTimeout(() => {
+        terminerTirageAuSort(participant, sequence);
+    }, 1650);
+
+    return true;
+}
+
+// ----------------------------------------------------------
 // MODE 2 JOUEURS
 // ----------------------------------------------------------
 
@@ -488,9 +585,10 @@ function jouerLocal(index) {
 // ----------------------------------------------------------
 
 function jouerContreIA(index) {
-    if (isAiThinking || gameFinished) return;
+    if (isAiThinking || isStartingToss || gameFinished) return;
     if (!placerSymbole(index, humanSymbol, "human")) return;
     if (terminerSiNecessaire()) return;
+    definirInteractiviteGrille(false);
     lancerTourIA();
 }
 
@@ -512,6 +610,7 @@ function lancerTourIA() {
         isAiThinking = false;
 
         if (terminerSiNecessaire()) return;
+        definirInteractiviteGrille(true);
         afficherTour(humanSymbol);
         sauvegarderEtatMatch();
     }, 500);
@@ -1027,6 +1126,8 @@ function resetGame() {
     moveHistory = [];
     currentLocalPlayer = 1;
     isAiThinking = false;
+    isStartingToss = false;
+    startTossSequence += 1;
     gameFinished = false;
     resultScored = false;
     isReplayMode = false;
@@ -1105,8 +1206,11 @@ function demarrerPartie(tenterRestauration = true) {
 
     afficherActionsFin(false);
 
+    // Dans l'interface réelle, chaque manche commence par un tirage animé.
+    // Si l'overlay n'existe pas (anciens tests), on conserve le fallback historique.
+    if (lancerTirageAuSort()) return;
+
     if (gameMode === "ai") {
-        // X commence toujours. Si l'humain choisit O, l'IA possède X et ouvre.
         if (humanSymbol === "O") lancerTourIA();
         else afficherTour(humanSymbol);
         return;
