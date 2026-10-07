@@ -1360,7 +1360,7 @@ a {
 
     grid-template-columns:
 
-        repeat(2, 1fr);
+        repeat(3, minmax(0, 1fr));
 
 
 
@@ -1372,7 +1372,7 @@ a {
 
     width:
 
-        min(100%, 580px);
+        min(100%, 900px);
 
 
 
@@ -1953,6 +1953,35 @@ a {
         none;
 
 
+
+}
+
+
+.multi-icon {
+
+    filter:
+        drop-shadow(0 0 15px rgba(77, 142, 255, 0.14));
+
+}
+
+
+
+.multi-icon svg {
+
+    width:
+        78px;
+
+    height:
+        72px;
+
+}
+
+
+
+.multi-icon svg * {
+
+    vector-effect:
+        non-scaling-stroke;
 
 }
 
@@ -4907,6 +4936,18 @@ body:has(#mode-ai:checked)
     }
 
 
+
+
+
+    .mode-cards {
+
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+
+        width:
+            min(100%, 620px);
+
+    }
 
 
 
