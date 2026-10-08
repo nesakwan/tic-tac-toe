@@ -73,8 +73,10 @@
     audio.preload = "auto";
 
     let pendingResumeTime = 0;
+    let resumeApplied = false;
     let gestureFallbackArmed = false;
     let destroyed = false;
+    let stateHeartbeat = null;
 
     function calculateResumeTime() {
         if (!savedMusicState) return 0;
@@ -101,6 +103,9 @@
         } catch (error) {
             console.warn("Impossible de restaurer la position de la musique.", error);
         }
+
+        resumeApplied = true;
+        if (settings.soundEnabled && isOwner()) attemptPlay();
     }
 
     function saveMusicState() {
@@ -195,6 +200,11 @@
             return;
         }
 
+        // Ne jamais démarrer quelques millisecondes à 0 puis sauter vers la
+        // position restaurée : c'était la principale sensation de "relance".
+        if (!resumeApplied && audio.readyState < 1) return;
+        if (!resumeApplied) applyResumeTime();
+
         // play() sur une piste déjà en cours n'apporte rien et pouvait être
         // rappelé à chaque mouvement du slider de volume.
         if (!audio.paused) return;
@@ -282,6 +292,7 @@
 
     function handlePageHide() {
         saveMusicState();
+        if (stateHeartbeat && typeof clearInterval === "function") clearInterval(stateHeartbeat);
         pauseAudio({ save: false });
         releaseOwnership();
         destroyed = true;
@@ -296,6 +307,9 @@
         audio.addEventListener("loadedmetadata", applyResumeTime, { once: true });
     }
 
+    // Sauvegarde plus fréquente que timeupdate afin qu'une navigation rapide
+    // reprenne presque exactement au même instant musical.
+    stateHeartbeat = typeof setInterval === "function" ? setInterval(saveMusicState, 250) : null;
     audio.addEventListener("timeupdate", saveMusicState);
     window.addEventListener("pagehide", handlePageHide);
     window.addEventListener("pageshow", () => {
@@ -309,6 +323,17 @@
     document.addEventListener("visibilitychange", handleVisibilityChange);
     document.addEventListener("pointerdown", handleUserActivity, { passive: true });
     document.addEventListener("keydown", handleUserActivity);
+
+
+    // Capture la navigation avant le démontage du document. Cela réduit le
+    // décalage entre deux pages HTML au strict temps de chargement de la page.
+    document.addEventListener("click", (event) => {
+        const link = event.target?.closest?.("a[href]");
+        if (!link) return;
+        const href = link.getAttribute("href");
+        if (!href || href.startsWith("#") || link.target === "_blank" || link.hasAttribute("download")) return;
+        saveMusicState();
+    }, true);
 
     window.addEventListener("ttt-settings-changed", (event) => {
         // Cet événement vient de la page actuelle : elle peut devenir propriétaire.

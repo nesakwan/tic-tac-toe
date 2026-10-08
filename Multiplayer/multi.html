@@ -4,12 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Multijoueur - Tic Tac Toe</title>
+    <link rel="stylesheet" href="../css/gamestyle.css">
     <link rel="stylesheet" href="multi.css">
 </head>
 <body>
     <main id="multi-app">
         <nav class="multi-nav">
-            <a class="nav-back" href="../Akatsuki/rencontre.html" aria-label="Retour à la préparation">
+            <a id="multi-back-button" class="nav-back" href="../Akatsuki/rencontre.html" aria-label="Retour à la préparation">
                 <span aria-hidden="true">←</span>
                 <span>Préparation</span>
             </a>
@@ -25,6 +26,12 @@
                 </svg>
             </a>
         </nav>
+
+        <div id="network-quality" class="network-quality" data-quality="connecting" aria-live="polite" title="Latence vers le serveur">
+            <span class="network-quality-dot"></span>
+            <strong id="network-quality-label">CONNEXION...</strong>
+            <small id="network-ping-value">— ms</small>
+        </div>
 
         <div class="background-symbols" aria-hidden="true">
             <span class="decor-x decor-x-one"></span>
@@ -51,15 +58,17 @@
                     <small>Ce nom sera affiché à votre adversaire pendant la partie.</small>
                 </div>
 
-                <input
-                    id="player-name-input"
-                    class="player-name-input"
-                    type="text"
-                    maxlength="18"
-                    autocomplete="nickname"
-                    placeholder="Joueur 1"
-                    aria-label="Votre nom de joueur"
-                >
+                <input id="player-name-input" class="player-name-input" type="text" maxlength="18" autocomplete="nickname" placeholder="Joueur 1" aria-label="Votre nom de joueur">
+            </section>
+            <section id="resume-banner" class="resume-banner" hidden>
+                <div>
+                    <span class="card-kicker">PARTIE EN COURS DÉTECTÉE</span>
+                    <strong id="resume-summary">Une session multijoueur peut être reprise.</strong>
+                </div>
+                <div class="resume-actions">
+                    <button id="resume-session" class="primary-action" type="button">REPRENDRE</button>
+                    <button id="forget-session" class="secondary-action" type="button">ABANDONNER</button>
+                </div>
             </section>
 
             <section id="lobby-actions" class="lobby-actions" aria-label="Choix multijoueur">
@@ -70,16 +79,13 @@
                             <path d="M32 23V39M24 31H40"></path>
                         </svg>
                     </div>
-
                     <div class="card-copy">
                         <span class="card-kicker">NOUVELLE SALLE</span>
                         <h3>Créer une partie</h3>
                         <p>Générez un code privé et envoyez-le à votre adversaire.</p>
                     </div>
-
                     <button id="create-room" class="primary-action" type="button">
-                        <span>CRÉER UNE PARTIE</span>
-                        <span aria-hidden="true">→</span>
+                        <span>CRÉER UNE PARTIE</span><span aria-hidden="true">→</span>
                     </button>
                 </article>
 
@@ -92,98 +98,235 @@
                             <path d="M30 47C31 37 35 33 42 33C49 33 54 37 55 47"></path>
                         </svg>
                     </div>
-
                     <div class="card-copy">
                         <span class="card-kicker">CODE PRIVÉ</span>
                         <h3>Rejoindre une partie</h3>
                         <p>Entrez le code à 4 caractères reçu de votre ami.</p>
                     </div>
-
                     <div class="join-controls">
                         <label class="sr-only" for="room-code-input">Code de partie</label>
-                        <input
-                            id="room-code-input"
-                            type="text"
-                            maxlength="4"
-                            autocomplete="off"
-                            spellcheck="false"
-                            placeholder="ABCD"
-                            aria-label="Code de partie"
-                        >
-
-                        <button id="join-room" class="secondary-action" type="button">
-                            REJOINDRE
-                        </button>
+                        <input id="room-code-input" type="text" maxlength="4" autocomplete="off" spellcheck="false" placeholder="ABCD" aria-label="Code de partie">
+                        <button id="join-room" class="secondary-action" type="button">REJOINDRE</button>
                     </div>
                 </article>
             </section>
 
             <p id="lobby-message" class="feedback-message error" role="alert"></p>
 
-            <section id="room-info" class="waiting-panel" hidden>
-                <div class="waiting-pulse" aria-hidden="true">
-                    <span></span><span></span><span></span>
-                </div>
-
-                <span class="waiting-kicker">SALLE CRÉÉE</span>
-                <h3>Invitez votre adversaire</h3>
-                <p>Envoyez-lui ce code. La partie commencera automatiquement dès qu'il vous rejoint.</p>
+            <section id="room-info" class="waiting-panel room-lobby" hidden>
+                <span class="waiting-kicker">SALLE MULTIJOUEUR</span>
+                <h3>Préparez le match</h3>
+                <p>Partagez le code, vérifiez les règles puis passez tous les deux en prêt.</p>
 
                 <div class="room-code-box">
                     <span>CODE DE LA PARTIE</span>
                     <strong id="room-code">----</strong>
-                    <button id="copy-room-code" type="button">Copier le code</button>
-                </div>
-
-                <p id="waiting-message" class="waiting-message">En attente d'un adversaire...</p>
-            </section>
-        </section>
-
-        <section id="coin-toss" class="coin-toss-overlay" hidden aria-live="polite">
-            <div class="coin-toss-card">
-                <span class="eyebrow">TIRAGE AU SORT</span>
-                <h2>Qui commence ?</h2>
-                <p id="coin-toss-subtitle">Le serveur lance la pièce...</p>
-
-                <div class="coin-scene" aria-hidden="true">
-                    <div id="coin" class="coin">
-                        <span class="coin-face coin-x">X</span>
-                        <span class="coin-face coin-o">O</span>
+                    <div class="room-share-actions">
+                        <button id="copy-room-code" type="button">Copier le code</button>
+                        <button id="copy-room-link" type="button">Copier le lien</button>
                     </div>
                 </div>
 
-                <strong id="coin-toss-result" class="coin-toss-result">TIRAGE...</strong>
-            </div>
-        </section>
-
-        <!-- Plateau temporaire. À l'étape 3 il sera remplacé par le vrai game.html. -->
-        <section id="game" class="temporary-game-stage" hidden>
-            <div class="temporary-game-shell">
-                <header class="temporary-game-header">
-                    <span class="eyebrow">MATCH EN LIGNE</span>
-                    <h2 id="player-symbol">Vous êtes ?</h2>
-                    <p id="online-players" class="online-players">Joueur 1 VS Joueur 2</p>
-                    <p id="game-status">Connexion...</p>
-                </header>
-
-                <div id="board" class="temporary-board" aria-label="Plateau multijoueur">
-                    <button class="cell" type="button" aria-label="Case 1"></button>
-                    <button class="cell" type="button" aria-label="Case 2"></button>
-                    <button class="cell" type="button" aria-label="Case 3"></button>
-                    <button class="cell" type="button" aria-label="Case 4"></button>
-                    <button class="cell" type="button" aria-label="Case 5"></button>
-                    <button class="cell" type="button" aria-label="Case 6"></button>
-                    <button class="cell" type="button" aria-label="Case 7"></button>
-                    <button class="cell" type="button" aria-label="Case 8"></button>
-                    <button class="cell" type="button" aria-label="Case 9"></button>
+                <div class="room-players">
+                    <article class="room-player-card">
+                        <div>
+                            <span class="room-player-meta">JOUEUR X <b id="host-badge">• HÔTE</b></span>
+                            <strong id="lobby-player-x">En attente...</strong>
+                        </div>
+                        <span id="lobby-ready-x" class="ready-state">○ PAS PRÊT</span>
+                    </article>
+                    <span class="room-vs">VS</span>
+                    <article class="room-player-card">
+                        <div>
+                            <span class="room-player-meta">JOUEUR O</span>
+                            <strong id="lobby-player-o">En attente...</strong>
+                        </div>
+                        <span id="lobby-ready-o" class="ready-state">○ PAS PRÊT</span>
+                    </article>
                 </div>
 
-                <p id="game-message" class="feedback-message error" role="alert"></p>
+                <section class="room-rules-panel" aria-label="Règles de la salle">
+                    <div class="room-rules-summary">
+                        <span>RÈGLES ACTUELLES</span>
+                        <strong id="room-rules-summary">3 × 3 • BO1 • Sans chrono • Premier à 1</strong>
+                        <small id="room-rules-note">L'hôte peut modifier le plateau, le format et le chrono avant le lancement.</small>
+                    </div>
+
+                    <div class="room-rules">
+                        <label>
+                            <span>PLATEAU</span>
+                            <select id="room-board-size">
+                                <option value="3">3 × 3</option>
+                                <option value="4">4 × 4</option>
+                            </select>
+                        </label>
+                        <label>
+                            <span>FORMAT</span>
+                            <select id="room-best-of">
+                                <option value="1">BO1 • 1 victoire</option>
+                                <option value="3">BO3 • Premier à 2</option>
+                                <option value="5">BO5 • Premier à 3</option>
+                            </select>
+                        </label>
+                        <label>
+                            <span>TEMPS / TOUR</span>
+                            <select id="room-turn-time">
+                                <option value="0">Aucun</option>
+                                <option value="10">10 s</option>
+                                <option value="20">20 s</option>
+                                <option value="30">30 s</option>
+                            </select>
+                        </label>
+                    </div>
+
+                    <p id="room-rules-change" class="room-rules-change" aria-live="polite"></p>
+                </section>
+
+                <p id="waiting-message" class="waiting-message">En attente d'un adversaire...</p>
+                <button id="ready-button" class="primary-action ready-button" type="button">JE SUIS PRÊT</button>
+            </section>
+        </section>
+
+        <!-- Même tirage visuel que les modes local / IA. -->
+        <section id="coin-toss" class="start-toss-overlay" hidden aria-live="polite">
+            <div class="start-toss-card">
+                <span class="start-toss-kicker">TIRAGE AU SORT</span>
+                <h2>Qui commence ?</h2>
+                <p id="coin-toss-subtitle">Le serveur prépare le lancer...</p>
+                <div class="start-coin-scene" aria-hidden="true">
+                    <div id="coin" class="start-coin">
+                        <span class="start-coin-face start-coin-x">X</span>
+                        <span class="start-coin-face start-coin-o">O</span>
+                    </div>
+                </div>
+                <strong id="coin-toss-result" class="start-toss-result">TIRAGE...</strong>
             </div>
         </section>
+
+        <!-- Gameplay en ligne : même structure et mêmes styles que game.html. -->
+        <section id="game" class="game-stage online-game-stage" hidden aria-label="Partie multijoueur en ligne">
+            <div class="match-shell">
+                <div class="match-topbar">
+                    <article class="participant-card participant-one">
+                        <div class="participant-copy">
+                            <span class="participant-role">JOUEUR EN LIGNE</span>
+                            <strong id="player-one-name">Joueur X</strong>
+                        </div>
+                        <span id="player-one-symbol" class="player-symbol symbol-x">X</span>
+                    </article>
+
+                    <div class="match-status">
+                        <span class="status-kicker">MATCH EN LIGNE</span>
+                        <div id="game-status" aria-live="polite">Connexion...</div>
+                        <div class="match-progress-line" aria-live="polite">
+                            <span id="match-round-label">MANCHE 1</span>
+                            <span aria-hidden="true">•</span>
+                            <span id="match-format-label">BO3 • Premier à 2</span>
+                        </div>
+                        <div id="turn-timer" class="turn-timer" hidden aria-live="polite">
+                            <div class="turn-timer-track">
+                                <span id="turn-timer-bar"></span>
+                            </div>
+                            <strong id="turn-timer-value">20 s</strong>
+                        </div>
+                    </div>
+
+                    <article class="participant-card participant-two">
+                        <span id="player-two-symbol" class="player-symbol symbol-o">O</span>
+                        <div class="participant-copy participant-copy-right">
+                            <span class="participant-role">EN LIGNE</span>
+                            <strong id="player-two-name">Joueur O</strong>
+                        </div>
+                    </article>
+                </div>
+
+                <section id="gameplay">
+                    <div class="board-aura" aria-hidden="true"></div>
+                    <div id="game-board" aria-label="Plateau Tic Tac Toe multijoueur"></div>
+                </section>
+
+                <section id="game-result" aria-label="Score du match">
+                    <div class="score-dock">
+                        <div class="score-card score-card-player">
+                            <span id="score-player-one-name" class="score-name">Joueur X · X</span>
+                            <strong id="score-player-one">0</strong>
+                        </div>
+                        <div class="score-card score-card-draw">
+                            <span class="score-name">Matchs nuls</span>
+                            <strong id="score-draw">0</strong>
+                        </div>
+                        <div class="score-card score-card-player">
+                            <span id="score-player-two-name" class="score-name">Joueur O · O</span>
+                            <strong id="score-player-two">0</strong>
+                        </div>
+                    </div>
+
+                    <div class="game-primary-actions">
+                        <button id="restart-button" class="primary-game-action" type="button">↻ Rejouer</button>
+                        <button id="abandon-button" class="danger-game-action" type="button">Abandonner le match</button>
+                    </div>
+                    <div id="end-actions" class="end-actions">
+                        <button id="end-replay-button" type="button">▶ Replay</button>
+                        <button id="end-change-mode-button" type="button">⇄ Changer de mode</button>
+                    </div>
+                </section>
+            </div>
+
+            <section id="replay-panel" class="replay-panel" aria-live="polite">
+                <div class="replay-header">
+                    <div>
+                        <span class="replay-kicker">REPLAY</span>
+                        <h2>Revisionnez la partie</h2>
+                        <p id="replay-action-label">Début de la partie</p>
+                    </div>
+                    <button id="replay-exit-button" class="replay-exit-button" type="button" aria-label="Quitter le replay">×</button>
+                </div>
+                <div class="replay-mode-selector">
+                    <label><input id="replay-mode-action" type="radio" name="replay-mode" value="action" checked><span>Action par action</span></label>
+                    <label><input id="replay-mode-turn" type="radio" name="replay-mode" value="turn"><span>Tour par tour</span></label>
+                </div>
+                <div class="replay-controls">
+                    <button id="replay-start-button" type="button">|&lt; Début</button>
+                    <button id="replay-prev-button" type="button">← Précédent</button>
+                    <strong id="replay-progress">Action 0 / 0</strong>
+                    <button id="replay-next-button" type="button">Suivant →</button>
+                    <button id="replay-end-button" type="button">Fin &gt;|</button>
+                </div>
+                <button id="replay-exit-button-bottom" class="replay-quit-button" type="button">Quitter le replay</button>
+            </section>
+        </section>
+
+        <div id="result-popup" class="popup-overlay" role="dialog" aria-modal="true" aria-labelledby="result-title">
+            <div class="result-effects" aria-hidden="true">
+                <span></span><span></span><span></span><span></span><span></span><span></span>
+                <span></span><span></span><span></span><span></span><span></span><span></span>
+            </div>
+            <div class="popup">
+                <button id="close-result-button" class="popup-close" type="button" aria-label="Fermer le résultat">×</button>
+                <div id="result-icon" class="result-icon">🏆</div>
+                <span id="result-kicker" class="result-kicker">RÉSULTAT DU MATCH</span>
+                <h2 id="result-title">VICTOIRE !</h2>
+                <p id="result-message">Félicitations !</p>
+                <section id="match-summary" class="match-summary-card" hidden aria-label="Résumé du match">
+                    <span>RÉSUMÉ DU MATCH</span>
+                    <div id="match-summary-grid" class="match-summary-grid"></div>
+                </section>
+                <div class="popup-buttons">
+                    <button id="popup-restart-button" class="primary-result-action" type="button">↻ Rejouer</button>
+                    <button id="popup-replay-button" type="button">▶ Replay</button>
+                    <button id="change-mode-button" type="button">⇄ Changer de mode</button>
+                    <button id="home-button" type="button">⌂ Retour à l'accueil</button>
+                </div>
+            </div>
+        </div>
+
+        <p id="game-message" class="feedback-message error floating-game-message" role="alert"></p>
     </main>
 
     <script src="../js/music.js" data-music-src="../Sounds/Super Smash Bros Brawl Music - Final Destination.mp3"></script>
+    <script src="../js/player-data.js"></script>
+    <script src="../js/board-ui.js"></script>
+    <script src="../js/phase-transition.js"></script>
     <script src="/socket.io/socket.io.js"></script>
     <script src="multiplayer.js"></script>
 </body>

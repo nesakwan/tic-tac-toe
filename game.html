@@ -38,6 +38,17 @@
                         <div class="match-status">
                             <span class="status-kicker">MATCH EN COURS</span>
                             <div id="turn-player" aria-live="polite"></div>
+                            <div class="match-progress-line" aria-live="polite">
+                                <span id="match-round-label">MANCHE 1</span>
+                                <span aria-hidden="true">•</span>
+                                <span id="match-format-label">BO3 • Premier à 2</span>
+                            </div>
+                            <div id="turn-timer" class="turn-timer" hidden aria-live="polite">
+                                <div class="turn-timer-track">
+                                    <span id="turn-timer-bar"></span>
+                                </div>
+                                <strong id="turn-timer-value">20 s</strong>
+                            </div>
                         </div>
 
                         <article class="participant-card participant-two">
@@ -82,7 +93,10 @@
                             </div>
                         </div>
 
-                        <button id="restart-button" class="primary-game-action" type="button">↻ Rejouer</button>
+                        <div class="game-primary-actions">
+                            <button id="restart-button" class="primary-game-action" type="button">↻ Rejouer</button>
+                            <button id="abandon-button" class="danger-game-action" type="button">Abandonner le match</button>
+                        </div>
 
                         <div id="end-actions" class="end-actions">
                             <button id="end-replay-button" type="button">▶ Replay</button>
@@ -149,9 +163,14 @@
                 <div class="popup">
                     <button id="close-result-button" class="popup-close" type="button" aria-label="Fermer le résultat">×</button>
                     <div id="result-icon" class="result-icon">🏆</div>
-                    <span class="result-kicker">RÉSULTAT DU MATCH</span>
+                    <span id="result-kicker" class="result-kicker">RÉSULTAT DU MATCH</span>
                     <h2 id="result-title">VICTOIRE !</h2>
                     <p id="result-message">Félicitations !</p>
+
+                    <section id="match-summary" class="match-summary-card" hidden aria-label="Résumé du match">
+                        <span>RÉSUMÉ DU MATCH</span>
+                        <div id="match-summary-grid" class="match-summary-grid"></div>
+                    </section>
 
                     <div class="popup-buttons">
                         <button id="popup-restart-button" class="primary-result-action" type="button">↻ Rejouer</button>
@@ -166,6 +185,9 @@
 
     <script src="js/music.js" data-music-src="Sounds/Super Smash Bros Brawl Music - Final Destination.mp3"></script>
     <script src="js/ai-names.js"></script>
+    <script src="js/player-data.js"></script>
+    <script src="js/board-ui.js"></script>
+    <script src="js/phase-transition.js"></script>
     <script src="js/gamepage.js"></script>
 </body>
 </html>
