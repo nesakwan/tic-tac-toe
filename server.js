@@ -504,7 +504,6 @@ io.on("connection", socket => {
 
         rooms.set(code, room);
         socket.join(code);
-
         socket.data.roomCode = code;
         socket.data.symbol = "X";
 
@@ -519,9 +518,6 @@ io.on("connection", socket => {
         console.log("Room créée :", code, `${boardSize}x${boardSize}`, `BO${bestOf}`);
     });
 
-    // --------------------------------------------------
-    // REJOINDRE UNE SALLE
-    // --------------------------------------------------
     socket.on("joinRoom", payload => {
         const rawCode = typeof payload === "string" ? payload : payload?.code;
         const code = String(rawCode || "").trim().toUpperCase();
@@ -603,8 +599,6 @@ io.on("connection", socket => {
         const room = rooms.get(code);
         if (!room) return socket.emit("resumeFailed", "La partie n'existe plus.");
 
-        // Le symbole est toujours déduit depuis le socket serveur.
-        // On ne fait jamais confiance au symbole envoyé par le navigateur.
         let symbol = null;
         if (room.tokens.X && room.tokens.X === token) symbol = "X";
         if (room.tokens.O && room.tokens.O === token) symbol = "O";
