@@ -2324,10 +2324,10 @@
                 sessionStorage.setItem(PREPARATION_STORAGE_KEY, JSON.stringify(state));
 
                 const returnTarget = state.step === "rules"
-                    ? "rencontre.html?resume=1#step-rules"
+                    ? "../Rencontre/rencontre.html?resume=1#step-rules"
                     : (state.step === "players"
-                        ? "rencontre.html?resume=1#step-players"
-                        : "rencontre.html?resume=1");
+                        ? "../Rencontre/rencontre.html?resume=1#step-players"
+                        : "../Rencontre/rencontre.html?resume=1");
 
                 sessionStorage.setItem(SETTINGS_RETURN_KEY, returnTarget);
             }
