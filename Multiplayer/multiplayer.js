@@ -8,6 +8,7 @@ const ONLINE_NAME_KEY = "tttOnlinePlayerName";
 const ONLINE_SESSION_KEY = "tttOnlineSession";
 const SETTINGS_RETURN_KEY = "tttSettingsReturn";
 
+
 function readJSON(storage, key, fallback = null) {
     const raw = storage.getItem(key);
     if (!raw) return fallback;
@@ -170,6 +171,7 @@ let replayFrames = [];
 let tossSequence = 0;
 let disconnectCountdownTimer = null;
 let turnTimerInterval = null;
+let serverClockOffsetMs = 0; // Décalage entre l'horloge du serveur et celle du client, en millisecondes.
 let currentMatchId = null;
 let currentMatchStartedAt = null;
 let firstStarterSymbol = null;
@@ -291,7 +293,7 @@ if (playerNameInput) {
 playerNameInput?.addEventListener("input", () => {
     const caret = playerNameInput.selectionStart;
     playerNameInput.value = playerNameInput.value.replace(/[<>]/g, "").slice(0, 18);
-    try { playerNameInput.setSelectionRange(caret, caret); } catch (_) {}
+    try { playerNameInput.setSelectionRange(caret, caret); } catch (_) { }
 });
 playerNameInput?.addEventListener("change", savePlayerName);
 roomCodeInput?.addEventListener("input", () => {
@@ -641,25 +643,74 @@ function stopTurnTimerDisplay() {
 }
 
 function syncTurnTimer(deadline = turnDeadline) {
+
     turnDeadline = deadline || null;
+
     stopTurnTimerDisplay();
-    if (!turnDeadline || turnTime <= 0 || currentStatus !== "playing" || gameFinished || matchFinished) return;
+
+    if (
+        !turnDeadline ||
+        turnTime <= 0 ||
+        currentStatus !== "playing" ||
+        gameFinished ||
+        matchFinished
+    ) {
+        return;
+    }
 
     const tick = () => {
-        const remaining = Math.max(0, Number(turnDeadline) - Date.now());
-        const total = turnTime * 1000;
-        const ratio = total > 0 ? Math.max(0, Math.min(1, remaining / total)) : 0;
+
+        const synchronizedNow =
+            Date.now() + serverClockOffsetMs;
+
+        const remaining =
+            Math.max(
+                0,
+                Number(turnDeadline) - synchronizedNow
+            );
+
+        const total =
+            turnTime * 1000;
+
+        const ratio =
+            total > 0
+                ? Math.min(1, remaining / total)
+                : 0;
+
         if (turnTimerElement) {
             turnTimerElement.hidden = false;
-            turnTimerElement.classList.toggle("is-low", remaining <= Math.min(5000, total * .25));
+
+            turnTimerElement.classList.toggle(
+                "is-low",
+                remaining <= Math.min(
+                    5000,
+                    total * 0.25
+                )
+            );
         }
-        if (turnTimerBar) turnTimerBar.style.transform = `scaleX(${ratio})`;
-        if (turnTimerValue) turnTimerValue.textContent = `${Math.max(0, Math.ceil(remaining / 1000))} s`;
-        if (remaining <= 0) stopTurnTimerDisplay();
+
+        if (turnTimerBar) {
+            turnTimerBar.style.transform =
+                `scaleX(${ratio})`;
+        }
+
+        if (turnTimerValue) {
+            turnTimerValue.textContent =
+                `${Math.max(
+                    0,
+                    Math.ceil(remaining / 1000)
+                )} s`;
+        }
+
+        if (remaining <= 0) {
+            stopTurnTimerDisplay();
+        }
     };
 
     tick();
-    turnTimerInterval = setInterval(tick, 100);
+
+    turnTimerInterval =
+        setInterval(tick, 100);
 }
 
 function syncRuntimeState(data) {
@@ -687,20 +738,89 @@ function classifyPing(ms) {
 }
 
 function measureNetworkQuality() {
-    if (!socket?.connected) { setNetworkQuality("RECONNEXION...", "reconnecting"); return; }
-    const started = performance.now();
-    socket.timeout(2500).emit("networkPing", { sentAt: Date.now() }, (error) => {
-        if (error) { setNetworkQuality("INSTABLE", "unstable"); return; }
-        lastPingMs = performance.now() - started;
-        const [label, quality] = classifyPing(lastPingMs);
-        setNetworkQuality(label, quality, lastPingMs);
-    });
+
+    if (!socket?.connected) {
+        setNetworkQuality(
+            "RECONNEXION...",
+            "reconnecting"
+        );
+        return;
+    }
+
+    const sentAt = Date.now();
+
+    socket.timeout(2500).emit(
+        "networkPing",
+        { sentAt },
+        (error, response) => {
+
+            if (error || !response?.serverTime) {
+
+                setNetworkQuality(
+                    "INSTABLE",
+                    "unstable"
+                );
+
+                return;
+            }
+
+            const receivedAt = Date.now();
+
+            const roundTripTime =
+                receivedAt - sentAt;
+
+            const estimatedServerTimeAtReceive =
+                Number(response.serverTime) +
+                roundTripTime / 2;
+
+            serverClockOffsetMs =
+                estimatedServerTimeAtReceive -
+                receivedAt;
+
+            setNetworkQualityFromPing(
+                roundTripTime
+            );
+        }
+    );
 }
 
 function startNetworkMonitoring() {
     if (networkPingTimer) clearInterval(networkPingTimer);
     measureNetworkQuality();
     networkPingTimer = setInterval(measureNetworkQuality, 4000);
+}
+
+function synchronizeServerClock() {
+
+    if (!socket?.connected) {
+        return;
+    }
+
+    const clientSentAt = Date.now();
+
+    socket.timeout(2500).emit(
+        "networkPing",
+        { sentAt: clientSentAt },
+        (error, response) => {
+
+            if (error || !response?.serverTime) {
+                setNetworkQuality("INSTABLE", "unstable");
+                return;
+            }
+
+            const clientReceivedAt = Date.now();
+
+            const roundTripTime =
+                clientReceivedAt - clientSentAt;
+
+            const estimatedClientTimeAtServerResponse =
+                clientSentAt + roundTripTime / 2;
+
+            serverClockOffsetMs =
+                Number(response.serverTime) -
+                estimatedClientTimeAtServerResponse;
+        }
+    );
 }
 
 // =====================================================
@@ -920,7 +1040,7 @@ function recordOnlineMatch(data) {
 
 function formatMatchDuration(ms) {
     const total = Math.max(0, Math.round((Number(ms) || 0) / 1000));
-    return `${String(Math.floor(total / 60)).padStart(2,"0")}:${String(total % 60).padStart(2,"0")}`;
+    return `${String(Math.floor(total / 60)).padStart(2, "0")}:${String(total % 60).padStart(2, "0")}`;
 }
 
 function showMatchSummary(data) {
@@ -942,7 +1062,7 @@ function showMatchSummary(data) {
         ["Manches nulles", String(data?.scores?.draw ?? scores.draw ?? 0)],
         ["Fin du match", reason]
     ];
-    matchSummaryGrid.innerHTML = items.map(([label,value]) => `<div class="match-summary-item"><small>${label}</small><strong>${value}</strong></div>`).join("");
+    matchSummaryGrid.innerHTML = items.map(([label, value]) => `<div class="match-summary-item"><small>${label}</small><strong>${value}</strong></div>`).join("");
     matchSummary.hidden = false;
 }
 
