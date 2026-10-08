@@ -530,14 +530,49 @@ button {
 
 /* Replay */
 .replay-panel {
-    width: min(100%, 720px);
+    width: min(560px, calc(100vw - 48px));
     display: none;
-    margin: 18px auto 0;
+
+    position: fixed;
+    left: 24px;
+    top: 300px;
+
+    margin: 0;
     padding: 20px;
+
     border: 1px solid rgba(67, 91, 124, 0.62);
     border-radius: 18px;
-    background: linear-gradient(180deg, rgba(21, 31, 45, 0.96), rgba(12, 21, 33, 0.97));
-    box-shadow: 0 18px 50px rgba(0, 0, 0, 0.24);
+
+    background: linear-gradient(
+        180deg,
+        rgba(21, 31, 45, 0.97),
+        rgba(12, 21, 33, 0.98)
+    );
+
+    box-shadow: 0 18px 50px rgba(0, 0, 0, 0.35);
+
+    z-index: 1000;
+}
+
+
+@media (max-width: 1525px) {
+
+    .replay-panel {
+        position: relative;
+
+        left: auto;
+        top: auto;
+        right: auto;
+        bottom: auto;
+
+        width: min(560px, 100%);
+        
+        margin: 18px auto 0;
+
+        padding: 20px;
+
+        z-index: 10;
+    }
 }
 
 .replay-header {
@@ -985,6 +1020,7 @@ button {
 
     #gameplay {
         padding-top: 24px;
+        position: relative;
     }
 
     #game-board {
@@ -1471,3 +1507,4 @@ button {
 @media (prefers-reduced-motion: reduce) {
     .cell[data-symbol-style="glitch"], .cell[data-symbol-style="energy"], .player-symbol[data-symbol-style="glitch"], .player-symbol[data-symbol-style="energy"] { animation:none !important; }
 }
+

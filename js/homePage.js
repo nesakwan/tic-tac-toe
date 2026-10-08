@@ -236,7 +236,7 @@
         }));
         sessionStorage.setItem("tttResumeMatch", "1");
         sessionStorage.setItem("tttOpenReplay", "1");
-        location.href = "../game.html";
+        location.href = "Gameplay/game.html";
     }
 
     function openHistory() {
