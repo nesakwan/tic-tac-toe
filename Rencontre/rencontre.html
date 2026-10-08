@@ -80,17 +80,7 @@
 
 
 
-<<<<<<< HEAD
-        <a
-
-            href="../Titre/titre.html"
-
-            class="back-button"
-
-        >
-=======
         <a href="../index.html" class="back-button">
->>>>>>> 76433e302ebc39960f47d726d4d02fabbcf51332
 
 
 
@@ -118,18 +108,8 @@
              PARAMÈTRES
         ====================================================== -->
 
-<<<<<<< HEAD
-        <a
-            href="../Parametres/parametre.html?from=preparation"
-            class="settings-button"
-            id="settings-button"
-            aria-label="Ouvrir les paramètres"
-            title="Paramètres"
-        >
-=======
         <a href="../Parametre/parametre.html?from=preparation" class="settings-button" id="settings-button"
             aria-label="Ouvrir les paramètres" title="Paramètres">
->>>>>>> 76433e302ebc39960f47d726d4d02fabbcf51332
             <svg viewBox="0 0 24 24" aria-hidden="true">
                 <circle cx="12" cy="12" r="3"></circle>
                 <path
@@ -1638,25 +1618,7 @@
 
                     <!-- CONTINUER VERS LES RÈGLES -->
 
-<<<<<<< HEAD
-                        CONTINUER = VALIDATION FINALE
-
-                        Pas d'étape "PRÊT".
-
-                    -->
-
-
-
-                    <a
-
-                        href="../Gameplay/game.html"
-
-                        class="primary-button start-button"
-
-                    >
-=======
                     <a href="#step-rules" class="primary-button rules-continue-button">
->>>>>>> 76433e302ebc39960f47d726d4d02fabbcf51332
 
 
 
@@ -1890,17 +1852,11 @@
                 const state = getPreparationState();
                 sessionStorage.setItem(PREPARATION_STORAGE_KEY, JSON.stringify(state));
 
-<<<<<<< HEAD
-                const returnTarget = state.step === "players"
-                    ? "../Rencontre/rencontre.html#step-players"
-                    : "../Rencontre/rencontre.html";
-=======
                 const returnTarget = state.step === "rules"
                     ? "../Rencontre/rencontre.html?resume=1#step-rules"
                     : (state.step === "players"
                         ? "../Rencontre/rencontre.html?resume=1#step-players"
                         : "../Rencontre/rencontre.html?resume=1");
->>>>>>> 76433e302ebc39960f47d726d4d02fabbcf51332
 
                 sessionStorage.setItem(SETTINGS_RETURN_KEY, returnTarget);
             }
