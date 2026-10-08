@@ -1626,8 +1626,8 @@ function ouvrirParametres() {
     stopperTimerTour({ preserve: true });
     sauvegarderEtatMatch();
     sessionStorage.setItem(RESUME_MATCH_KEY, "1");
-    sessionStorage.setItem(SETTINGS_RETURN_KEY, "../game.html");
-    location.href = "../Parametres/parametre.html?from=game";
+    sessionStorage.setItem(SETTINGS_RETURN_KEY, "../Gameplay/game.html");
+    location.href = "../Parametre/parametre.html?from=game";
 }
 
 function changerMode() {
