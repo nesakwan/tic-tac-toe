@@ -1194,11 +1194,11 @@ function leaveOnlineRoom(destination, { forfeit = true } = {}) {
 }
 function goPreparation() {
     const ok = !currentRoom || matchFinished || currentStatus === "lobby" || typeof confirm !== "function" || confirm("Quitter maintenant abandonnera le match. Continuer ?");
-    if (ok) leaveOnlineRoom("../Akatsuki/rencontre.html", { forfeit: true });
+    if (ok) leaveOnlineRoom("../Rencontre/rencontre.html", { forfeit: true });
 }
 function goHome() {
     const ok = !currentRoom || matchFinished || currentStatus === "lobby" || typeof confirm !== "function" || confirm("Quitter maintenant abandonnera le match. Continuer ?");
-    if (ok) leaveOnlineRoom("../Akatsuki/titre.html", { forfeit: true });
+    if (ok) leaveOnlineRoom("../index.html", { forfeit: true });
 }
 changeModeButton?.addEventListener("click", goPreparation);
 endChangeModeButton?.addEventListener("click", goPreparation);

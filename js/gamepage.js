@@ -1627,7 +1627,7 @@ function ouvrirParametres() {
     sauvegarderEtatMatch();
     sessionStorage.setItem(RESUME_MATCH_KEY, "1");
     sessionStorage.setItem(SETTINGS_RETURN_KEY, "../game.html");
-    location.href = "Akatsuki/parametre.html?from=game";
+    location.href = "../Parametres/parametre.html?from=game";
 }
 
 function changerMode() {
@@ -1635,7 +1635,7 @@ function changerMode() {
     sessionStorage.removeItem(MATCH_STORAGE_KEY);
     sessionStorage.removeItem(RESUME_MATCH_KEY);
     sessionStorage.removeItem(SETTINGS_RETURN_KEY);
-    location.href = "Akatsuki/rencontre.html";
+    location.href = "../Rencontre/rencontre.html";
 }
 
 function quitterVersAccueil() {
@@ -1647,7 +1647,7 @@ function quitterVersAccueil() {
     }
     sessionStorage.removeItem(MATCH_STORAGE_KEY);
     sessionStorage.removeItem(RESUME_MATCH_KEY);
-    location.href = "Akatsuki/titre.html";
+    location.href = "../index.html";
 }
 
 
