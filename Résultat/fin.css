@@ -110,17 +110,13 @@ a {
 
     background:
 
-        radial-gradient(
-            circle at 50% 40%,
+        radial-gradient(circle at 50% 40%,
             rgba(34, 68, 116, 0.18),
-            transparent 42%
-        ),
+            transparent 42%),
 
-        linear-gradient(
-            180deg,
+        linear-gradient(180deg,
             var(--screen-top) 0%,
-            var(--screen-bottom) 100%
-        );
+            var(--screen-bottom) 100%);
 
 }
 
@@ -146,8 +142,7 @@ a {
     justify-content: center;
 
     padding:
-        35px
-        25px;
+        35px 25px;
 
 }
 
@@ -181,10 +176,8 @@ a {
     z-index: 20;
 
     width:
-        min(
-            92vw,
-            560px
-        );
+        min(92vw,
+            560px);
 
     display: flex;
 
@@ -193,53 +186,40 @@ a {
     align-items: center;
 
     padding:
-        44px
-        38px
-        38px;
+        44px 38px 38px;
 
     overflow: hidden;
 
     border:
 
-        1px solid
-        rgba(
-            53,
+        1px solid rgba(53,
             72,
             97,
-            0.46
-        );
+            0.46);
 
     border-radius: 19px;
 
     background:
 
-        rgba(
-            18,
+        rgba(18,
             28,
             41,
-            0.46
-        );
+            0.46);
 
     backdrop-filter:
         blur(5px);
 
     box-shadow:
 
-        0 20px 55px
-        rgba(
+        0 20px 55px rgba(0,
             0,
             0,
-            0,
-            0.18
-        ),
+            0.18),
 
-        inset 0 1px 0
-        rgba(
+        inset 0 1px 0 rgba(255,
             255,
             255,
-            255,
-            0.025
-        );
+            0.025);
 
 }
 
@@ -252,45 +232,31 @@ a {
 
     background:
 
-        radial-gradient(
-            circle at 50% 17%,
-            rgba(
-                255,
+        radial-gradient(circle at 50% 17%,
+            rgba(255,
                 179,
                 56,
-                0.10
-            ),
-            transparent 33%
-        ),
+                0.10),
+            transparent 33%),
 
-        radial-gradient(
-            circle at 30% 50%,
-            rgba(
-                77,
+        radial-gradient(circle at 30% 50%,
+            rgba(77,
                 142,
                 255,
-                0.04
-            ),
-            transparent 40%
-        ),
+                0.04),
+            transparent 40%),
 
-        radial-gradient(
-            circle at 70% 50%,
-            rgba(
-                230,
+        radial-gradient(circle at 70% 50%,
+            rgba(230,
                 106,
                 181,
-                0.04
-            ),
-            transparent 40%
-        ),
+                0.04),
+            transparent 40%),
 
-        rgba(
-            18,
+        rgba(18,
             28,
             41,
-            0.47
-        );
+            0.47);
 
 }
 
@@ -303,34 +269,24 @@ a {
 
     background:
 
-        radial-gradient(
-            circle at 50% 20%,
-            rgba(
-                228,
+        radial-gradient(circle at 50% 20%,
+            rgba(228,
                 88,
                 109,
-                0.08
-            ),
-            transparent 35%
-        ),
+                0.08),
+            transparent 35%),
 
-        radial-gradient(
-            circle at 60% 55%,
-            rgba(
-                117,
+        radial-gradient(circle at 60% 55%,
+            rgba(117,
                 89,
                 244,
-                0.04
-            ),
-            transparent 40%
-        ),
+                0.04),
+            transparent 40%),
 
-        rgba(
-            18,
+        rgba(18,
             28,
             41,
-            0.47
-        );
+            0.47);
 
 }
 
@@ -343,23 +299,17 @@ a {
 
     background:
 
-        radial-gradient(
-            circle at 50% 20%,
-            rgba(
-                130,
+        radial-gradient(circle at 50% 20%,
+            rgba(130,
                 160,
                 200,
-                0.08
-            ),
-            transparent 36%
-        ),
+                0.08),
+            transparent 36%),
 
-        rgba(
-            18,
+        rgba(18,
             28,
             41,
-            0.47
-        );
+            0.47);
 
 }
 
@@ -393,15 +343,10 @@ a {
 
     animation:
 
-        trophyEntrance
-        0.75s
-        cubic-bezier(
-            0.34,
+        trophyEntrance 0.75s cubic-bezier(0.34,
             1.56,
             0.64,
-            1
-        )
-        both;
+            1) both;
 
 }
 
@@ -419,12 +364,10 @@ a {
 
     background:
 
-        rgba(
-            255,
+        rgba(255,
             179,
             56,
-            0.10
-        );
+            0.10);
 
     filter:
         blur(25px);
@@ -443,12 +386,10 @@ a {
 
     fill:
 
-        rgba(
-            255,
+        rgba(255,
             179,
             56,
-            0.13
-        );
+            0.13);
 
     stroke:
         var(--gold);
@@ -460,21 +401,15 @@ a {
 
     filter:
 
-        drop-shadow(
-            0 0 13px
-            rgba(
-                255,
+        drop-shadow(0 0 13px rgba(255,
                 179,
                 56,
-                0.24
-            )
-        );
+                0.24));
 
 }
 
 
-.victory-icon
-.trophy-star {
+.victory-icon .trophy-star {
 
     fill:
         #ffd067;
@@ -495,10 +430,7 @@ a {
 
     animation:
 
-        defeatEntrance
-        0.60s
-        ease-out
-        both;
+        defeatEntrance 0.60s ease-out both;
 
 }
 
@@ -516,12 +448,10 @@ a {
 
     background:
 
-        rgba(
-            228,
+        rgba(228,
             88,
             109,
-            0.07
-        );
+            0.07);
 
     filter:
         blur(24px);
@@ -538,12 +468,10 @@ a {
 
     fill:
 
-        rgba(
-            228,
+        rgba(228,
             88,
             109,
-            0.055
-        );
+            0.055);
 
     stroke:
         var(--red);
@@ -588,16 +516,9 @@ a {
 
     animation:
 
-        drawEntrance
-        0.55s
-        ease-out
-        both,
+        drawEntrance 0.55s ease-out both,
 
-        drawFloat
-        3s
-        ease-in-out
-        0.6s
-        infinite;
+        drawFloat 3s ease-in-out 0.6s infinite;
 
 }
 
@@ -615,12 +536,10 @@ a {
 
     background:
 
-        rgba(
-            130,
+        rgba(130,
             160,
             200,
-            0.08
-        );
+            0.08);
 
     filter:
         blur(25px);
@@ -649,15 +568,10 @@ a {
 
     filter:
 
-        drop-shadow(
-            0 0 10px
-            rgba(
-                108,
+        drop-shadow(0 0 10px rgba(108,
                 154,
                 255,
-                0.10
-            )
-        );
+                0.10));
 
 }
 
@@ -706,11 +620,9 @@ a {
 
     font-size:
 
-        clamp(
-            2rem,
+        clamp(2rem,
             5vw,
-            2.7rem
-        );
+            2.7rem);
 
     font-weight: 850;
 
@@ -719,11 +631,7 @@ a {
 
     animation:
 
-        titleAppear
-        0.4s
-        ease-out
-        0.17s
-        both;
+        titleAppear 0.4s ease-out 0.17s both;
 
 }
 
@@ -739,13 +647,10 @@ a {
 
     text-shadow:
 
-        0 0 16px
-        rgba(
-            77,
+        0 0 16px rgba(77,
             142,
             255,
-            0.34
-        );
+            0.34);
 
 }
 
@@ -760,13 +665,10 @@ a {
 
     text-shadow:
 
-        0 0 16px
-        rgba(
-            230,
+        0 0 16px rgba(230,
             106,
             181,
-            0.32
-        );
+            0.32);
 
 }
 
@@ -782,13 +684,10 @@ a {
 
     text-shadow:
 
-        0 0 18px
-        rgba(
-            228,
+        0 0 18px rgba(228,
             88,
             109,
-            0.08
-        );
+            0.08);
 
 }
 
@@ -811,11 +710,7 @@ a {
 
     animation:
 
-        subtitleAppear
-        0.4s
-        ease-out
-        0.25s
-        both;
+        subtitleAppear 0.4s ease-out 0.25s both;
 
 }
 
@@ -846,10 +741,8 @@ a {
 .replay-button {
 
     width:
-        min(
-            100%,
-            370px
-        );
+        min(100%,
+            370px);
 
     min-height: 66px;
 
@@ -861,18 +754,14 @@ a {
     gap: 10px;
 
     padding:
-        15px
-        24px;
+        15px 24px;
 
     border:
 
-        1px solid
-        rgba(
-            125,
+        1px solid rgba(125,
             174,
             255,
-            0.28
-        );
+            0.28);
 
     border-radius: 14px;
 
@@ -881,29 +770,21 @@ a {
 
     background:
 
-        linear-gradient(
-            135deg,
+        linear-gradient(135deg,
             #438dfb,
-            #5973f6
-        );
+            #5973f6);
 
     box-shadow:
 
-        0 10px 25px
-        rgba(
-            54,
+        0 10px 25px rgba(54,
             105,
             236,
-            0.22
-        ),
+            0.22),
 
-        inset 0 1px 0
-        rgba(
+        inset 0 1px 0 rgba(255,
             255,
             255,
-            255,
-            0.16
-        );
+            0.16);
 
     font-size:
         0.91rem;
@@ -921,11 +802,7 @@ a {
 
     animation:
 
-        buttonAppear
-        0.4s
-        ease-out
-        0.40s
-        both;
+        buttonAppear 0.4s ease-out 0.40s both;
 
 }
 
@@ -958,13 +835,10 @@ a {
 
     box-shadow:
 
-        0 14px 30px
-        rgba(
-            54,
+        0 14px 30px rgba(54,
             105,
             236,
-            0.28
-        );
+            0.28);
 
 }
 
@@ -976,16 +850,13 @@ a {
 .secondary-actions {
 
     width:
-        min(
-            100%,
-            470px
-        );
+        min(100%,
+            470px);
 
     display: grid;
 
     grid-template-columns:
-        1fr
-        1fr;
+        1fr 1fr;
 
     gap: 12px;
 
@@ -1006,13 +877,11 @@ a {
     gap: 8px;
 
     padding:
-        12px
-        15px;
+        12px 15px;
 
     border:
 
-        1px solid
-        var(--border);
+        1px solid var(--border);
 
     border-radius: 11px;
 
@@ -1021,11 +890,9 @@ a {
 
     background:
 
-        linear-gradient(
-            180deg,
+        linear-gradient(180deg,
             #182333,
-            #151f2d
-        );
+            #151f2d);
 
     font-size:
         0.72rem;
@@ -1045,11 +912,7 @@ a {
 
     animation:
 
-        buttonAppear
-        0.4s
-        ease-out
-        0.50s
-        both;
+        buttonAppear 0.4s ease-out 0.50s both;
 
 }
 
@@ -1058,11 +921,7 @@ a {
 
     animation:
 
-        buttonAppear
-        0.4s
-        ease-out
-        0.60s
-        both;
+        buttonAppear 0.4s ease-out 0.60s both;
 
 }
 
@@ -1133,10 +992,7 @@ a {
 
     animation:
 
-        confettiFall
-        3.1s
-        ease-in
-        infinite;
+        confettiFall 3.1s ease-in infinite;
 
 }
 
@@ -1291,10 +1147,7 @@ a {
 
     animation:
 
-        defeatParticleFall
-        3.2s
-        ease-in-out
-        infinite;
+        defeatParticleFall 3.2s ease-in-out infinite;
 
 }
 
@@ -1485,8 +1338,7 @@ a {
 .decor-x::before {
 
     transform:
-        translate(-50%, -50%)
-        rotate(45deg);
+        translate(-50%, -50%) rotate(45deg);
 
 }
 
@@ -1494,8 +1346,7 @@ a {
 .decor-x::after {
 
     transform:
-        translate(-50%, -50%)
-        rotate(-45deg);
+        translate(-50%, -50%) rotate(-45deg);
 
 }
 
@@ -1531,8 +1382,7 @@ a {
 
     border:
 
-        15px solid
-        #442653;
+        15px solid #442653;
 
     border-radius: 50%;
 
@@ -1571,8 +1421,7 @@ a {
         opacity: 0;
 
         transform:
-            scale(0.5)
-            rotate(-5deg);
+            scale(0.5) rotate(-5deg);
 
     }
 
@@ -1581,8 +1430,7 @@ a {
         opacity: 1;
 
         transform:
-            scale(1.12)
-            rotate(5deg);
+            scale(1.12) rotate(5deg);
 
     }
 
@@ -1591,8 +1439,7 @@ a {
         opacity: 1;
 
         transform:
-            scale(1)
-            rotate(0deg);
+            scale(1) rotate(0deg);
 
     }
 
@@ -1606,8 +1453,7 @@ a {
         opacity: 0;
 
         transform:
-            scale(1.1)
-            translateX(0);
+            scale(1.1) translateX(0);
 
     }
 
@@ -1616,8 +1462,7 @@ a {
         opacity: 1;
 
         transform:
-            scale(1)
-            translateX(-4px);
+            scale(1) translateX(-4px);
 
     }
 
@@ -1782,8 +1627,7 @@ a {
         opacity: 0;
 
         transform:
-            translateY(-30px)
-            rotate(0deg);
+            translateY(-30px) rotate(0deg);
 
     }
 
@@ -1804,8 +1648,7 @@ a {
         opacity: 0;
 
         transform:
-            translateY(500px)
-            rotate(420deg);
+            translateY(500px) rotate(420deg);
 
     }
 
@@ -1819,8 +1662,7 @@ a {
         opacity: 0;
 
         transform:
-            translateY(-10px)
-            rotate(0deg);
+            translateY(-10px) rotate(0deg);
 
     }
 
@@ -1835,8 +1677,7 @@ a {
         opacity: 0;
 
         transform:
-            translateY(240px)
-            rotate(180deg);
+            translateY(240px) rotate(180deg);
 
     }
 
@@ -1852,15 +1693,11 @@ a {
     .result-card {
 
         width:
-            min(
-                94vw,
-                520px
-            );
+            min(94vw,
+                520px);
 
         padding:
-            40px
-            28px
-            32px;
+            40px 28px 32px;
 
     }
 
@@ -1923,8 +1760,7 @@ a {
             100dvh;
 
         padding:
-            25px
-            15px;
+            25px 15px;
 
     }
 
@@ -1934,9 +1770,7 @@ a {
         width: 100%;
 
         padding:
-            35px
-            20px
-            25px;
+            35px 20px 25px;
 
         border-radius:
             16px;
@@ -1975,11 +1809,9 @@ a {
     .result-title {
 
         font-size:
-            clamp(
-                1.7rem,
+            clamp(1.7rem,
                 9vw,
-                2.1rem
-            );
+                2.1rem);
 
     }
 

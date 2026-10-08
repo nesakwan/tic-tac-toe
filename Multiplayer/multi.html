@@ -1,16 +1,21 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Multijoueur - Tic Tac Toe</title>
     <link rel="stylesheet" href="../Gameplay/gamestyle.css">
     <link rel="stylesheet" href="multi.css">
+    <link rel="icon" type="image/x-icon" href="Images/TTTLogo.png">
+
 </head>
+
 <body>
     <main id="multi-app">
         <nav class="multi-nav">
-            <a id="multi-back-button" class="nav-back" href="../Rencontre/rencontre.html" aria-label="Retour à la préparation">
+            <a id="multi-back-button" class="nav-back" href="../Rencontre/rencontre.html"
+                aria-label="Retour à la préparation">
                 <span aria-hidden="true">←</span>
                 <span>Préparation</span>
             </a>
@@ -19,15 +24,19 @@
                 <span>TIC</span> <span>TAC</span> <span>TOE</span>
             </h1>
 
-            <a id="settings-button" class="settings-button" href="../Parametre/parametre.html?from=multiplayer" aria-label="Ouvrir les paramètres" title="Paramètres">
+            <a id="settings-button" class="settings-button" href="../Parametre/parametre.html?from=multiplayer"
+                aria-label="Ouvrir les paramètres" title="Paramètres">
                 <svg viewBox="0 0 24 24" aria-hidden="true">
                     <circle cx="12" cy="12" r="3"></circle>
-                    <path d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06-2.12 2.12-.06-.06a1.7 1.7 0 0 0-1.88-.34 1.7 1.7 0 0 0-1.03 1.55V20.3h-3v-.09a1.7 1.7 0 0 0-1.03-1.55 1.7 1.7 0 0 0-1.88.34l-.06.06-2.12-2.12.06-.06A1.7 1.7 0 0 0 7 15a1.7 1.7 0 0 0-1.55-1.03H5.3v-3h.15A1.7 1.7 0 0 0 7 9.94a1.7 1.7 0 0 0-.34-1.88L6.6 8l2.12-2.12.06.06a1.7 1.7 0 0 0 1.88.34A1.7 1.7 0 0 0 11.69 4.7V4.6h3v.1a1.7 1.7 0 0 0 1.03 1.55 1.7 1.7 0 0 0 1.88-.34l.06-.06L19.8 8l-.06.06a1.7 1.7 0 0 0-.34 1.88 1.7 1.7 0 0 0 1.55 1.03h.15v3h-.15A1.7 1.7 0 0 0 19.4 15Z"></path>
+                    <path
+                        d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06-2.12 2.12-.06-.06a1.7 1.7 0 0 0-1.88-.34 1.7 1.7 0 0 0-1.03 1.55V20.3h-3v-.09a1.7 1.7 0 0 0-1.03-1.55 1.7 1.7 0 0 0-1.88.34l-.06.06-2.12-2.12.06-.06A1.7 1.7 0 0 0 7 15a1.7 1.7 0 0 0-1.55-1.03H5.3v-3h.15A1.7 1.7 0 0 0 7 9.94a1.7 1.7 0 0 0-.34-1.88L6.6 8l2.12-2.12.06.06a1.7 1.7 0 0 0 1.88.34A1.7 1.7 0 0 0 11.69 4.7V4.6h3v.1a1.7 1.7 0 0 0 1.03 1.55 1.7 1.7 0 0 0 1.88-.34l.06-.06L19.8 8l-.06.06a1.7 1.7 0 0 0-.34 1.88 1.7 1.7 0 0 0 1.55 1.03h.15v3h-.15A1.7 1.7 0 0 0 19.4 15Z">
+                    </path>
                 </svg>
             </a>
         </nav>
 
-        <div id="network-quality" class="network-quality" data-quality="connecting" aria-live="polite" title="Latence vers le serveur">
+        <div id="network-quality" class="network-quality" data-quality="connecting" aria-live="polite"
+            title="Latence vers le serveur">
             <span class="network-quality-dot"></span>
             <strong id="network-quality-label">CONNEXION...</strong>
             <small id="network-ping-value">— ms</small>
@@ -58,7 +67,8 @@
                     <small>Ce nom sera affiché à votre adversaire pendant la partie.</small>
                 </div>
 
-                <input id="player-name-input" class="player-name-input" type="text" maxlength="18" autocomplete="nickname" placeholder="Joueur 1" aria-label="Votre nom de joueur">
+                <input id="player-name-input" class="player-name-input" type="text" maxlength="18"
+                    autocomplete="nickname" placeholder="Joueur 1" aria-label="Votre nom de joueur">
             </section>
             <section id="resume-banner" class="resume-banner" hidden>
                 <div>
@@ -105,7 +115,8 @@
                     </div>
                     <div class="join-controls">
                         <label class="sr-only" for="room-code-input">Code de partie</label>
-                        <input id="room-code-input" type="text" maxlength="4" autocomplete="off" spellcheck="false" placeholder="ABCD" aria-label="Code de partie">
+                        <input id="room-code-input" type="text" maxlength="4" autocomplete="off" spellcheck="false"
+                            placeholder="ABCD" aria-label="Code de partie">
                         <button id="join-room" class="secondary-action" type="button">REJOINDRE</button>
                     </div>
                 </article>
@@ -149,7 +160,8 @@
                     <div class="room-rules-summary">
                         <span>RÈGLES ACTUELLES</span>
                         <strong id="room-rules-summary">3 × 3 • BO1 • Sans chrono • Premier à 1</strong>
-                        <small id="room-rules-note">L'hôte peut modifier le plateau, le format et le chrono avant le lancement.</small>
+                        <small id="room-rules-note">L'hôte peut modifier le plateau, le format et le chrono avant le
+                            lancement.</small>
                     </div>
 
                     <div class="room-rules">
@@ -263,7 +275,8 @@
 
                     <div class="game-primary-actions">
                         <button id="restart-button" class="primary-game-action" type="button">↻ Rejouer</button>
-                        <button id="abandon-button" class="danger-game-action" type="button">Abandonner le match</button>
+                        <button id="abandon-button" class="danger-game-action" type="button">Abandonner le
+                            match</button>
                     </div>
                     <div id="end-actions" class="end-actions">
                         <button id="end-replay-button" type="button">▶ Replay</button>
@@ -279,11 +292,14 @@
                         <h2>Revisionnez la partie</h2>
                         <p id="replay-action-label">Début de la partie</p>
                     </div>
-                    <button id="replay-exit-button" class="replay-exit-button" type="button" aria-label="Quitter le replay">×</button>
+                    <button id="replay-exit-button" class="replay-exit-button" type="button"
+                        aria-label="Quitter le replay">×</button>
                 </div>
                 <div class="replay-mode-selector">
-                    <label><input id="replay-mode-action" type="radio" name="replay-mode" value="action" checked><span>Action par action</span></label>
-                    <label><input id="replay-mode-turn" type="radio" name="replay-mode" value="turn"><span>Tour par tour</span></label>
+                    <label><input id="replay-mode-action" type="radio" name="replay-mode" value="action"
+                            checked><span>Action par action</span></label>
+                    <label><input id="replay-mode-turn" type="radio" name="replay-mode" value="turn"><span>Tour par
+                            tour</span></label>
                 </div>
                 <div class="replay-controls">
                     <button id="replay-start-button" type="button">|&lt; Début</button>
@@ -292,7 +308,8 @@
                     <button id="replay-next-button" type="button">Suivant →</button>
                     <button id="replay-end-button" type="button">Fin &gt;|</button>
                 </div>
-                <button id="replay-exit-button-bottom" class="replay-quit-button" type="button">Quitter le replay</button>
+                <button id="replay-exit-button-bottom" class="replay-quit-button" type="button">Quitter le
+                    replay</button>
             </section>
         </section>
 
@@ -302,7 +319,8 @@
                 <span></span><span></span><span></span><span></span><span></span><span></span>
             </div>
             <div class="popup">
-                <button id="close-result-button" class="popup-close" type="button" aria-label="Fermer le résultat">×</button>
+                <button id="close-result-button" class="popup-close" type="button"
+                    aria-label="Fermer le résultat">×</button>
                 <div id="result-icon" class="result-icon">🏆</div>
                 <span id="result-kicker" class="result-kicker">RÉSULTAT DU MATCH</span>
                 <h2 id="result-title">VICTOIRE !</h2>
@@ -323,11 +341,13 @@
         <p id="game-message" class="feedback-message error floating-game-message" role="alert"></p>
     </main>
 
-    <script src="../js/music.js" data-music-src="../Sounds/Super Smash Bros Brawl Music - Final Destination.mp3"></script>
+    <script src="../js/music.js"
+        data-music-src="../Sounds/Super Smash Bros Brawl Music - Final Destination.mp3"></script>
     <script src="../js/player-data.js"></script>
     <script src="../js/board-ui.js"></script>
     <script src="../js/phase-transition.js"></script>
     <script src="/socket.io/socket.io.js"></script>
     <script src="multiplayer.js"></script>
 </body>
+
 </html>

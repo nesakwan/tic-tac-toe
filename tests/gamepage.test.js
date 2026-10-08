@@ -141,13 +141,13 @@ function loadGame(preparationState, options = {}) {
         window: {},
         sessionStorage,
         localStorage,
-        console: { log() {}, warn() {}, error() {} },
+        console: { log() { }, warn() { }, error() { } },
         Math,
         setTimeout(callback) {
             callback();
             return 1;
         },
-        clearTimeout() {},
+        clearTimeout() { },
         location: { href: '', search: options.locationSearch || '' }
     };
 

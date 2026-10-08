@@ -228,13 +228,13 @@ select {
     transition: transform 0.2s ease;
 }
 
-.switch input:checked + .switch-slider {
+.switch input:checked+.switch-slider {
     border-color: rgba(108, 154, 255, 0.32);
     background: linear-gradient(135deg, #438dfb, #5973f6);
     box-shadow: 0 0 15px rgba(77, 142, 255, 0.18);
 }
 
-.switch input:checked + .switch-slider::before {
+.switch input:checked+.switch-slider::before {
     transform: translateX(22px);
 }
 
@@ -299,13 +299,11 @@ select {
     border-radius: 999px;
     outline: 0;
     cursor: pointer;
-    background: linear-gradient(
-        to right,
-        var(--blue) 0%,
-        var(--blue) var(--volume-progress),
-        #263449 var(--volume-progress),
-        #263449 100%
-    );
+    background: linear-gradient(to right,
+            var(--blue) 0%,
+            var(--blue) var(--volume-progress),
+            #263449 var(--volume-progress),
+            #263449 100%);
 }
 
 .volume-slider:disabled {
@@ -506,7 +504,10 @@ select {
 }
 
 @media (prefers-reduced-motion: reduce) {
-    *, *::before, *::after {
+
+    *,
+    *::before,
+    *::after {
         transition-duration: 0.01ms !important;
         animation-duration: 0.01ms !important;
     }

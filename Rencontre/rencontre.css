@@ -226,11 +226,7 @@ a {
 
     padding:
 
-        70px
-
-        30px
-
-        50px;
+        70px 30px 50px;
 
 
 
@@ -238,51 +234,33 @@ a {
 
 
 
-        radial-gradient(
-
-            circle at 50% 35%,
+        radial-gradient(circle at 50% 35%,
 
             rgba(34, 68, 116, 0.20),
 
-            transparent 42%
-
-        ),
+            transparent 42%),
 
 
 
-        radial-gradient(
-
-            circle at 20% 90%,
+        radial-gradient(circle at 20% 90%,
 
             rgba(28, 52, 91, 0.10),
 
-            transparent 35%
-
-        ),
+            transparent 35%),
 
 
 
-        linear-gradient(
-
-            180deg,
+        linear-gradient(180deg,
 
             var(--screen-top) 0%,
 
-            var(--screen-bottom) 100%
-
-        );
+            var(--screen-bottom) 100%);
 
 
 
     animation:
 
-        screenAppear
-
-        0.35s
-
-        ease-out
-
-        both;
+        screenAppear 0.35s ease-out both;
 
 
 
@@ -472,7 +450,9 @@ a {
     transform: translateY(-1px);
 }
 
-.settings-button:hover svg { transform: rotate(25deg); }
+.settings-button:hover svg {
+    transform: rotate(25deg);
+}
 
 .settings-button:focus-visible {
     outline: 3px solid rgba(108, 154, 255, 0.28);
@@ -552,15 +532,11 @@ a {
 
     font-size:
 
-        clamp(
-
-            2rem,
+        clamp(2rem,
 
             3.5vw,
 
-            2.7rem
-
-        );
+            2.7rem);
 
 
 
@@ -638,9 +614,7 @@ a {
 
     margin:
 
-        0 auto
-
-        35px;
+        0 auto 35px;
 
 
 
@@ -710,9 +684,7 @@ a {
 
     border:
 
-        1px solid
-
-        var(--border-light);
+        1px solid var(--border-light);
 
 
 
@@ -782,15 +754,11 @@ a {
 
     width:
 
-        clamp(
-
-            90px,
+        clamp(90px,
 
             15vw,
 
-            170px
-
-        );
+            170px);
 
 
 
@@ -800,9 +768,7 @@ a {
 
     margin:
 
-        0 5px
-
-        25px;
+        0 5px 25px;
 
 
 
@@ -838,9 +804,7 @@ a {
 
 
 
-.progress-mode
-
-.progress-circle {
+.progress-mode .progress-circle {
 
 
 
@@ -860,15 +824,11 @@ a {
 
 
 
-        linear-gradient(
-
-            135deg,
+        linear-gradient(135deg,
 
             #438dfb,
 
-            #5973f6
-
-        );
+            #5973f6);
 
 
 
@@ -876,9 +836,7 @@ a {
 
 
 
-        0 0 16px
-
-        rgba(77, 142, 255, 0.22);
+        0 0 16px rgba(77, 142, 255, 0.22);
 
 
 
@@ -896,9 +854,7 @@ a {
 
 
 
-.preparation-container:has(#step-players:target)
-
-.progress-mode {
+.preparation-container:has(#step-players:target) .progress-mode {
 
 
 
@@ -914,11 +870,7 @@ a {
 
 
 
-.preparation-container:has(#step-players:target)
-
-.progress-mode
-
-.progress-circle {
+.preparation-container:has(#step-players:target) .progress-mode .progress-circle {
 
 
 
@@ -946,11 +898,7 @@ a {
 
 
 
-.preparation-container:has(#step-players:target)
-
-.progress-mode
-
-.progress-circle::before {
+.preparation-container:has(#step-players:target) .progress-mode .progress-circle::before {
 
 
 
@@ -966,11 +914,7 @@ a {
 
 
 
-.preparation-container:has(#step-players:target)
-
-.progress-mode
-
-.progress-circle {
+.preparation-container:has(#step-players:target) .progress-mode .progress-circle {
 
 
 
@@ -984,11 +928,7 @@ a {
 
 
 
-.preparation-container:has(#step-players:target)
-
-.progress-mode
-
-.progress-circle::before {
+.preparation-container:has(#step-players:target) .progress-mode .progress-circle::before {
 
 
 
@@ -1004,9 +944,7 @@ a {
 
 
 
-.preparation-container:has(#step-players:target)
-
-.progress-players {
+.preparation-container:has(#step-players:target) .progress-players {
 
 
 
@@ -1022,11 +960,7 @@ a {
 
 
 
-.preparation-container:has(#step-players:target)
-
-.progress-players
-
-.progress-circle {
+.preparation-container:has(#step-players:target) .progress-players .progress-circle {
 
 
 
@@ -1046,15 +980,11 @@ a {
 
 
 
-        linear-gradient(
-
-            135deg,
+        linear-gradient(135deg,
 
             #438dfb,
 
-            #5973f6
-
-        );
+            #5973f6);
 
 
 
@@ -1062,9 +992,7 @@ a {
 
 
 
-        0 0 16px
-
-        rgba(77, 142, 255, 0.22);
+        0 0 16px rgba(77, 142, 255, 0.22);
 
 
 
@@ -1092,13 +1020,7 @@ a {
 
     animation:
 
-        stepAppear
-
-        0.32s
-
-        ease-out
-
-        both;
+        stepAppear 0.32s ease-out both;
 
 
 
@@ -1148,9 +1070,7 @@ a {
 
 
 
-.preparation-container:has(#step-players:target)
-
-#step-mode {
+.preparation-container:has(#step-players:target) #step-mode {
 
 
 
@@ -1228,9 +1148,7 @@ a {
 
 
 
-        1px solid
-
-        rgba(77, 142, 255, 0.18);
+        1px solid rgba(77, 142, 255, 0.18);
 
 
 
@@ -1290,15 +1208,11 @@ a {
 
 
 
-        clamp(
-
-            1.5rem,
+        clamp(1.5rem,
 
             2.8vw,
 
-            2rem
-
-        );
+            2rem);
 
 
 
@@ -1411,7 +1325,7 @@ a {
 
 
 
-.mode-card > input {
+.mode-card>input {
 
 
 
@@ -1499,9 +1413,7 @@ a {
 
     border:
 
-        1px solid
-
-        var(--border-light);
+        1px solid var(--border-light);
 
 
 
@@ -1515,27 +1427,19 @@ a {
 
 
 
-        radial-gradient(
-
-            circle at 50% 15%,
+        radial-gradient(circle at 50% 15%,
 
             rgba(77, 142, 255, 0.05),
 
-            transparent 40%
-
-        ),
+            transparent 40%),
 
 
 
-        linear-gradient(
-
-            180deg,
+        linear-gradient(180deg,
 
             #182333,
 
-            #121c29
-
-        );
+            #121c29);
 
 
 
@@ -1557,9 +1461,7 @@ a {
 
 
 
-.mode-card:hover
-
-.mode-card-content {
+.mode-card:hover .mode-card-content {
 
 
 
@@ -1585,9 +1487,7 @@ a {
 
 
 
-.mode-card:has(input:checked)
-
-.mode-card-content {
+.mode-card:has(input:checked) .mode-card-content {
 
 
 
@@ -1599,9 +1499,7 @@ a {
 
     border:
 
-        2px solid
-
-        var(--blue);
+        2px solid var(--blue);
 
 
 
@@ -1609,27 +1507,19 @@ a {
 
 
 
-        radial-gradient(
-
-            circle at 50% 15%,
+        radial-gradient(circle at 50% 15%,
 
             rgba(77, 142, 255, 0.12),
 
-            transparent 47%
-
-        ),
+            transparent 47%),
 
 
 
-        linear-gradient(
-
-            180deg,
+        linear-gradient(180deg,
 
             #192a43,
 
-            #121d2c
-
-        );
+            #121d2c);
 
 
 
@@ -1637,9 +1527,7 @@ a {
 
 
 
-        0 0 22px
-
-        rgba(77, 142, 255, 0.14);
+        0 0 22px rgba(77, 142, 255, 0.14);
 
 
 
@@ -1691,9 +1579,7 @@ a {
 
     border:
 
-        1px solid
-
-        #354861;
+        1px solid #354861;
 
 
 
@@ -1783,9 +1669,7 @@ a {
 
 
 
-.mode-card:has(input:checked)
-
-.selection-indicator {
+.mode-card:has(input:checked) .selection-indicator {
 
 
 
@@ -2092,9 +1976,7 @@ a {
 
 
 
-        1px solid
-
-        rgba(80, 109, 149, 0.17);
+        1px solid rgba(80, 109, 149, 0.17);
 
 
 
@@ -2114,13 +1996,7 @@ a {
 
     animation:
 
-        difficultyAppear
-
-        0.28s
-
-        ease-out
-
-        both;
+        difficultyAppear 0.28s ease-out both;
 
 
 
@@ -2324,9 +2200,7 @@ body:has(#mode-ai:checked) .difficulty-area {
 
     border:
 
-        1px solid
-
-        var(--border);
+        1px solid var(--border);
 
 
 
@@ -2398,9 +2272,7 @@ body:has(#mode-ai:checked) .difficulty-area {
 
 
 
-.difficulty-choice.easy
-
-input:checked + span {
+.difficulty-choice.easy input:checked+span {
 
 
 
@@ -2432,9 +2304,7 @@ input:checked + span {
 
 
 
-.difficulty-choice.normal
-
-input:checked + span {
+.difficulty-choice.normal input:checked+span {
 
 
 
@@ -2454,15 +2324,11 @@ input:checked + span {
 
 
 
-        linear-gradient(
-
-            135deg,
+        linear-gradient(135deg,
 
             #438dfb,
 
-            #5973f6
-
-        );
+            #5973f6);
 
 
 
@@ -2476,9 +2342,7 @@ input:checked + span {
 
 
 
-.difficulty-choice.hard
-
-input:checked + span {
+.difficulty-choice.hard input:checked+span {
 
 
 
@@ -2498,15 +2362,11 @@ input:checked + span {
 
 
 
-        linear-gradient(
-
-            135deg,
+        linear-gradient(135deg,
 
             #5e63d9,
 
-            #7559f4
-
-        );
+            #7559f4);
 
 
 
@@ -2520,9 +2380,7 @@ input:checked + span {
 
 
 
-.difficulty-choice.god
-
-input:checked + span {
+.difficulty-choice.god input:checked+span {
 
 
 
@@ -2542,17 +2400,13 @@ input:checked + span {
 
 
 
-        linear-gradient(
-
-            135deg,
+        linear-gradient(135deg,
 
             #7559f4,
 
             #e66ab5,
 
-            #ff9a47
-
-        );
+            #ff9a47);
 
 
 
@@ -2560,9 +2414,7 @@ input:checked + span {
 
 
 
-        0 0 16px
-
-        rgba(230, 106, 181, 0.17);
+        0 0 16px rgba(230, 106, 181, 0.17);
 
 
 
@@ -2654,13 +2506,7 @@ input:checked + span {
 
 
 
-body:has(
-
-    .difficulty-choice.easy input:checked
-
-)
-
-.description-easy {
+body:has(.difficulty-choice.easy input:checked) .description-easy {
 
 
 
@@ -2676,13 +2522,7 @@ body:has(
 
 
 
-body:has(
-
-    .difficulty-choice.normal input:checked
-
-)
-
-.description-normal {
+body:has(.difficulty-choice.normal input:checked) .description-normal {
 
 
 
@@ -2698,13 +2538,7 @@ body:has(
 
 
 
-body:has(
-
-    .difficulty-choice.hard input:checked
-
-)
-
-.description-hard {
+body:has(.difficulty-choice.hard input:checked) .description-hard {
 
 
 
@@ -2720,13 +2554,7 @@ body:has(
 
 
 
-body:has(
-
-    .difficulty-choice.god input:checked
-
-)
-
-.description-god {
+body:has(.difficulty-choice.god input:checked) .description-god {
 
 
 
@@ -2840,9 +2668,7 @@ body:has(
 
 
 
-        1px solid
-
-        rgba(125, 174, 255, 0.26);
+        1px solid rgba(125, 174, 255, 0.26);
 
 
 
@@ -2862,15 +2688,11 @@ body:has(
 
 
 
-        linear-gradient(
-
-            135deg,
+        linear-gradient(135deg,
 
             #438dfb,
 
-            #5973f6
-
-        );
+            #5973f6);
 
 
 
@@ -2878,9 +2700,7 @@ body:has(
 
 
 
-        0 9px 22px
-
-        rgba(54, 105, 236, 0.18);
+        0 9px 22px rgba(54, 105, 236, 0.18);
 
 
 
@@ -3008,13 +2828,7 @@ body:has(
 
 
 
-body:has(
-
-    input[name="game-mode"]:checked
-
-)
-
-.continue-button {
+body:has(input[name="game-mode"]:checked) .continue-button {
 
 
 
@@ -3132,9 +2946,7 @@ body:has(
 
     border:
 
-        1px solid
-
-        var(--border-light);
+        1px solid var(--border-light);
 
 
 
@@ -3148,27 +2960,19 @@ body:has(
 
 
 
-        radial-gradient(
-
-            circle at 50% 20%,
+        radial-gradient(circle at 50% 20%,
 
             rgba(77, 142, 255, 0.05),
 
-            transparent 40%
-
-        ),
+            transparent 40%),
 
 
 
-        linear-gradient(
-
-            180deg,
+        linear-gradient(180deg,
 
             #182333,
 
-            #121c29
-
-        );
+            #121c29);
 
 
 
@@ -3390,9 +3194,7 @@ body:has(
 
     border:
 
-        1px solid
-
-        var(--border);
+        1px solid var(--border);
 
 
 
@@ -3446,9 +3248,7 @@ body:has(
 
 
 
-        0 0 0 3px
-
-        rgba(77, 142, 255, 0.08);
+        0 0 0 3px rgba(77, 142, 255, 0.08);
 
 
 
@@ -3528,9 +3328,7 @@ body:has(
 
 
 
-        1px solid
-
-        rgba(82, 108, 145, 0.18);
+        1px solid rgba(82, 108, 145, 0.18);
 
 
 
@@ -3700,9 +3498,7 @@ body:has(
 
     border:
 
-        1px solid
-
-        var(--border);
+        1px solid var(--border);
 
 
 
@@ -3784,9 +3580,7 @@ body:has(
 
 
 
-.mini-x
-
-input:checked + span {
+.mini-x input:checked+span {
 
 
 
@@ -3806,15 +3600,11 @@ input:checked + span {
 
 
 
-        linear-gradient(
-
-            135deg,
+        linear-gradient(135deg,
 
             #377eea,
 
-            #596df4
-
-        );
+            #596df4);
 
 
 
@@ -3822,9 +3612,7 @@ input:checked + span {
 
 
 
-        0 0 15px
-
-        rgba(77, 142, 255, 0.13);
+        0 0 15px rgba(77, 142, 255, 0.13);
 
 
 
@@ -3854,9 +3642,7 @@ input:checked + span {
 
 
 
-.mini-o
-
-input:checked + span {
+.mini-o input:checked+span {
 
 
 
@@ -3876,15 +3662,11 @@ input:checked + span {
 
 
 
-        linear-gradient(
-
-            135deg,
+        linear-gradient(135deg,
 
             #bd569c,
 
-            #e66ab5
-
-        );
+            #e66ab5);
 
 
 
@@ -3892,9 +3674,7 @@ input:checked + span {
 
 
 
-        0 0 15px
-
-        rgba(230, 106, 181, 0.13);
+        0 0 15px rgba(230, 106, 181, 0.13);
 
 
 
@@ -4010,6 +3790,7 @@ body:has(#mode-ai:checked) .players-ai {
         opacity: 0;
         transform: translateY(4px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -4120,9 +3901,7 @@ body:has(#mode-ai:checked) .players-ai {
 
 
 
-        1px solid
-
-        rgba(82, 108, 145, 0.18);
+        1px solid rgba(82, 108, 145, 0.18);
 
 
 
@@ -4278,9 +4057,7 @@ body:has(#mode-ai:checked) .players-ai {
 
     border:
 
-        1px solid
-
-        var(--border);
+        1px solid var(--border);
 
 
 
@@ -4534,9 +4311,7 @@ body:has(#mode-ai:checked) .players-ai {
 
     transform:
 
-        translate(-50%, -50%)
-
-        rotate(45deg);
+        translate(-50%, -50%) rotate(45deg);
 
 
 
@@ -4552,9 +4327,7 @@ body:has(#mode-ai:checked) .players-ai {
 
     transform:
 
-        translate(-50%, -50%)
-
-        rotate(-45deg);
+        translate(-50%, -50%) rotate(-45deg);
 
 
 
@@ -4670,9 +4443,7 @@ body:has(#mode-ai:checked) .players-ai {
 
     border:
 
-        15px solid
-
-        #442653;
+        15px solid #442653;
 
 
 
@@ -4920,11 +4691,7 @@ body:has(#mode-ai:checked) .players-ai {
 
         padding:
 
-            75px
-
-            20px
-
-            40px;
+            75px 20px 40px;
 
 
 
@@ -5012,11 +4779,7 @@ body:has(#mode-ai:checked) .players-ai {
 
         padding:
 
-            80px
-
-            15px
-
-            35px;
+            80px 15px 35px;
 
 
 
@@ -5443,7 +5206,7 @@ body:has(#mode-ai:checked) .players-ai {
     pointer-events: none;
 }
 
-.board-size-choice > span {
+.board-size-choice>span {
     min-width: 126px;
     min-height: 64px;
     display: flex;
@@ -5468,18 +5231,18 @@ body:has(#mode-ai:checked) .players-ai {
     font-size: 0.67rem;
 }
 
-.board-size-choice:hover > span {
+.board-size-choice:hover>span {
     transform: translateY(-1px);
     border-color: rgba(108, 154, 255, .55);
 }
 
-.board-size-choice input:checked + span {
+.board-size-choice input:checked+span {
     border-color: var(--blue);
     background: linear-gradient(180deg, rgba(77, 142, 255, .16), rgba(18, 29, 43, .96));
     box-shadow: 0 0 0 2px rgba(77, 142, 255, .08), 0 0 22px rgba(77, 142, 255, .08);
 }
 
-.board-size-choice input:checked + span small {
+.board-size-choice input:checked+span small {
     color: #9fbfff;
 }
 
@@ -5500,7 +5263,7 @@ body:has(#mode-ai:checked) .players-ai {
         grid-template-columns: 1fr;
     }
 
-    .board-size-choice > span {
+    .board-size-choice>span {
         min-width: 0;
     }
 }
@@ -5518,15 +5281,25 @@ body:has(#mode-ai:checked) .players-ai {
     padding: 20px 22px;
     border: 1px solid var(--border);
     border-radius: 16px;
-    background: linear-gradient(180deg, rgba(24,35,51,.88), rgba(18,28,41,.88));
+    background: linear-gradient(180deg, rgba(24, 35, 51, .88), rgba(18, 28, 41, .88));
 }
+
 .match-format-options {
     display: grid;
     grid-template-columns: repeat(3, minmax(86px, 1fr));
     gap: 10px;
 }
-.match-format-choice { cursor: pointer; }
-.match-format-choice input { position: absolute; opacity: 0; pointer-events: none; }
+
+.match-format-choice {
+    cursor: pointer;
+}
+
+.match-format-choice input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
 .match-format-choice span {
     min-height: 72px;
     display: flex;
@@ -5541,16 +5314,32 @@ body:has(#mode-ai:checked) .players-ai {
     color: var(--text-primary);
     transition: .2s ease;
 }
-.match-format-choice strong { font-size: 1rem; letter-spacing: .04em; }
-.match-format-choice small { color: var(--text-secondary); font-size: .72rem; }
-.match-format-choice:hover span { transform: translateY(-2px); border-color: rgba(108,154,255,.7); }
-.match-format-choice input:checked + span {
-    border-color: var(--blue);
-    background: linear-gradient(135deg, rgba(77,142,255,.22), rgba(117,89,244,.12));
-    box-shadow: 0 0 18px rgba(77,142,255,.12);
+
+.match-format-choice strong {
+    font-size: 1rem;
+    letter-spacing: .04em;
 }
+
+.match-format-choice small {
+    color: var(--text-secondary);
+    font-size: .72rem;
+}
+
+.match-format-choice:hover span {
+    transform: translateY(-2px);
+    border-color: rgba(108, 154, 255, .7);
+}
+
+.match-format-choice input:checked+span {
+    border-color: var(--blue);
+    background: linear-gradient(135deg, rgba(77, 142, 255, .22), rgba(117, 89, 244, .12));
+    box-shadow: 0 0 18px rgba(77, 142, 255, .12);
+}
+
 @media (max-width: 760px) {
-    .match-format-area { grid-template-columns: 1fr; }
+    .match-format-area {
+        grid-template-columns: 1fr;
+    }
 }
 
 /* =========================================================
@@ -5564,26 +5353,55 @@ body:has(#mode-ai:checked) .players-ai {
     align-items: center;
     justify-content: space-between;
     gap: 16px;
-    border: 1px solid rgba(77,142,255,.30);
+    border: 1px solid rgba(77, 142, 255, .30);
     border-radius: 14px;
-    background: rgba(18,31,47,.88);
+    background: rgba(18, 31, 47, .88);
 }
-.online-resume-banner > div:first-child { display:flex; flex-direction:column; gap:4px; }
-.online-resume-banner span { color: var(--blue-light); font-size:.66rem; font-weight:850; letter-spacing:.12em; }
-.online-resume-banner strong { color:var(--text-primary); font-size:.88rem; }
-.online-resume-actions { display:flex; gap:8px; }
+
+.online-resume-banner>div:first-child {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.online-resume-banner span {
+    color: var(--blue-light);
+    font-size: .66rem;
+    font-weight: 850;
+    letter-spacing: .12em;
+}
+
+.online-resume-banner strong {
+    color: var(--text-primary);
+    font-size: .88rem;
+}
+
+.online-resume-actions {
+    display: flex;
+    gap: 8px;
+}
+
 .online-resume-actions a {
-    padding:9px 12px;
-    border:1px solid var(--border-light);
-    border-radius:9px;
-    color:#e6ebf2;
-    background:#172438;
-    font-size:.72rem;
-    font-weight:850;
+    padding: 9px 12px;
+    border: 1px solid var(--border-light);
+    border-radius: 9px;
+    color: #e6ebf2;
+    background: #172438;
+    font-size: .72rem;
+    font-weight: 850;
 }
-.online-resume-actions a.danger { color:#f2a4b0; border-color:rgba(228,88,109,.35); background:rgba(228,88,109,.08); }
+
+.online-resume-actions a.danger {
+    color: #f2a4b0;
+    border-color: rgba(228, 88, 109, .35);
+    background: rgba(228, 88, 109, .08);
+}
+
 @media (max-width: 680px) {
-    .online-resume-banner { flex-direction:column; text-align:center; }
+    .online-resume-banner {
+        flex-direction: column;
+        text-align: center;
+    }
 }
 
 
@@ -5661,15 +5479,26 @@ body:has(#mode-ai:checked) .players-ai {
     padding: 20px 22px;
     border: 1px solid var(--border);
     border-radius: 16px;
-    background: linear-gradient(180deg, rgba(24,35,51,.88), rgba(18,28,41,.88));
+    background: linear-gradient(180deg, rgba(24, 35, 51, .88), rgba(18, 28, 41, .88));
 }
+
 .turn-time-options {
     display: grid;
     grid-template-columns: repeat(4, minmax(74px, 1fr));
     gap: 10px;
 }
-.turn-time-choice { position: relative; cursor: pointer; }
-.turn-time-choice input { position: absolute; opacity: 0; pointer-events: none; }
+
+.turn-time-choice {
+    position: relative;
+    cursor: pointer;
+}
+
+.turn-time-choice input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
 .turn-time-choice span {
     min-height: 72px;
     display: flex;
@@ -5684,21 +5513,47 @@ body:has(#mode-ai:checked) .players-ai {
     color: var(--text-primary);
     transition: .2s ease;
 }
-.turn-time-choice strong { font-size: .96rem; }
-.turn-time-choice small { color: var(--text-secondary); font-size: .68rem; }
-.turn-time-choice:hover span { transform: translateY(-2px); border-color: rgba(108,154,255,.7); }
-.turn-time-choice input:checked + span {
+
+.turn-time-choice strong {
+    font-size: .96rem;
+}
+
+.turn-time-choice small {
+    color: var(--text-secondary);
+    font-size: .68rem;
+}
+
+.turn-time-choice:hover span {
+    transform: translateY(-2px);
+    border-color: rgba(108, 154, 255, .7);
+}
+
+.turn-time-choice input:checked+span {
     border-color: var(--blue);
-    background: linear-gradient(135deg, rgba(77,142,255,.22), rgba(117,89,244,.12));
-    box-shadow: 0 0 18px rgba(77,142,255,.12);
+    background: linear-gradient(135deg, rgba(77, 142, 255, .22), rgba(117, 89, 244, .12));
+    box-shadow: 0 0 18px rgba(77, 142, 255, .12);
 }
-#step-rules .turn-time-area { margin-left: auto; margin-right: auto; }
+
+#step-rules .turn-time-area {
+    margin-left: auto;
+    margin-right: auto;
+}
+
 @media (max-width: 820px) {
-    .turn-time-area { grid-template-columns: 1fr; }
+    .turn-time-area {
+        grid-template-columns: 1fr;
+    }
 }
+
 @media (max-width: 560px) {
-    .turn-time-options { grid-template-columns: repeat(2, 1fr); }
+    .turn-time-options {
+        grid-template-columns: repeat(2, 1fr);
+    }
 }
 
 
-@media (max-width: 760px) { .mode-cards { grid-template-columns: 1fr; } }
+@media (max-width: 760px) {
+    .mode-cards {
+        grid-template-columns: 1fr;
+    }
+}
