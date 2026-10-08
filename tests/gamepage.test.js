@@ -141,13 +141,13 @@ function loadGame(preparationState, options = {}) {
         window: {},
         sessionStorage,
         localStorage,
-        console: { log() {}, warn() {}, error() {} },
+        console: { log() { }, warn() { }, error() { } },
         Math,
         setTimeout(callback) {
             callback();
             return 1;
         },
-        clearTimeout() {},
+        clearTimeout() { },
         location: { href: '', search: options.locationSearch || '' }
     };
 
@@ -530,7 +530,7 @@ test('ouvrir les paramètres sauvegarde le match courant et prépare le retour e
     assert.equal(saved.moveHistory.length, 2);
     assert.equal(game.sessionStorage.getItem('tttResumeMatch'), '1');
     assert.equal(game.sessionStorage.getItem('tttSettingsReturn'), '../game.html');
-    assert.equal(game.context.location.href, 'Parametres/parametre.html?from=game');
+    assert.equal(game.context.location.href, 'Parametre/parametre.html?from=game');
 });
 
 test('le retour des paramètres restaure grille, tour, historique et scores', () => {
@@ -596,7 +596,7 @@ test('changer de mode efface aussi l état du match sans toucher aux paramètres
 
 test('la page paramètres ne contient plus thème, mode sombre ni symbole par défaut', () => {
     const html = fs.readFileSync(
-        path.join(__dirname, '..', 'Parametres', 'parametre.html'),
+        path.join(__dirname, '..', 'Parametre', 'parametre.html'),
         'utf8'
     );
 

@@ -93,7 +93,7 @@ function loadMusic({ settings, ownerId = null, hasFocus = true } = {}) {
         localStorage,
         sessionStorage,
         Audio: FakeAudio,
-        console: { warn() {}, log() {}, error() {} },
+        console: { warn() { }, log() { }, error() { } },
         Date,
         Math,
         crypto: { randomUUID: () => 'tab-1' },

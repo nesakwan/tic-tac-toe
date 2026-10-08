@@ -1,2 +1,2 @@
 # tic-tac-toe
-le futur
+The future app

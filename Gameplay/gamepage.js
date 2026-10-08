@@ -11,7 +11,9 @@ const resultPopup = document.getElementById("result-popup");
 const resultTitle = document.getElementById("result-title");
 const resultMessage = document.getElementById("result-message");
 const resultIcon = document.getElementById("result-icon");
-const cells = document.querySelectorAll(".cell");
+const resultKicker = document.getElementById("result-kicker");
+const gameBoardElement = document.getElementById("game-board");
+let cells = Array.from(document.querySelectorAll(".cell"));
 
 const restartButton = document.getElementById("restart-button");
 const homeButton = document.getElementById("home-button");
@@ -56,6 +58,12 @@ const startTossOverlay = document.getElementById("start-toss");
 const startCoin = document.getElementById("start-coin");
 const startTossSubtitle = document.getElementById("start-toss-subtitle");
 const startTossResult = document.getElementById("start-toss-result");
+const matchRoundLabel = document.getElementById("match-round-label");
+const matchFormatLabel = document.getElementById("match-format-label");
+const turnTimerElement = document.getElementById("turn-timer");
+const turnTimerBar = document.getElementById("turn-timer-bar");
+const turnTimerValue = document.getElementById("turn-timer-value");
+const abandonButton = document.getElementById("abandon-button");
 
 
 // ----------------------------------------------------------
@@ -84,8 +92,49 @@ function chargerPreparation() {
 }
 
 const preparationData = chargerPreparation();
-const gameMode = preparationData.gameMode || "local";
+const gameMode = preparationData.gameMode === "ai" ? "ai" : "local";
 const difficulty = preparationData.difficulty || "normal";
+const boardSize = Number(preparationData.boardSize) === 4 ? 4 : 3;
+const boardCellCount = boardSize * boardSize;
+const bestOf = [1, 3, 5].includes(Number(preparationData.bestOf)) ? Number(preparationData.bestOf) : 1;
+const winsRequired = Math.ceil(bestOf / 2);
+const turnTime = [0, 10, 20, 30].includes(Number(preparationData.turnTime)) ? Number(preparationData.turnTime) : 0;
+const localProfile = globalThis.TTTPlayerData?.getProfile?.() || null;
+const profileDefaultName = localProfile?.name || "Joueur 1";
+
+function construirePlateau() {
+    if (!gameBoardElement) return;
+
+    if (globalThis.TTTBoardUI?.buildBoard) {
+        cells = globalThis.TTTBoardUI.buildBoard(gameBoardElement, boardSize);
+        return;
+    }
+
+    if (gameBoardElement.style?.setProperty) {
+        gameBoardElement.style.setProperty("--board-size", String(boardSize));
+    }
+
+    gameBoardElement.classList?.toggle("board-4x4", boardSize === 4);
+
+    // Fallback utilisé notamment par les tests sans DOM complet.
+    if (boardSize === 4 && typeof document.createElement === "function") {
+        gameBoardElement.innerHTML = "";
+        for (let index = 0; index < boardCellCount; index++) {
+            const cell = document.createElement("button");
+            cell.id = `cell${index}`;
+            cell.className = "cell";
+            cell.type = "button";
+            cell.dataset.index = String(index);
+            cell.setAttribute("aria-label", `Case ${index + 1}`);
+            gameBoardElement.appendChild(cell);
+        }
+        cells = Array.from(gameBoardElement.querySelectorAll(".cell"));
+    } else {
+        cells = Array.from(document.querySelectorAll(".cell")).slice(0, boardCellCount);
+    }
+}
+
+construirePlateau();
 
 
 // ----------------------------------------------------------
@@ -154,13 +203,13 @@ if (localPlayer2Symbol === localPlayer1Symbol) {
 const playerOne = gameMode === "ai"
     ? {
         actor: "human",
-        name: normaliserNom(preparationData.aiPlayerName, "Joueur 1"),
+        name: normaliserNom(preparationData.aiPlayerName, profileDefaultName),
         symbol: humanSymbol,
         meta: "JOUEUR"
     }
     : {
         actor: "player1",
-        name: normaliserNom(preparationData.localPlayer1Name, "Joueur 1"),
+        name: normaliserNom(preparationData.localPlayer1Name, profileDefaultName),
         symbol: localPlayer1Symbol,
         meta: "JOUEUR 1"
     };
@@ -197,11 +246,17 @@ function participantParActeur(actor) {
     return null;
 }
 
+function cosmetiquePourSymbole(symbole) {
+    return globalThis.TTTPlayerData?.cosmeticForSymbol?.(localProfile, symbole)
+        || { style: "classic", theme: symbole === "O" ? "pink" : "blue" };
+}
+
 function appliquerClasseSymbole(element, symbole) {
     if (!element?.classList) return;
     element.classList.remove("symbol-x", "symbol-o", "mark-x", "mark-o");
     if (symbole === "X") element.classList.add("symbol-x");
     if (symbole === "O") element.classList.add("symbol-o");
+    globalThis.TTTPlayerData?.applyElementCosmetic?.(element, symbole, cosmetiquePourSymbole(symbole));
 }
 
 function afficherIdentiteParticipants() {
@@ -230,20 +285,32 @@ function afficherIdentiteParticipants() {
 // ÉTAT DE PARTIE
 // ----------------------------------------------------------
 
-let gameBoard = Array(9).fill("");
+let gameBoard = Array(boardCellCount).fill("");
 let currentLocalPlayer = 1;
 let isAiThinking = false;
 let isStartingToss = false;
 let startTossSequence = 0;
 let gameFinished = false;
 let resultScored = false;
+let matchFinished = false;
+let roundNumber = 1;
+let nextRoundStarterSymbol = null;
+let roundsHistory = [];
+let matchHistoryRecorded = false;
+let matchSessionId = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+
+let turnTimerInterval = null;
+let turnTimerDeadline = null;
+let turnTimerRemainingMs = turnTime > 0 ? turnTime * 1000 : 0;
+let turnTimerSymbol = null;
 
 // Historique des coups réellement joués. Les simulations Minimax n'y touchent pas.
 let moveHistory = [];
-let finalBoard = Array(9).fill("");
+let finalBoard = Array(boardCellCount).fill("");
 let isReplayMode = false;
 let replayPosition = 0;
 let replayMode = "action";
+let replayFrames = [];
 
 let scores = {
     player1: 0,
@@ -251,11 +318,36 @@ let scores = {
     draw: 0
 };
 
-const winningCombinations = [
-    [0, 1, 2], [3, 4, 5], [6, 7, 8],
-    [0, 3, 6], [1, 4, 7], [2, 5, 8],
-    [0, 4, 8], [2, 4, 6]
-];
+function genererCombinaisonsGagnantes(size) {
+    const combinations = [];
+
+    for (let row = 0; row < size; row++) {
+        combinations.push(
+            Array.from({ length: size }, (_, col) => row * size + col)
+        );
+    }
+
+    for (let col = 0; col < size; col++) {
+        combinations.push(
+            Array.from({ length: size }, (_, row) => row * size + col)
+        );
+    }
+
+    combinations.push(
+        Array.from({ length: size }, (_, index) => index * size + index)
+    );
+
+    combinations.push(
+        Array.from(
+            { length: size },
+            (_, index) => index * size + (size - 1 - index)
+        )
+    );
+
+    return combinations;
+}
+
+const winningCombinations = genererCombinaisonsGagnantes(boardSize);
 
 function mettreAJourScores() {
     if (scorePlayerOne) scorePlayerOne.textContent = String(scores.player1);
@@ -263,8 +355,20 @@ function mettreAJourScores() {
     if (scoreDraw) scoreDraw.textContent = String(scores.draw);
 }
 
+function mettreAJourProgressionMatch() {
+    if (matchRoundLabel) matchRoundLabel.textContent = `MANCHE ${roundNumber}`;
+    if (matchFormatLabel) matchFormatLabel.textContent = `BO${bestOf} • Premier à ${winsRequired}`;
+}
+
+function scoreDuParticipant(participant) {
+    if (participant === playerOne) return scores.player1;
+    if (participant === playerTwo) return scores.player2;
+    return 0;
+}
+
 function sauvegarderEtatMatch() {
     const state = {
+        boardSize,
         gameBoard: [...gameBoard],
         currentLocalPlayer,
         isAiThinking,
@@ -273,11 +377,24 @@ function sauvegarderEtatMatch() {
         moveHistory: moveHistory.map(move => ({ ...move })),
         finalBoard: [...finalBoard],
         scores: { ...scores },
+        bestOf,
+        winsRequired,
+        roundNumber,
+        matchFinished,
+        nextRoundStarterSymbol,
+        roundsHistory: roundsHistory.map(round => ({ ...round, board: [...round.board], moves: round.moves.map(move => ({ ...move })) })),
         isReplayMode,
         replayPosition,
         replayMode,
         resultPopupVisible: resultPopup?.style.display === "flex",
-        endActionsVisible: endActions?.style.display === "flex"
+        endActionsVisible: endActions?.style.display === "flex",
+        resultTitleText: resultTitle?.textContent || "",
+        resultMessageText: resultMessage?.textContent || "",
+        resultIconText: resultIcon?.textContent || "",
+        resultKickerText: resultKicker?.textContent || "",
+        turnTimerRemainingMs: turnTime > 0 ? obtenirTempsRestantTour() : 0,
+        turnTimerSymbol,
+        matchSessionId
     };
 
     sessionStorage.setItem(MATCH_STORAGE_KEY, JSON.stringify(state));
@@ -287,7 +404,7 @@ function sauvegarderEtatMatch() {
 function etatMatchValide(state) {
     return state &&
         Array.isArray(state.gameBoard) &&
-        state.gameBoard.length === 9 &&
+        state.gameBoard.length === boardCellCount &&
         Array.isArray(state.moveHistory);
 }
 
@@ -304,7 +421,7 @@ function restaurerEtatMatchSiDemande() {
     gameFinished = Boolean(state.gameFinished);
     resultScored = Boolean(state.resultScored);
     moveHistory = state.moveHistory.map(move => ({ ...move }));
-    finalBoard = Array.isArray(state.finalBoard) && state.finalBoard.length === 9
+    finalBoard = Array.isArray(state.finalBoard) && state.finalBoard.length === boardCellCount
         ? [...state.finalBoard]
         : [...gameBoard];
     scores = {
@@ -312,11 +429,30 @@ function restaurerEtatMatchSiDemande() {
         player2: Number(state.scores?.player2) || 0,
         draw: Number(state.scores?.draw) || 0
     };
+    roundNumber = Math.max(1, Number(state.roundNumber) || 1);
+    matchFinished = Boolean(state.matchFinished);
+    nextRoundStarterSymbol = state.nextRoundStarterSymbol === "X" || state.nextRoundStarterSymbol === "O"
+        ? state.nextRoundStarterSymbol
+        : null;
+    roundsHistory = Array.isArray(state.roundsHistory) ? state.roundsHistory.map(round => ({
+        ...round,
+        board: Array.isArray(round.board) ? [...round.board] : [],
+        moves: Array.isArray(round.moves) ? round.moves.map(move => ({ ...move })) : []
+    })) : [];
     isReplayMode = Boolean(state.isReplayMode);
     replayPosition = Number.isInteger(state.replayPosition) ? state.replayPosition : 0;
     replayMode = state.replayMode === "turn" ? "turn" : "action";
+    turnTimerRemainingMs = Math.max(0, Number(state.turnTimerRemainingMs) || turnTime * 1000);
+    turnTimerSymbol = state.turnTimerSymbol === "X" || state.turnTimerSymbol === "O" ? state.turnTimerSymbol : null;
+    matchSessionId = String(state.matchSessionId || matchSessionId);
 
     mettreAJourScores();
+    mettreAJourProgressionMatch();
+
+    if (resultTitle && state.resultTitleText) resultTitle.textContent = state.resultTitleText;
+    if (resultMessage && state.resultMessageText) resultMessage.textContent = state.resultMessageText;
+    if (resultIcon && state.resultIconText) resultIcon.textContent = state.resultIconText;
+    if (resultKicker && state.resultKickerText) resultKicker.textContent = state.resultKickerText;
 
     if (isReplayMode && gameFinished) {
         if (replayPanel) replayPanel.style.display = "block";
@@ -349,8 +485,11 @@ function restaurerEtatMatchSiDemande() {
 
     if (gameMode === "ai") {
         afficherTour(humanSymbol);
+        demarrerTimerTour(humanSymbol, turnTimerRemainingMs);
     } else {
-        afficherTour(symboleActuelLocal());
+        const activeSymbol = symboleActuelLocal();
+        afficherTour(activeSymbol);
+        demarrerTimerTour(activeSymbol, turnTimerRemainingMs);
     }
 
     return true;
@@ -385,6 +524,110 @@ function afficherTour(symbole, texte = null) {
 
 
 // ----------------------------------------------------------
+// TIMER PAR TOUR
+// ----------------------------------------------------------
+
+function obtenirTempsRestantTour() {
+    if (turnTime <= 0) return 0;
+    if (turnTimerDeadline) return Math.max(0, turnTimerDeadline - Date.now());
+    return Math.max(0, turnTimerRemainingMs || turnTime * 1000);
+}
+
+function afficherTimerTour() {
+    if (!turnTimerElement) return;
+
+    if (turnTime <= 0 || !turnTimerSymbol || gameFinished || isStartingToss || isReplayMode) {
+        turnTimerElement.hidden = true;
+        return;
+    }
+
+    const remaining = obtenirTempsRestantTour();
+    const total = turnTime * 1000;
+    const ratio = total > 0 ? Math.max(0, Math.min(1, remaining / total)) : 0;
+    turnTimerElement.hidden = false;
+    turnTimerElement.classList.toggle("is-low", remaining <= Math.min(5000, total * 0.25));
+    if (turnTimerBar) turnTimerBar.style.transform = `scaleX(${ratio})`;
+    if (turnTimerValue) turnTimerValue.textContent = `${Math.max(0, Math.ceil(remaining / 1000))} s`;
+}
+
+function stopperTimerTour({ preserve = false } = {}) {
+    if (turnTimerInterval) {
+        clearInterval(turnTimerInterval);
+        turnTimerInterval = null;
+    }
+
+    if (preserve && turnTimerDeadline) {
+        turnTimerRemainingMs = Math.max(0, turnTimerDeadline - Date.now());
+    }
+
+    turnTimerDeadline = null;
+
+    if (!preserve) {
+        turnTimerRemainingMs = turnTime > 0 ? turnTime * 1000 : 0;
+        turnTimerSymbol = null;
+    }
+
+    afficherTimerTour();
+}
+
+function demarrerTimerTour(symbole, remainingMs = null) {
+    stopperTimerTour();
+    if (turnTime <= 0 || gameFinished || isStartingToss || isReplayMode) return;
+    if (symbole !== "X" && symbole !== "O") return;
+
+    turnTimerSymbol = symbole;
+    turnTimerRemainingMs = Math.max(0, Number(remainingMs) || turnTime * 1000);
+    turnTimerDeadline = Date.now() + turnTimerRemainingMs;
+
+    const tick = () => {
+        afficherTimerTour();
+        if (obtenirTempsRestantTour() <= 0) {
+            stopperTimerTour();
+            gererExpirationTimerTour(symbole);
+        }
+    };
+
+    tick();
+    turnTimerInterval = setInterval(tick, 100);
+}
+
+function gererExpirationTimerTour(symboleExpire) {
+    if (gameFinished || isReplayMode || isStartingToss) return;
+
+    const participant = participantParSymbole(symboleExpire);
+    if (turnPlayer) {
+        turnPlayer.innerHTML = `<p><strong>${participant?.name || symboleExpire}</strong> a dépassé le temps — tour perdu.</p>`;
+    }
+
+    definirInteractiviteGrille(false);
+
+    setTimeout(() => {
+        if (gameFinished || isReplayMode || isStartingToss) return;
+
+        if (gameMode === "ai") {
+            if (symboleExpire === humanSymbol) {
+                lancerTourIA();
+            } else {
+                isAiThinking = false;
+                definirInteractiviteGrille(true);
+                afficherTour(humanSymbol);
+                demarrerTimerTour(humanSymbol);
+                sauvegarderEtatMatch();
+            }
+            return;
+        }
+
+        currentLocalPlayer = currentLocalPlayer === 1 ? 2 : 1;
+        definirInteractiviteGrille(true);
+        const nextSymbol = symboleActuelLocal();
+        afficherTour(nextSymbol);
+        demarrerTimerTour(nextSymbol);
+        sauvegarderEtatMatch();
+    }, 420);
+}
+
+
+// ----------------------------------------------------------
 // GRILLE ET COUPS
 // ----------------------------------------------------------
 
@@ -399,18 +642,23 @@ function placerSymbole(index, symbole, actor = null, recordMove = true) {
         isStartingToss ||
         !Number.isInteger(index) ||
         index < 0 ||
-        index > 8 ||
+        index >= boardCellCount ||
         gameBoard[index] !== ""
     ) {
         return false;
     }
 
+    stopperTimerTour();
     gameBoard[index] = symbole;
     const cell = document.getElementById(`cell${index}`);
     if (cell) {
-        cell.textContent = symbole;
-        cell.classList?.remove("mark-x", "mark-o");
-        cell.classList?.add(symbole === "X" ? "mark-x" : "mark-o");
+        if (globalThis.TTTBoardUI?.paintCell) {
+            globalThis.TTTBoardUI.paintCell(cell, symbole, { animate: true, cosmetic: cosmetiquePourSymbole(symbole) });
+        } else {
+            cell.textContent = symbole;
+            cell.classList?.remove("mark-x", "mark-o");
+            cell.classList?.add(symbole === "X" ? "mark-x" : "mark-o");
+        }
     }
 
     if (recordMove && actor) enregistrerCoup(index, symbole, actor);
@@ -421,19 +669,46 @@ function placerSymbole(index, symbole, actor = null, recordMove = true) {
 function afficherGrille(grille) {
     cells.forEach((cell, index) => {
         const symbole = grille[index] || "";
-        cell.textContent = symbole;
-        cell.classList?.remove("mark-x", "mark-o");
-        if (symbole === "X") cell.classList?.add("mark-x");
-        if (symbole === "O") cell.classList?.add("mark-o");
+
+        if (globalThis.TTTBoardUI?.paintCell) {
+            globalThis.TTTBoardUI.paintCell(cell, symbole, {
+                animate: false,
+                winning: false,
+                cosmetic: symbole ? cosmetiquePourSymbole(symbole) : null
+            });
+        } else {
+            cell.textContent = symbole;
+            cell.classList?.remove("mark-x", "mark-o", "winning-cell");
+            if (symbole === "X") cell.classList?.add("mark-x");
+            if (symbole === "O") cell.classList?.add("mark-o");
+        }
     });
 }
 
 function verifierGagnant(grille, symbole) {
-    return winningCombinations.some(([a, b, c]) =>
-        grille[a] === symbole &&
-        grille[b] === symbole &&
-        grille[c] === symbole
+    return winningCombinations.some(combination =>
+        combination.every(index => grille[index] === symbole)
     );
+}
+
+function trouverCombinaisonGagnante(grille = gameBoard) {
+    for (const combination of winningCombinations) {
+        const symbole = grille[combination[0]];
+        if (symbole && combination.every(index => grille[index] === symbole)) {
+            return [...combination];
+        }
+    }
+    return [];
+}
+
+function surlignerCombinaisonGagnante(grille = gameBoard) {
+    const line = trouverCombinaisonGagnante(grille);
+    cells.forEach(cell => cell.classList?.remove("winning-cell"));
+    line.forEach(index => {
+        const cell = document.getElementById(`cell${index}`);
+        cell?.classList?.add("winning-cell");
+    });
+    return line;
 }
 
 function trouverGagnant() {
@@ -451,13 +726,16 @@ function terminerSiNecessaire() {
     const gagnant = trouverGagnant();
 
     if (gagnant) {
+        stopperTimerTour();
         gameFinished = true;
+        surlignerCombinaisonGagnante(gameBoard);
         showResult(gagnant);
         sauvegarderEtatMatch();
         return true;
     }
 
     if (checkDraw()) {
+        stopperTimerTour();
         gameFinished = true;
         showResult(null);
         sauvegarderEtatMatch();
@@ -518,6 +796,7 @@ function terminerTirageAuSort(participant, sequence) {
             } else {
                 definirInteractiviteGrille(true);
                 afficherTour(humanSymbol);
+                demarrerTimerTour(humanSymbol);
                 sauvegarderEtatMatch();
             }
             return;
@@ -525,9 +804,11 @@ function terminerTirageAuSort(participant, sequence) {
 
         currentLocalPlayer = participant.actor === "player2" ? 2 : 1;
         definirInteractiviteGrille(true);
-        afficherTour(symboleActuelLocal());
+        const nextSymbol = symboleActuelLocal();
+        afficherTour(nextSymbol);
+        demarrerTimerTour(nextSymbol);
         sauvegarderEtatMatch();
-    }, 650);
+    }, 900);
 }
 
 function lancerTirageAuSort() {
@@ -538,27 +819,51 @@ function lancerTirageAuSort() {
     const sequence = ++startTossSequence;
 
     isStartingToss = true;
+    stopperTimerTour();
     definirInteractiviteGrille(false);
     startTossOverlay.hidden = false;
 
-    if (startTossSubtitle) startTossSubtitle.textContent = "La pièce est lancée...";
+    if (startTossSubtitle) startTossSubtitle.textContent = "Préparation du lancer...";
     if (startTossResult) {
         startTossResult.textContent = "TIRAGE...";
         startTossResult.classList.remove("result-x", "result-o", "revealed");
     }
 
     if (startCoin) {
-        startCoin.classList.remove("is-tossing", "lands-x", "lands-o");
-        // Force le navigateur à relancer l'animation à chaque manche.
+        startCoin.classList.remove("is-tossing", "lands-x", "lands-o", "is-ready");
+        startCoin.style?.setProperty?.(
+            "--coin-final-rotation",
+            participant.symbol === "O" ? "3420deg" : "3240deg"
+        );
         void startCoin.offsetWidth;
-        startCoin.classList.add("is-tossing");
+        startCoin.classList.add("is-ready");
     }
 
     afficherTour("", "Tirage au sort...");
 
     setTimeout(() => {
+        if (sequence !== startTossSequence) return;
+        if (startTossSubtitle) startTossSubtitle.textContent = "La pièce s'envole...";
+        if (startCoin) {
+            startCoin.classList.remove("is-ready");
+            void startCoin.offsetWidth;
+            startCoin.classList.add("is-tossing");
+        }
+    }, 350);
+
+    setTimeout(() => {
+        if (sequence !== startTossSequence) return;
+        if (startTossSubtitle) startTossSubtitle.textContent = "Elle ralentit...";
+    }, 2050);
+
+    setTimeout(() => {
+        if (sequence !== startTossSequence) return;
+        if (startTossSubtitle) startTossSubtitle.textContent = "La pièce retombe...";
+    }, 2800);
+
+    setTimeout(() => {
         terminerTirageAuSort(participant, sequence);
-    }, 1650);
+    }, 3350);
 
     return true;
 }
@@ -575,7 +880,9 @@ function jouerLocal(index) {
     if (terminerSiNecessaire()) return;
 
     currentLocalPlayer = currentLocalPlayer === 1 ? 2 : 1;
-    afficherTour(symboleActuelLocal());
+    const nextSymbol = symboleActuelLocal();
+    afficherTour(nextSymbol);
+    demarrerTimerTour(nextSymbol);
     sauvegarderEtatMatch();
 }
 
@@ -597,6 +904,7 @@ function lancerTourIA() {
 
     isAiThinking = true;
     afficherTour(aiSymbol, `${playerTwo.name} joue`);
+    demarrerTimerTour(aiSymbol);
     sauvegarderEtatMatch();
 
     setTimeout(() => {
@@ -612,6 +920,7 @@ function lancerTourIA() {
         if (terminerSiNecessaire()) return;
         definirInteractiviteGrille(true);
         afficherTour(humanSymbol);
+        demarrerTimerTour(humanSymbol);
         sauvegarderEtatMatch();
     }, 500);
 }
@@ -647,6 +956,26 @@ function trouverCoupGagnant(grille, symbole) {
     return null;
 }
 
+function indicesCentraux() {
+    if (boardSize === 3) return [4];
+    return [5, 6, 9, 10];
+}
+
+function indicesCoins() {
+    return [
+        0,
+        boardSize - 1,
+        boardCellCount - boardSize,
+        boardCellCount - 1
+    ];
+}
+
+function choisirParmiDisponibles(grille, indices) {
+    const disponibles = indices.filter(index => grille[index] === "");
+    if (disponibles.length === 0) return null;
+    return disponibles[Math.floor(Math.random() * disponibles.length)];
+}
+
 function iaNormale(grille, symboleIA, symboleJoueur) {
     let coup = trouverCoupGagnant(grille, symboleIA);
     if (coup !== null) return coup;
@@ -654,27 +983,40 @@ function iaNormale(grille, symboleIA, symboleJoueur) {
     coup = trouverCoupGagnant(grille, symboleJoueur);
     if (coup !== null) return coup;
 
-    if (grille[4] === "") return 4;
+    coup = choisirParmiDisponibles(grille, indicesCentraux());
+    if (coup !== null) return coup;
+
+    coup = choisirParmiDisponibles(grille, indicesCoins());
+    if (coup !== null) return coup;
+
     return iaFacile(grille);
 }
 
 function evaluerPosition(grille, symboleIA, symboleJoueur) {
     let score = 0;
 
-    if (grille[4] === symboleIA) score += 3;
-    if (grille[4] === symboleJoueur) score -= 3;
+    for (const index of indicesCentraux()) {
+        if (grille[index] === symboleIA) score += 3;
+        if (grille[index] === symboleJoueur) score -= 3;
+    }
 
-    for (const index of [0, 2, 6, 8]) {
+    for (const index of indicesCoins()) {
         if (grille[index] === symboleIA) score += 1;
         if (grille[index] === symboleJoueur) score -= 1;
     }
 
-    for (const [a, b, c] of winningCombinations) {
-        const ligne = [grille[a], grille[b], grille[c]];
+    for (const combination of winningCombinations) {
+        const ligne = combination.map(index => grille[index]);
         const iaCount = ligne.filter(v => v === symboleIA).length;
         const joueurCount = ligne.filter(v => v === symboleJoueur).length;
-        if (joueurCount === 0) score += iaCount;
-        if (iaCount === 0) score -= joueurCount;
+
+        if (joueurCount === 0 && iaCount > 0) {
+            score += Math.pow(3, iaCount - 1);
+        }
+
+        if (iaCount === 0 && joueurCount > 0) {
+            score -= Math.pow(3, joueurCount - 1);
+        }
     }
 
     return score;
@@ -740,7 +1082,12 @@ function iaDifficile(grille, symboleIA, symboleJoueur) {
     for (const index of casesLibres) {
         grille[index] = symboleIA;
         const score = minimaxLimite(
-            grille, 0, false, symboleIA, symboleJoueur, 4
+            grille,
+            0,
+            false,
+            symboleIA,
+            symboleJoueur,
+            boardSize === 4 ? 3 : 4
         );
         grille[index] = "";
         coupsScores.push({ index, score });
@@ -796,21 +1143,141 @@ function minimaxGod(grille, profondeur, estMaximisation, symboleIA, symboleJoueu
     return meilleurScore;
 }
 
+function ordonnerCoupsIA(grille, symboleIA, symboleJoueur) {
+    const libres = trouverCasesLibres(grille);
+    const gagnant = trouverCoupGagnant(grille, symboleIA);
+    const blocage = trouverCoupGagnant(grille, symboleJoueur);
+    const prioritaires = [
+        gagnant,
+        blocage,
+        ...indicesCentraux(),
+        ...indicesCoins()
+    ].filter(index => Number.isInteger(index) && libres.includes(index));
+
+    return [...new Set([...prioritaires, ...libres])];
+}
+
+function minimaxAlphaBeta(
+    grille,
+    profondeur,
+    profondeurMax,
+    estMaximisation,
+    symboleIA,
+    symboleJoueur,
+    alpha,
+    beta
+) {
+    if (verifierGagnant(grille, symboleIA)) return 1000 - profondeur * 10;
+    if (verifierGagnant(grille, symboleJoueur)) return -1000 + profondeur * 10;
+
+    const casesLibres = trouverCasesLibres(grille);
+    if (casesLibres.length === 0) return 0;
+    if (profondeur >= profondeurMax) {
+        return evaluerPosition(grille, symboleIA, symboleJoueur);
+    }
+
+    const coups = ordonnerCoupsIA(grille, symboleIA, symboleJoueur);
+
+    if (estMaximisation) {
+        let meilleurScore = -Infinity;
+        for (const index of coups) {
+            grille[index] = symboleIA;
+            const score = minimaxAlphaBeta(
+                grille,
+                profondeur + 1,
+                profondeurMax,
+                false,
+                symboleIA,
+                symboleJoueur,
+                alpha,
+                beta
+            );
+            grille[index] = "";
+            meilleurScore = Math.max(meilleurScore, score);
+            alpha = Math.max(alpha, meilleurScore);
+            if (beta <= alpha) break;
+        }
+        return meilleurScore;
+    }
+
+    let meilleurScore = Infinity;
+    for (const index of coups) {
+        grille[index] = symboleJoueur;
+        const score = minimaxAlphaBeta(
+            grille,
+            profondeur + 1,
+            profondeurMax,
+            true,
+            symboleIA,
+            symboleJoueur,
+            alpha,
+            beta
+        );
+        grille[index] = "";
+        meilleurScore = Math.min(meilleurScore, score);
+        beta = Math.min(beta, meilleurScore);
+        if (beta <= alpha) break;
+    }
+    return meilleurScore;
+}
+
 function iaGod(grille, symboleIA, symboleJoueur) {
     const casesLibres = trouverCasesLibres(grille);
     if (casesLibres.length === 0) return null;
 
+    // Le 3×3 reste parfaitement résolu avec le Minimax complet historique.
+    if (boardSize === 3) {
+        let meilleurScore = -Infinity;
+        let meilleurCoup = null;
+
+        for (const index of casesLibres) {
+            grille[index] = symboleIA;
+            const score = minimaxGod(
+                grille,
+                0,
+                false,
+                symboleIA,
+                symboleJoueur
+            );
+            grille[index] = "";
+
+            if (score > meilleurScore) {
+                meilleurScore = score;
+                meilleurCoup = index;
+            }
+        }
+
+        return meilleurCoup;
+    }
+
+    // Sur 4×4, un Minimax complet explose combinatoirement.
+    // On conserve une IA très forte grâce à l'alpha-bêta + heuristique,
+    // avec une profondeur qui augmente naturellement en fin de partie.
+    let coup = trouverCoupGagnant(grille, symboleIA);
+    if (coup !== null) return coup;
+
+    coup = trouverCoupGagnant(grille, symboleJoueur);
+    if (coup !== null) return coup;
+
+    const profondeurMax =
+        casesLibres.length <= 7 ? 7 :
+        casesLibres.length <= 10 ? 5 :
+        3;
+
     let meilleurScore = -Infinity;
     let meilleurCoup = null;
 
-    for (const index of casesLibres) {
+    for (const index of ordonnerCoupsIA(grille, symboleIA, symboleJoueur)) {
         grille[index] = symboleIA;
-        const score = minimaxGod(
+        const score = minimaxAlphaBeta(
             grille,
             0,
+            profondeurMax,
             false,
             symboleIA,
-            symboleJoueur
+            symboleJoueur,
+            -Infinity,
+            Infinity
         );
         grille[index] = "";
 
@@ -820,7 +1287,7 @@ function iaGod(grille, symboleIA, symboleJoueur) {
         }
     }
 
-    return meilleurCoup;
+    return meilleurCoup ?? iaNormale(grille, symboleIA, symboleJoueur);
 }
 
 
@@ -854,50 +1321,118 @@ function appliquerStyleResultat(type) {
     resultPopup.classList.add(`result-${type}`);
 }
 
+function enregistrerMatchDansHistorique(winner = null, endReason = "victory") {
+    if (matchHistoryRecorded || !matchFinished) return;
+    const store = globalThis.TTTPlayerData;
+    if (!store?.recordMatch) return;
+
+    const profileName = String(localProfile?.name || "").trim().toLowerCase();
+    const trackedParticipant = gameMode === "ai"
+        ? playerOne
+        : (profileName && playerTwo.name.trim().toLowerCase() === profileName && playerOne.name.trim().toLowerCase() !== profileName
+            ? playerTwo
+            : playerOne);
+
+    const result = winner === trackedParticipant
+        ? "win"
+        : winner
+            ? "loss"
+            : "draw";
+
+    store.recordMatch({
+        externalId: `local-${matchSessionId}`,
+        mode: gameMode === "ai" ? "ai" : "local",
+        result,
+        playerOneName: playerOne.name,
+        playerTwoName: playerTwo.name,
+        playerOneSymbol: playerOne.symbol,
+        playerTwoSymbol: playerTwo.symbol,
+        scoreOne: scores.player1,
+        scoreTwo: scores.player2,
+        draws: scores.draw,
+        boardSize,
+        bestOf,
+        roundsPlayed: roundsHistory.length,
+        endReason,
+        difficulty: gameMode === "ai" ? difficulty : "",
+        rounds: roundsHistory.map(round => ({
+            round: round.round,
+            winner: round.winner,
+            board: [...round.board],
+            moves: round.moves.map(move => ({ ...move }))
+        }))
+    });
+
+    matchHistoryRecorded = true;
+}
+
 function showResult(gagnant) {
     finalBoard = [...gameBoard];
     incrementerScoreResultat(gagnant);
+
+    const winner = gagnant ? participantParSymbole(gagnant) : null;
+    const loser = winner === playerOne ? playerTwo : winner === playerTwo ? playerOne : null;
+    nextRoundStarterSymbol = loser?.symbol || null;
+
+    roundsHistory.push({
+        round: roundNumber,
+        winner: gagnant || null,
+        board: [...finalBoard],
+        moves: moveHistory.map(move => ({ ...move }))
+    });
+
+    matchFinished = Boolean(winner && scoreDuParticipant(winner) >= winsRequired);
+    if (matchFinished) enregistrerMatchDansHistorique(winner, "victory");
     afficherActionsFin(true);
+    mettreAJourProgressionMatch();
+
+    if (restartButton) restartButton.textContent = matchFinished ? "↻ Nouvelle revanche" : "→ Manche suivante";
+    if (popupRestartButton) popupRestartButton.textContent = matchFinished ? "↻ REVANCHE" : "→ MANCHE SUIVANTE";
+    if (endRestartButton) endRestartButton.textContent = matchFinished ? "↻ Revanche" : "→ Manche suivante";
 
     if (!resultPopup) return;
 
-    if (!gagnant) {
-        appliquerStyleResultat("draw");
-        resultTitle.textContent = "MATCH NUL !";
-        resultMessage.textContent =
-            `${playerOne.name} (${playerOne.symbol}) et ${playerTwo.name} (${playerTwo.symbol}) se neutralisent.`;
-        resultIcon.textContent = "🤝";
-    } else {
-        const winner = participantParSymbole(gagnant);
-        const loser = winner === playerOne ? playerTwo : playerOne;
-        const winnerName = winner?.name || gagnant;
+    if (resultKicker) resultKicker.textContent = matchFinished ? "RÉSULTAT DU MATCH" : "RÉSULTAT DE LA MANCHE";
+
+    if (bestOf === 1 && winner) {
         const playerWonAgainstAi = gameMode === "ai" && winner === playerOne;
         const playerLostAgainstAi = gameMode === "ai" && winner === playerTwo;
-
         appliquerStyleResultat(playerLostAgainstAi ? "defeat" : "victory");
-
         if (playerLostAgainstAi) {
             resultTitle.textContent = "DÉFAITE";
-            resultMessage.textContent =
-                `${playerTwo.name} remporte la partie — ${libelleDifficulte()}.`;
+            resultMessage.textContent = `${playerTwo.name} remporte la partie — ${libelleDifficulte()}.`;
             resultIcon.textContent = "🤖";
         } else {
-            resultTitle.textContent =
-                `${winnerName.toUpperCase()} (${gagnant}) A GAGNÉ !`;
-
-            if (playerWonAgainstAi) {
-                resultMessage.textContent =
-                    `Victoire contre ${playerTwo.name} — ${libelleDifficulte()}.`;
-            } else {
-                resultMessage.textContent =
-                    `${winnerName} remporte la partie face à ${loser.name}.`;
-            }
-
+            resultTitle.textContent = `${winner.name.toUpperCase()} (${gagnant}) A GAGNÉ !`;
+            resultMessage.textContent = playerWonAgainstAi
+                ? `Victoire contre ${playerTwo.name} — ${libelleDifficulte()}.`
+                : `${winner.name} remporte la partie face à ${loser.name}.`;
             resultIcon.textContent = "🏆";
         }
+    } else if (matchFinished && winner) {
+        const playerLostAgainstAi = gameMode === "ai" && winner === playerTwo;
+        appliquerStyleResultat(playerLostAgainstAi ? "defeat" : "victory");
+        resultTitle.textContent = playerLostAgainstAi ? "MATCH PERDU" : "MATCH REMPORTÉ !";
+        resultMessage.textContent = `${winner.name} remporte le BO${bestOf} ${scoreDuParticipant(playerOne)} — ${scoreDuParticipant(playerTwo)}.`;
+        resultIcon.textContent = playerLostAgainstAi ? "🤖" : "🏆";
+    } else if (!gagnant) {
+        appliquerStyleResultat("draw");
+        if (bestOf === 1) {
+            resultTitle.textContent = "MATCH NUL !";
+            resultMessage.textContent = `${playerOne.name} (${playerOne.symbol}) et ${playerTwo.name} (${playerTwo.symbol}) se neutralisent.`;
+        } else {
+            resultTitle.textContent = "MANCHE NULLE";
+            resultMessage.textContent = `Aucun point de match attribué. Nouveau tirage pour la manche ${roundNumber + 1}.`;
+        }
+        resultIcon.textContent = "🤝";
+    } else {
+        const playerLostAgainstAi = gameMode === "ai" && winner === playerTwo;
+        appliquerStyleResultat(playerLostAgainstAi ? "defeat" : "victory");
+        resultTitle.textContent = "MANCHE REMPORTÉE";
+        resultMessage.textContent = `${winner.name} prend la manche ${roundNumber} — score ${scores.player1} à ${scores.player2}.`;
+        resultIcon.textContent = playerLostAgainstAi ? "◆" : "🏆";
     }
 
-    // Relance proprement les animations CSS à chaque nouvelle fin de manche.
     resultPopup.style.display = "none";
     void resultPopup.offsetWidth;
     resultPopup.style.display = "flex";
@@ -915,51 +1450,64 @@ function fermerResultat() {
 // REPLAY
 // ----------------------------------------------------------
 
+function construireFramesReplay() {
+    const rounds = roundsHistory.length > 0
+        ? roundsHistory
+        : [{ round: roundNumber, moves: moveHistory.map(move => ({ ...move })) }];
+
+    const frames = [{
+        round: rounds[0]?.round || 1,
+        board: Array(boardCellCount).fill(""),
+        move: null,
+        turnEnd: true
+    }];
+
+    for (const round of rounds) {
+        const board = Array(boardCellCount).fill("");
+        const moves = Array.isArray(round.moves) ? round.moves : [];
+        let offset = 0;
+
+        // Si l'IA ouvre la manche, son premier coup constitue à lui seul un tour de replay.
+        if (gameMode === "ai" && moves[0]?.actor === "ai") {
+            const move = moves[0];
+            board[move.index] = move.symbol;
+            frames.push({ round: round.round, board: [...board], move, turnEnd: true });
+            offset = 1;
+        }
+
+        for (let i = offset; i < moves.length; i++) {
+            const move = moves[i];
+            board[move.index] = move.symbol;
+            const localCount = i - offset + 1;
+            const turnEnd = gameMode === "ai"
+                ? (move.actor === "ai" || i === moves.length - 1)
+                : (localCount % 2 === 0 || i === moves.length - 1);
+            frames.push({ round: round.round, board: [...board], move, turnEnd });
+        }
+    }
+
+    replayFrames = frames;
+    return replayFrames;
+}
+
 function grilleReplayJusqua(position) {
-    const grille = Array(9).fill("");
-    moveHistory.slice(0, position).forEach(move => {
-        grille[move.index] = move.symbol;
-    });
-    return grille;
+    if (!replayFrames.length) construireFramesReplay();
+    const frame = replayFrames[Math.max(0, Math.min(replayFrames.length - 1, position))];
+    return frame ? [...frame.board] : Array(boardCellCount).fill("");
 }
 
 function obtenirLimitesToursReplay() {
+    if (!replayFrames.length) construireFramesReplay();
     const limites = [0];
-    const total = moveHistory.length;
-    if (total === 0) return limites;
-
-    let position = 0;
-
-    // Lorsque l'IA joue X, son premier coup constitue l'ouverture.
-    if (gameMode === "ai" && moveHistory[0]?.actor === "ai") {
-        limites.push(1);
-        position = 1;
-    }
-
-    while (position < total) {
-        if (gameMode === "ai") {
-            let prochainePosition = position + 1;
-            if (
-                moveHistory[position]?.actor === "human" &&
-                prochainePosition < total &&
-                moveHistory[prochainePosition]?.actor === "ai"
-            ) {
-                prochainePosition += 1;
-            }
-            position = Math.min(total, prochainePosition);
-        } else {
-            position = Math.min(total, position + 2);
-        }
-
-        if (limites[limites.length - 1] !== position) limites.push(position);
-    }
-
-    return limites;
+    replayFrames.forEach((frame, index) => {
+        if (index > 0 && frame.turnEnd) limites.push(index);
+    });
+    return [...new Set(limites)];
 }
 
 function positionTourSuivante(position) {
     return obtenirLimitesToursReplay().find(limite => limite > position)
-        ?? moveHistory.length;
+        ?? Math.max(0, replayFrames.length - 1);
 }
 
 function positionTourPrecedente(position) {
@@ -970,56 +1518,48 @@ function positionTourPrecedente(position) {
     return 0;
 }
 
-function decrireCoup(move) {
-    if (!move) return "Début de la partie";
+function decrireCoup(move, round = roundNumber) {
+    if (!move) return `Début du match — manche ${round}`;
     const participant = participantParActeur(move.actor);
     const nom = participant?.name || move.symbol;
-    return `${nom} joue ${move.symbol} en case ${move.index}`;
+    return `Manche ${round} • ${nom} joue ${move.symbol} en case ${move.index + 1}`;
 }
 
 function mettreAJourDescriptionReplay() {
     if (!replayActionLabel) return;
-
-    if (replayPosition === 0) {
-        replayActionLabel.textContent = "Début de la partie";
-        return;
-    }
-
-    if (replayMode === "action") {
-        replayActionLabel.textContent = decrireCoup(moveHistory[replayPosition - 1]);
-        return;
-    }
-
-    const limites = obtenirLimitesToursReplay();
-    const positionIndex = limites.findIndex(limite => limite === replayPosition);
-    const debut = positionIndex > 0 ? limites[positionIndex - 1] : 0;
-    const coups = moveHistory.slice(debut, replayPosition).map(decrireCoup);
-    replayActionLabel.textContent = coups.join(" • ") || "Début de la partie";
+    if (!replayFrames.length) construireFramesReplay();
+    const frame = replayFrames[replayPosition];
+    replayActionLabel.textContent = frame?.move
+        ? decrireCoup(frame.move, frame.round)
+        : `Début du match — manche ${frame?.round || 1}`;
 }
 
 function mettreAJourProgressionReplay() {
+    if (!replayFrames.length) construireFramesReplay();
+    const last = Math.max(0, replayFrames.length - 1);
+
     if (replayProgress) {
         if (replayMode === "turn") {
             const limites = obtenirLimitesToursReplay();
-            const totalTours = Math.max(0, limites.length - 1);
             const indexExact = limites.findIndex(limite => limite === replayPosition);
             const tourActuel = indexExact >= 0 ? indexExact : 0;
-            replayProgress.textContent = `Tour ${tourActuel} / ${totalTours}`;
+            replayProgress.textContent = `Tour ${tourActuel} / ${Math.max(0, limites.length - 1)}`;
         } else {
-            replayProgress.textContent = `Action ${replayPosition} / ${moveHistory.length}`;
+            replayProgress.textContent = `Action ${replayPosition} / ${last}`;
         }
     }
 
     if (replayStartButton) replayStartButton.disabled = replayPosition === 0;
     if (replayPrevButton) replayPrevButton.disabled = replayPosition === 0;
-    if (replayNextButton) replayNextButton.disabled = replayPosition >= moveHistory.length;
-    if (replayEndButton) replayEndButton.disabled = replayPosition >= moveHistory.length;
-
+    if (replayNextButton) replayNextButton.disabled = replayPosition >= last;
+    if (replayEndButton) replayEndButton.disabled = replayPosition >= last;
     mettreAJourDescriptionReplay();
 }
 
 function afficherPositionReplay(position) {
-    replayPosition = Math.max(0, Math.min(moveHistory.length, position));
+    if (!replayFrames.length) construireFramesReplay();
+    const last = Math.max(0, replayFrames.length - 1);
+    replayPosition = Math.max(0, Math.min(last, position));
     afficherGrille(grilleReplayJusqua(replayPosition));
     mettreAJourProgressionReplay();
     sauvegarderEtatMatch();
@@ -1027,18 +1567,18 @@ function afficherPositionReplay(position) {
 
 function changerModeReplay(mode) {
     replayMode = mode === "turn" ? "turn" : "action";
-
     if (replayMode === "turn") {
         const limites = obtenirLimitesToursReplay();
-        replayPosition = limites.find(limite => limite >= replayPosition)
-            ?? moveHistory.length;
+        replayPosition = limites.find(limite => limite >= replayPosition) ?? Math.max(0, replayFrames.length - 1);
     }
-
     afficherPositionReplay(replayPosition);
 }
 
 function demarrerReplay() {
-    if (!gameFinished || moveHistory.length === 0) return;
+    if (!gameFinished) return;
+    stopperTimerTour();
+    construireFramesReplay();
+    if (replayFrames.length <= 1) return;
 
     isReplayMode = true;
     replayPosition = 0;
@@ -1047,45 +1587,33 @@ function demarrerReplay() {
     if (resultPopup) resultPopup.style.display = "none";
     afficherActionsFin(false);
     if (replayPanel) replayPanel.style.display = "block";
-
     afficherPositionReplay(0);
 }
 
-function replayDebut() {
-    if (isReplayMode) afficherPositionReplay(0);
-}
-
+function replayDebut() { if (isReplayMode) afficherPositionReplay(0); }
 function replayPrecedent() {
     if (!isReplayMode) return;
-    const position = replayMode === "turn"
-        ? positionTourPrecedente(replayPosition)
-        : replayPosition - 1;
-    afficherPositionReplay(position);
+    afficherPositionReplay(replayMode === "turn" ? positionTourPrecedente(replayPosition) : replayPosition - 1);
 }
-
 function replaySuivant() {
     if (!isReplayMode) return;
-    const position = replayMode === "turn"
-        ? positionTourSuivante(replayPosition)
-        : replayPosition + 1;
-    afficherPositionReplay(position);
+    afficherPositionReplay(replayMode === "turn" ? positionTourSuivante(replayPosition) : replayPosition + 1);
 }
-
 function replayFin() {
-    if (isReplayMode) afficherPositionReplay(moveHistory.length);
+    if (!isReplayMode) return;
+    if (!replayFrames.length) construireFramesReplay();
+    afficherPositionReplay(Math.max(0, replayFrames.length - 1));
 }
-
 function quitterReplay() {
     if (!isReplayMode) return;
-
     isReplayMode = false;
     replayPosition = 0;
+    replayFrames = [];
     if (replayPanel) replayPanel.style.display = "none";
-
     afficherGrille(finalBoard);
     afficherActionsFin(true);
     if (resultPopup) resultPopup.style.display = "none";
-    afficherTour("", "Partie terminée");
+    afficherTour("", matchFinished ? "Match terminé" : "Manche terminée");
     sauvegarderEtatMatch();
 }
 
@@ -1095,10 +1623,11 @@ function quitterReplay() {
 // ----------------------------------------------------------
 
 function ouvrirParametres() {
+    stopperTimerTour({ preserve: true });
     sauvegarderEtatMatch();
     sessionStorage.setItem(RESUME_MATCH_KEY, "1");
     sessionStorage.setItem(SETTINGS_RETURN_KEY, "../Gameplay/game.html");
-    location.href = "../Parametres/parametre.html?from=game";
+    location.href = "../Parametre/parametre.html?from=game";
 }
 
 function changerMode() {
@@ -1110,9 +1639,15 @@ function changerMode() {
 }
 
 function quitterVersAccueil() {
+    if (!matchFinished && !gameFinished) {
+        const accepter = typeof confirm === "function"
+            ? confirm("Quitter maintenant abandonnera le match en cours. Continuer ?")
+            : true;
+        if (!accepter) return;
+    }
     sessionStorage.removeItem(MATCH_STORAGE_KEY);
     sessionStorage.removeItem(RESUME_MATCH_KEY);
-    location.href = "../Titre/titre.html";
+    location.href = "../index.html";
 }
 
 
@@ -1120,9 +1655,10 @@ function quitterVersAccueil() {
 // REJOUER
 // ----------------------------------------------------------
 
-function resetGame() {
-    gameBoard = Array(9).fill("");
-    finalBoard = Array(9).fill("");
+function preparerNouvelleGrille() {
+    stopperTimerTour();
+    gameBoard = Array(boardCellCount).fill("");
+    finalBoard = Array(boardCellCount).fill("");
     moveHistory = [];
     currentLocalPlayer = 1;
     isAiThinking = false;
@@ -1132,10 +1668,11 @@ function resetGame() {
     resultScored = false;
     isReplayMode = false;
     replayPosition = 0;
+    replayFrames = [];
 
     cells.forEach(cell => {
         cell.textContent = "";
-        cell.classList?.remove("mark-x", "mark-o");
+        cell.classList?.remove("mark-x", "mark-o", "winning-cell");
         cell.disabled = false;
     });
 
@@ -1145,9 +1682,95 @@ function resetGame() {
     }
     if (replayPanel) replayPanel.style.display = "none";
     afficherActionsFin(false);
+}
 
+function commencerAvecSymbole(symbole) {
+    const participant = participantParSymbole(symbole);
+    if (!participant) { demarrerPartie(false); return; }
+
+    if (gameMode === "ai") {
+        if (participant.actor === "ai") {
+            definirInteractiviteGrille(false);
+            lancerTourIA();
+        } else {
+            definirInteractiviteGrille(true);
+            afficherTour(humanSymbol);
+            demarrerTimerTour(humanSymbol);
+            sauvegarderEtatMatch();
+        }
+        return;
+    }
+
+    currentLocalPlayer = participant === playerTwo ? 2 : 1;
+    definirInteractiviteGrille(true);
+    const nextSymbol = symboleActuelLocal();
+    afficherTour(nextSymbol);
+    demarrerTimerTour(nextSymbol);
+    sauvegarderEtatMatch();
+}
+
+function mancheSuivante() {
+    if (!gameFinished || matchFinished) return;
+    roundNumber += 1;
+    const starter = nextRoundStarterSymbol;
+    nextRoundStarterSymbol = null;
+    preparerNouvelleGrille();
+    mettreAJourProgressionMatch();
+
+    if (starter) commencerAvecSymbole(starter);
+    else demarrerPartie(false);
+}
+
+function resetGame() {
+    scores = { player1: 0, player2: 0, draw: 0 };
+    matchHistoryRecorded = false;
+    matchSessionId = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+    roundNumber = 1;
+    matchFinished = false;
+    nextRoundStarterSymbol = null;
+    roundsHistory = [];
+    mettreAJourScores();
+    mettreAJourProgressionMatch();
+    preparerNouvelleGrille();
     sauvegarderEtatMatch();
     demarrerPartie(false);
+}
+
+function actionApresResultat() {
+    if (matchFinished) resetGame();
+    else mancheSuivante();
+}
+
+function abandonnerMatch() {
+    if (gameFinished && matchFinished) return;
+    const accepter = typeof confirm === "function"
+        ? confirm("Abandonner le match ? La victoire sera attribuée à l'adversaire.")
+        : true;
+    if (!accepter) return;
+    stopperTimerTour();
+
+    const loser = gameMode === "ai" ? playerOne : participantParSymbole(symboleActuelLocal());
+    const winner = loser === playerOne ? playerTwo : playerOne;
+    if (winner === playerOne) scores.player1 = Math.max(scores.player1, winsRequired);
+    else scores.player2 = Math.max(scores.player2, winsRequired);
+    matchFinished = true;
+    gameFinished = true;
+    finalBoard = [...gameBoard];
+    roundsHistory.push({
+        round: roundNumber,
+        winner: winner.symbol,
+        board: [...finalBoard],
+        moves: moveHistory.map(move => ({ ...move }))
+    });
+    enregistrerMatchDansHistorique(winner, "forfeit");
+    mettreAJourScores();
+    appliquerStyleResultat(gameMode === "ai" && winner === playerTwo ? "defeat" : "victory");
+    if (resultTitle) resultTitle.textContent = gameMode === "ai" && winner === playerTwo ? "ABANDON" : "MATCH TERMINÉ";
+    if (resultMessage) resultMessage.textContent = `${winner.name} remporte le match par abandon.`;
+    if (resultIcon) resultIcon.textContent = "⚑";
+    if (resultPopup) resultPopup.style.display = "flex";
+    afficherActionsFin(true);
+    sauvegarderEtatMatch();
 }
 
 
@@ -1155,9 +1778,16 @@ function resetGame() {
 // ÉVÉNEMENTS
 // ----------------------------------------------------------
 
-restartButton?.addEventListener("click", resetGame);
-popupRestartButton?.addEventListener("click", resetGame);
-endRestartButton?.addEventListener("click", resetGame);
+restartButton?.addEventListener("click", () => {
+    if (gameFinished) actionApresResultat();
+    else {
+        const accepter = typeof confirm === "function" ? confirm("Recommencer entièrement le match ?") : true;
+        if (accepter) resetGame();
+    }
+});
+popupRestartButton?.addEventListener("click", actionApresResultat);
+endRestartButton?.addEventListener("click", actionApresResultat);
+abandonButton?.addEventListener("click", abandonnerMatch);
 closeResultButton?.addEventListener("click", fermerResultat);
 popupReplayButton?.addEventListener("click", demarrerReplay);
 endReplayButton?.addEventListener("click", demarrerReplay);
@@ -1201,8 +1831,15 @@ cells.forEach(cell => {
 function demarrerPartie(tenterRestauration = true) {
     afficherIdentiteParticipants();
     mettreAJourScores();
+    mettreAJourProgressionMatch();
 
-    if (tenterRestauration && restaurerEtatMatchSiDemande()) return;
+    if (tenterRestauration && restaurerEtatMatchSiDemande()) {
+        if (sessionStorage.getItem("tttOpenReplay") === "1") {
+            sessionStorage.removeItem("tttOpenReplay");
+            setTimeout(() => demarrerReplay(), 0);
+        }
+        return;
+    }
 
     afficherActionsFin(false);
 
@@ -1212,11 +1849,16 @@ function demarrerPartie(tenterRestauration = true) {
 
     if (gameMode === "ai") {
         if (humanSymbol === "O") lancerTourIA();
-        else afficherTour(humanSymbol);
+        else {
+            afficherTour(humanSymbol);
+            demarrerTimerTour(humanSymbol);
+        }
         return;
     }
 
-    afficherTour(symboleActuelLocal());
+    const initialSymbol = symboleActuelLocal();
+    afficherTour(initialSymbol);
+    demarrerTimerTour(initialSymbol);
 }
 
 demarrerPartie();

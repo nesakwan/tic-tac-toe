@@ -1,11 +1,15 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Paramètres - Tic Tac Toe</title>
     <link rel="stylesheet" href="parametre.css">
+    <link rel="icon" type="image/x-icon" href="assets/Images/TTTLogo.png">
+
 </head>
+
 <body>
     <main class="settings-screen">
         <div class="background-symbols" aria-hidden="true">
@@ -15,7 +19,7 @@
             <div class="decor-o decor-o-2"></div>
         </div>
 
-        <a href="../Titre/titre.html" class="back-button" id="settings-back-button">
+        <a href="../index.html" class="back-button" id="settings-back-button">
             <svg viewBox="0 0 24 24" aria-hidden="true">
                 <path d="M15 18L9 12L15 6"></path>
             </svg>
@@ -63,15 +67,8 @@
                                 <path d="M11 5L6 9H3V15H6L11 19V5Z"></path>
                                 <path d="M15 9C16.3 10.6 16.3 13.4 15 15"></path>
                             </svg>
-                            <input
-                                class="volume-slider"
-                                id="volume-slider"
-                                type="range"
-                                min="0"
-                                max="100"
-                                value="2"
-                                aria-label="Volume"
-                            >
+                            <input class="volume-slider" id="volume-slider" type="range" min="0" max="100" value="70"
+                                aria-label="Volume">
                         </div>
                     </div>
                 </section>
@@ -112,7 +109,8 @@
         </section>
     </main>
 
-    <script src="../js/music.js" data-music-src="../Sounds/Super Smash Bros Brawl Music - Final Destination.mp3"></script>
+    <script src="../js/music.js"
+        data-music-src="../assets/Sounds/Super Smash Bros Brawl Music - Final Destination.mp3"></script>
 
     <script>
         (() => {
@@ -130,7 +128,7 @@
 
             if (sourcePage === "game") {
                 settingsBackButton.href =
-                    sessionStorage.getItem(SETTINGS_RETURN_KEY) || "../Gameplay/game.html";
+                    sessionStorage.getItem(SETTINGS_RETURN_KEY) || "../game.html";
 
                 // Le retour vers game.html doit restaurer l'état sauvegardé.
                 settingsBackButton.addEventListener("click", () => {
@@ -226,4 +224,5 @@
         })();
     </script>
 </body>
+
 </html>
