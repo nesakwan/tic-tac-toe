@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Fin de partie - Tic Tac Toe</title>
+
+    <link rel="stylesheet" href="fin.css">
+</head>
+
+
+<body>
+
+    <main class="end-screen">
+
+
+        <!-- =====================================================
+             DÉCORATIONS COMMUNES
+        ====================================================== -->
+
+        <div
+            class="background-symbols"
+            aria-hidden="true"
+        >
+
+            <div class="decor-x decor-x-1"></div>
+            <div class="decor-x decor-x-2"></div>
+
+            <div class="decor-o decor-o-1"></div>
+            <div class="decor-o decor-o-2"></div>
+
+        </div>
+
+
+
+        <!-- =====================================================
+             ÉCRAN VICTOIRE
+             ACTIF PAR DÉFAUT
+        ====================================================== -->
+
+        <section
+            class="result-screen victory active"
+        >
+
+            <!-- CONFETTIS -->
+
+            <div
+                class="confetti-container"
+                aria-hidden="true"
+            >
+
+                <span class="confetti confetti-1"></span>
+                <span class="confetti confetti-2"></span>
+                <span class="confetti confetti-3"></span>
+                <span class="confetti confetti-4"></span>
+                <span class="confetti confetti-5"></span>
+                <span class="confetti confetti-6"></span>
+                <span class="confetti confetti-7"></span>
+                <span class="confetti confetti-8"></span>
+
+                <span class="confetti confetti-9"></span>
+                <span class="confetti confetti-10"></span>
+                <span class="confetti confetti-11"></span>
+                <span class="confetti confetti-12"></span>
+                <span class="confetti confetti-13"></span>
+                <span class="confetti confetti-14"></span>
+                <span class="confetti confetti-15"></span>
+                <span class="confetti confetti-16"></span>
+
+            </div>
+
+
+            <div class="result-card victory-card">
+
+
+                <!-- TROPHÉE -->
+
+                <div class="result-icon victory-icon">
+
+                    <svg
+                        viewBox="0 0 120 120"
+                        aria-hidden="true"
+                    >
+
+                        <!-- coupe -->
+                        <path
+                            d="
+                            M38 18
+                            H82
+                            V35
+                            C82 56 72 68 60 72
+                            C48 68 38 56 38 35
+                            Z
+                            "
+                        ></path>
+
+                        <!-- poignées -->
+                        <path
+                            d="
+                            M38 27
+                            H22
+                            V38
+                            C22 51 30 58 42 59
+                            "
+                        ></path>
+
+                        <path
+                            d="
+                            M82 27
+                            H98
+                            V38
+                            C98 51 90 58 78 59
+                            "
+                        ></path>
+
+                        <!-- pied -->
+                        <path
+                            d="
+                            M60 72
+                            V88
+                            "
+                        ></path>
+
+                        <path
+                            d="
+                            M45 100
+                            H75
+                            "
+                        ></path>
+
+                        <path
+                            d="
+                            M50 88
+                            H70
+                            L75 100
+                            H45
+                            Z
+                            "
+                        ></path>
+
+                        <!-- étoile -->
+                        <path
+                            class="trophy-star"
+                            d="
+                            M60 28
+                            L64 38
+                            L75 39
+                            L67 46
+                            L69 57
+                            L60 51
+                            L51 57
+                            L53 46
+                            L45 39
+                            L56 38
+                            Z
+                            "
+                        ></path>
+
+                    </svg>
+
+                </div>
+
+
+                <!-- TITRE -->
+
+                <h1 class="result-title victory-title">
+
+                    <span class="winner-symbol">
+                        X
+                    </span>
+
+                    <span>
+                        A GAGNÉ !
+                    </span>
+
+                </h1>
+
+
+                <p class="result-subtitle">
+                    Félicitations !
+                </p>
+
+
+                <!-- BOUTONS -->
+
+                <div class="result-actions">
+
+                    <a
+                        href="#"
+                        class="replay-button"
+                    >
+
+                        <svg
+                            viewBox="0 0 24 24"
+                            aria-hidden="true"
+                        >
+                            <path
+                                d="M20 11A8 8 0 1 0 18 16"
+                            ></path>
+
+                            <path
+                                d="M20 5V11H14"
+                            ></path>
+                        </svg>
+
+                        <span>
+                            REJOUER
+                        </span>
+
+                    </a>
+
+
+                    <div class="secondary-actions">
+
+                        <a
+                            href="../Rencontre/rencontre.html"
+                            class="secondary-button"
+                        >
+
+                            <svg
+                                viewBox="0 0 24 24"
+                                aria-hidden="true"
+                            >
+                                <path d="M8 7H16"></path>
+                                <path d="M8 12H16"></path>
+                                <path d="M8 17H16"></path>
+                            </svg>
+
+                            <span>
+                                CHANGER DE MODE
+                            </span>
+
+                        </a>
+
+
+                        <a
+                            href="../index.html"
+                            class="secondary-button"
+                        >
+
+                            <svg
+                                viewBox="0 0 24 24"
+                                aria-hidden="true"
+                            >
+                                <path
+                                    d="M3 11L12 4L21 11"
+                                ></path>
+
+                                <path
+                                    d="M5 10V20H19V10"
+                                ></path>
+                            </svg>
+
+                            <span>
+                                RETOUR À L'ACCUEIL
+                            </span>
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =====================================================
+             ÉCRAN DÉFAITE
+        ====================================================== -->
+
+        <section
+            class="result-screen defeat hidden"
+        >
+
+            <!-- PETITES PARTICULES -->
+
+            <div
+                class="defeat-particles"
+                aria-hidden="true"
+            >
+
+                <span class="defeat-particle p1"></span>
+                <span class="defeat-particle p2"></span>
+                <span class="defeat-particle p3"></span>
+                <span class="defeat-particle p4"></span>
+                <span class="defeat-particle p5"></span>
+                <span class="defeat-particle p6"></span>
+
+            </div>
+
+
+            <div class="result-card defeat-card">
+
+
+                <!-- ICÔNE DÉFAITE -->
+
+                <div class="result-icon defeat-icon">
+
+                    <svg
+                        viewBox="0 0 120 120"
+                        aria-hidden="true"
+                    >
+
+                        <!-- bouclier -->
+                        <path
+                            d="
+                            M60 12
+                            L96 26
+                            V54
+                            C96 80 81 99 60 108
+                            C39 99 24 80 24 54
+                            V26
+                            Z
+                            "
+                        ></path>
+
+
+                        <!-- fissure -->
+                        <path
+                            class="crack"
+                            d="
+                            M63 24
+                            L53 48
+                            L65 54
+                            L54 74
+                            L62 80
+                            L54 101
+                            "
+                        ></path>
+
+
+                        <!-- petit X -->
+                        <path
+                            class="defeat-x"
+                            d="
+                            M39 43
+                            L50 54
+
+                            M50 43
+                            L39 54
+                            "
+                        ></path>
+
+                    </svg>
+
+                </div>
+
+
+                <h1 class="result-title defeat-title">
+                    DÉFAITE
+                </h1>
+
+
+                <p class="result-subtitle">
+                    L'IA remporte la partie.
+                </p>
+
+
+                <div class="result-actions">
+
+                    <a
+                        href="#"
+                        class="replay-button"
+                    >
+
+                        <svg
+                            viewBox="0 0 24 24"
+                            aria-hidden="true"
+                        >
+                            <path
+                                d="M20 11A8 8 0 1 0 18 16"
+                            ></path>
+
+                            <path
+                                d="M20 5V11H14"
+                            ></path>
+                        </svg>
+
+                        <span>
+                            REJOUER
+                        </span>
+
+                    </a>
+
+
+                    <div class="secondary-actions">
+
+                        <a
+                            href="../Rencontre/rencontre.html"
+                            class="secondary-button"
+                        >
+
+                            <svg
+                                viewBox="0 0 24 24"
+                                aria-hidden="true"
+                            >
+                                <path d="M8 7H16"></path>
+                                <path d="M8 12H16"></path>
+                                <path d="M8 17H16"></path>
+                            </svg>
+
+                            <span>
+                                CHANGER DE MODE
+                            </span>
+
+                        </a>
+
+
+                        <a
+                            href="../index.html"
+                            class="secondary-button"
+                        >
+
+                            <svg
+                                viewBox="0 0 24 24"
+                                aria-hidden="true"
+                            >
+                                <path
+                                    d="M3 11L12 4L21 11"
+                                ></path>
+
+                                <path
+                                    d="M5 10V20H19V10"
+                                ></path>
+                            </svg>
+
+                            <span>
+                                RETOUR À L'ACCUEIL
+                            </span>
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =====================================================
+             ÉCRAN MATCH NUL
+        ====================================================== -->
+
+        <section
+            class="result-screen draw hidden"
+        >
+
+            <!-- DÉCORATIONS SYMÉTRIQUES -->
+
+            <div
+                class="draw-accents"
+                aria-hidden="true"
+            >
+
+                <span class="draw-line line-blue line-blue-1"></span>
+                <span class="draw-line line-blue line-blue-2"></span>
+                <span class="draw-line line-pink line-pink-1"></span>
+                <span class="draw-line line-pink line-pink-2"></span>
+
+            </div>
+
+
+            <div class="result-card draw-card">
+
+
+                <!-- POIGNÉE DE MAIN -->
+
+                <div class="result-icon draw-icon">
+
+                    <svg
+                        viewBox="0 0 140 110"
+                        aria-hidden="true"
+                    >
+
+                        <!-- bras gauche -->
+                        <path
+                            class="hand-left"
+                            d="
+                            M11 40
+                            L39 18
+                            L63 39
+                            L53 49
+                            L42 40
+                            L31 50
+                            Z
+                            "
+                        ></path>
+
+
+                        <!-- bras droit -->
+                        <path
+                            class="hand-right"
+                            d="
+                            M129 40
+                            L101 18
+                            L77 39
+                            L87 49
+                            L98 40
+                            L109 50
+                            Z
+                            "
+                        ></path>
+
+
+                        <!-- mains -->
+                        <path
+                            class="hand-center"
+                            d="
+                            M42 40
+                            L55 53
+
+                            C59 57 63 56 66 53
+
+                            L72 47
+
+                            L91 65
+
+                            C95 69 95 74 91 77
+
+                            C88 80 84 80 81 77
+
+                            L67 64
+                            "
+                        ></path>
+
+
+                        <path
+                            class="hand-center"
+                            d="
+                            M53 49
+                            L79 73
+
+                            C83 77 83 82 79 85
+
+                            C76 88 71 88 68 85
+
+                            L48 67
+                            "
+                        ></path>
+
+
+                        <path
+                            class="hand-center"
+                            d="
+                            M48 67
+                            L62 80
+
+                            C66 84 65 89 62 92
+
+                            C58 95 54 94 51 91
+
+                            L32 74
+                            "
+                        ></path>
+
+                    </svg>
+
+                </div>
+
+
+                <h1 class="result-title draw-title">
+                    MATCH NUL !
+                </h1>
+
+
+                <p class="result-subtitle">
+                    Personne n'a gagné cette partie.
+                </p>
+
+
+                <div class="result-actions">
+
+                    <a
+                        href="#"
+                        class="replay-button"
+                    >
+
+                        <svg
+                            viewBox="0 0 24 24"
+                            aria-hidden="true"
+                        >
+                            <path
+                                d="M20 11A8 8 0 1 0 18 16"
+                            ></path>
+
+                            <path
+                                d="M20 5V11H14"
+                            ></path>
+                        </svg>
+
+                        <span>
+                            REJOUER
+                        </span>
+
+                    </a>
+
+
+                    <div class="secondary-actions">
+
+                        <a
+                            href="../Rencontre/rencontre.html"
+                            class="secondary-button"
+                        >
+
+                            <svg
+                                viewBox="0 0 24 24"
+                                aria-hidden="true"
+                            >
+                                <path d="M8 7H16"></path>
+                                <path d="M8 12H16"></path>
+                                <path d="M8 17H16"></path>
+                            </svg>
+
+                            <span>
+                                CHANGER DE MODE
+                            </span>
+
+                        </a>
+
+
+                        <a
+                            href="../index.html"
+                            class="secondary-button"
+                        >
+
+                            <svg
+                                viewBox="0 0 24 24"
+                                aria-hidden="true"
+                            >
+                                <path
+                                    d="M3 11L12 4L21 11"
+                                ></path>
+
+                                <path
+                                    d="M5 10V20H19V10"
+                                ></path>
+                            </svg>
+
+                            <span>
+                                RETOUR À L'ACCUEIL
+                            </span>
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+    </main>
+
+</body>
+
+</html>
