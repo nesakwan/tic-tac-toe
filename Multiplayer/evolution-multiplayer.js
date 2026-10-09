@@ -52,6 +52,8 @@
   let pendingStylePlacement = false;
   let selectedEffect = 'add';
   let awaitingGambling = false;
+  let gamblingAnimationToken = 0;
+  let lastGambleSignature = '';
   let actionPending = false;
   let ghostRevealRound = null;
   let ghostRevealTimer = null;
@@ -171,7 +173,12 @@
       host.append(button);
     }
 
-    host.scrollLeft = previousScroll;
+    const activeStyle = roomStyles[symbol];
+    if (host.dataset.centeredStyle !== activeStyle) {
+      host.dataset.centeredStyle = activeStyle;
+      const selectedCard = host.querySelector('.evo-mini-style.active');
+      if (selectedCard) host.scrollLeft = Math.max(0, selectedCard.offsetLeft - host.offsetLeft - (host.clientWidth - selectedCard.offsetWidth) / 2);
+    } else host.scrollLeft = previousScroll;
     updateStyleNav(symbol);
     const current = $(`style-current-${symbol.toLowerCase()}`);
     const owner = $(`style-owner-${symbol.toLowerCase()}`);
@@ -451,12 +458,21 @@
     const icons = {aggressive:'⚔',defensive:'◆',time:'⏳',bomb:'✹',risk:'▲',gambling:'⚄'};
     const flash = document.createElement('div');
     flash.className = `evo-style-flash fx-${style}`;
+    flash.style.setProperty('--skill-color', styleCatalog[style]?.[2] || '#a985ff');
     flash.setAttribute('role','status');
     const label = document.createElement('strong');
     label.textContent = `${icons[style]} ${style.toUpperCase()}${delayed ? ' · DÉCLENCHEMENT' : ''}`;
     const who = document.createElement('small');
     who.textContent = `${roomPlayers[owner] || owner} utilise son pouvoir`;
-    flash.append(label,who); zone.append(flash);
+    flash.append(label,who);
+    for (let i=0; i<7; i++) {
+      const particle=document.createElement('i');
+      particle.className='evo-skill-particle';
+      particle.style.setProperty('--p',String(i));
+      particle.setAttribute('aria-hidden','true');
+      flash.append(particle);
+    }
+    zone.append(flash);
     for (const cell of cells) {
       const button = Array.from(els.board.children).find(el => el.dataset.cell === cell);
       if (button) {button.classList.add('evo-power-hit');setTimeout(()=>button.classList.remove('evo-power-hit'),900);}
@@ -503,19 +519,22 @@
     }
     els.board.replaceChildren();
     const ext=state.effects?.filter(e=>e.type==='add').flatMap(e=>e.cells)||[];
-    const original=[...(state.permanentCells||[]),...(state.permanentErased||[]),...ext];
+    const available = new Set(candidates(state));
+    // La grille englobe seulement le plateau réel et les cases qu'on peut ajouter,
+    // et non une bordure fictive entière de chaque côté.
+    const original=[...(state.permanentCells||[]),...(state.permanentErased||[]),...ext,...available];
     const b=E.bounds(state),coords=original.map(xy);
-    const minX=Math.min(b.minX-1,...coords.map(([x])=>x));
-    const maxX=Math.max(b.maxX+1,...coords.map(([x])=>x));
-    const minY=Math.min(b.minY-1,...coords.map(([,y])=>y));
-    const maxY=Math.max(b.maxY+1,...coords.map(([,y])=>y));
+    const minX=Math.min(b.minX,...coords.map(([x])=>x));
+    const maxX=Math.max(b.maxX,...coords.map(([x])=>x));
+    const minY=Math.min(b.minY,...coords.map(([,y])=>y));
+    const maxY=Math.max(b.maxY,...coords.map(([,y])=>y));
     const cols = maxX - minX + 1;
     const rows = maxY - minY + 1;
     syncBoardMetrics(els.board, cols, rows);
     els.board.classList.toggle('ghost-final-board',Boolean(state.ghostFinal));
     const permanent=new Set(state.permanentCells||[]);
     const erasedPermanent=new Set(state.permanentErased||[]);
-    const possible = new Set(candidates(state));
+    const possible = available;
     const line = new Set(replayActive ? (E.winningLine(state)?.cells || []) : (winningLine || []));
 
     let ghostOrder = 0;
@@ -542,7 +561,9 @@
       if (state.ghostFinal && (isPermanent || isVoid)) btn.style.setProperty('--ghost-order', String(ghostOrder++));
       btn.textContent = symbol || (isVoid?'⊘':'') || (exists&&!playable?'⊘':'');
       if (symbol) globalThis.TTTPlayerData?.applyElementCosmetic?.(btn, symbol, roomCosmetics[symbol] || myCosmetic(symbol));
-      const hideGhost = !isVoid && outer && !exists && !['add','bomb','aggressive'].includes(mode);
+      // L'ancien rendu montrait une couronne de cases fictives, même impossibles à ajouter.
+      // Les seules cases d'aperçu sont maintenant celles que le moteur autorise.
+      const hideGhost = isVoid || (!exists && !selectable);
       if (hideGhost) btn.classList.add('hidden-cell');
       btn.disabled = replayActive || ghostRevealing || status !== 'playing' || state.turn !== mySymbol || !selectable || hideGhost;
       btn.addEventListener('click', () => selectCell(cell));
@@ -657,23 +678,40 @@
   }
 
   async function animateGambling(cell) {
-    if (!cell) return;
+    if (!cell || replayActive) return;
+    const token = ++gamblingAnimationToken;
     const [x,y] = xy(cell);
-    const overlay = els.dice;
-    overlay.hidden = false;
+    els.dice.hidden = false;
     els.diceCube.classList.add('rolling');
-    els.diceResult.textContent = 'Lancement du dé serveur…';
-    els.diceSub.textContent = 'Le hasard est calculé côté serveur.';
-    let face=1;
-    const id = setInterval(() => { els.diceCube.textContent = String(face); face = face % 6 + 1; }, 130);
-    await new Promise(r => setTimeout(r, 1500));
-    clearInterval(id);
+    els.diceResult.textContent = 'La case a été tirée au sort !';
+    els.diceSub.textContent = 'La sélection a été effectuée par le serveur.';
+    const faces = ['⚀','⚁','⚂','⚃','⚄','⚅'];
+    let index = 0;
+    const interval = setInterval(() => { els.diceCube.textContent = faces[index++ % faces.length]; }, 100);
+    await new Promise(resolve => setTimeout(resolve, 650));
+    clearInterval(interval);
+    if (token !== gamblingAnimationToken) return;
     els.diceCube.classList.remove('rolling');
-    els.diceCube.textContent = String((Math.abs(x*7+y*11)%6)+1);
+    els.diceCube.textContent = '⚄';
+    // Aucun faux numéro de dé : ce sont les vraies coordonnées choisies par le moteur.
     els.diceResult.textContent = `Ligne ${y+1} · Colonne ${x+1}`;
-    els.diceSub.textContent = `Case tirée : (${x}, ${y}). Le résultat vient du serveur.`;
-    await new Promise(r => setTimeout(r, 1700));
-    overlay.hidden = true;
+    els.diceSub.textContent = `Case (${x}, ${y}) sélectionnée par le serveur.`;
+    await new Promise(resolve => setTimeout(resolve, 750));
+    if (token === gamblingAnimationToken) els.dice.hidden = true;
+  }
+
+  function displayResolvedGamble(previous, next) {
+    if (!next?.history || !previous || replayActive) return false;
+    const oldCount = previous.history?.filter(event => event.type === 'gambling').length || 0;
+    const drawn = next.history.filter(event => event.type === 'gambling');
+    if (drawn.length <= oldCount) return false;
+    const latest = drawn.at(-1);
+    const signature = `${round}:${drawn.length}:${latest.actor}:${latest.cell}`;
+    if (signature === lastGambleSignature) return false;
+    lastGambleSignature = signature;
+    awaitingGambling = false;
+    animateGambling(latest.cell);
+    return true;
   }
 
   function stopTimer({ hide = true } = {}) {
@@ -728,11 +766,17 @@
     if (Number(data?.round) === 1) {
       ghostRevealRound = null;
       ghostRevealing = false;
+      lastGambleSignature = '';
+      gamblingAnimationToken += 1;
+      els.dice.hidden = true;
       clearTimeout(ghostRevealTimer);
     }
     currentState(data);
     els.lobby.hidden = true; els.coin.hidden = true; els.game.hidden = false;
     els.result.hidden = true;
+    els.game.classList.remove('evo-scene-arrive');
+    void els.game.offsetWidth;
+    els.game.classList.add('evo-scene-arrive');
     actionPending=false; chosen=[]; pendingStylePlacement=false; mode='place'; replayActive=false; els.replayPanel.classList.remove('is-open');
     renderGame(); syncTimer();
   }
@@ -741,9 +785,19 @@
   function showResult(data, matchEnd=false) {
     const previous = evo;
     currentState(data);
+    els.lobby.hidden = true; els.coin.hidden = true; els.game.hidden = false;
     renderGame();
     animateStatePower(previous, evo); stopTimer();
-    els.result.hidden = false;
+    const resolvedGamble = displayResolvedGamble(previous, evo);
+    // Laisser apparaître la vraie case tirée avant le résultat si Gambling a terminé la manche.
+    const outcomeRound = round;
+    els.result.hidden = true;
+    if (resolvedGamble) setTimeout(() => {
+      if (round !== outcomeRound || !['round_end','match_end'].includes(status)) return;
+      void els.result.offsetWidth;
+      els.result.hidden = false;
+    }, 1450);
+    else { void els.result.offsetWidth; els.result.hidden = false; }
     els.result.classList.remove('result-victory','result-defeat','result-draw');
     const winner = matchEnd ? (data.matchWinner || null) : (data.winner || evo?.winner || null);
     const draw = !winner;
@@ -799,14 +853,49 @@
     currentState(data);
     if (data.gameVariant && data.gameVariant !== 'evolution') return;
     els.lobby.hidden=true; els.coin.hidden=true; els.game.hidden=false;
-    const latestGamble = awaitingGambling && evo?.history ? [...evo.history].reverse().find(x=>x?.type==='gambling'&&x.actor===mySymbol) : null;
     actionPending=false; chosen=[]; pendingStylePlacement=false; mode='place';
     renderGame(); syncTimer();
     animateStatePower(previous, evo);
-    if (latestGamble) { awaitingGambling=false; animateGambling(latestGamble.cell); }
+    displayResolvedGamble(previous, evo);
   }
 
   function leaveAndGo(url) { if (currentRoom) socket.emit('leaveRoom'); clearSession(); location.href=url; }
+
+  // Paramètres intégrés : aucun changement de page => le socket, le timer et la salle restent actifs.
+  const settingsModal = $('evo-settings-modal');
+  const settingsToggle = $('evo-settings-sound');
+  const settingsVolume = $('evo-settings-volume');
+  const settingsVolumeLabel = $('evo-settings-volume-text');
+  const settingsLanguage = $('evo-settings-language');
+  let lastSettingsFocus = null;
+  function openSettings(event) {
+    event?.preventDefault();
+    let saved = {};
+    try { saved = JSON.parse(localStorage.getItem('tttSettings') || '{}') || {}; } catch (_) {}
+    settingsToggle.checked = saved.soundEnabled !== false;
+    settingsVolume.value = Number.isFinite(Number(saved.volume)) ? String(Math.max(0, Math.min(100, Number(saved.volume)))) : '70';
+    settingsVolumeLabel.textContent = `${settingsVolume.value} %`;
+    settingsLanguage.value = ['fr','en','es','de'].includes(saved.language) ? saved.language : 'fr';
+    lastSettingsFocus = document.activeElement;
+    settingsModal.hidden = false;
+    $('evo-settings-close').focus();
+  }
+  function closeSettings() {
+    settingsModal.hidden = true;
+    lastSettingsFocus?.focus?.();
+  }
+  function saveInlineSettings() {
+    const settings = {soundEnabled: settingsToggle.checked, volume:Number(settingsVolume.value), language:settingsLanguage.value};
+    settingsVolumeLabel.textContent = `${settings.volume} %`;
+    localStorage.setItem('tttSettings', JSON.stringify(settings));
+    window.dispatchEvent(new CustomEvent('ttt-settings-changed',{detail:settings}));
+  }
+  $('settings-button')?.addEventListener('click',openSettings);
+  $('evo-settings-close')?.addEventListener('click',closeSettings);
+  $('evo-settings-done')?.addEventListener('click',closeSettings);
+  settingsModal?.addEventListener('click',event=>{if(event.target===settingsModal)closeSettings();});
+  document.addEventListener('keydown',event=>{if(event.key==='Escape' && !settingsModal.hidden)closeSettings();});
+  for(const setting of [settingsToggle,settingsVolume,settingsLanguage]) setting?.addEventListener('input',saveInlineSettings);
 
   // Lobby controls
   els.nameInput.value = initialName();
@@ -876,7 +965,7 @@
   socket.on('roundOver',data=>{replayFrames=clone(data.evolutionFrames||[]);showResult(data,false);});
   socket.on('matchOver',data=>{replayFrames=clone(data.evolutionFrames||data.evolutionRoundHistory?.at?.(-1)?.frames||[]);showResult(data,true);});
   socket.on('turnTimedOut',data=>{actionPending=false;applyServerState(data);setFeedback(`${data.timedOutName||data.timedOutSymbol} a perdu son tour.`);});
-  socket.on('gameError',msg=>{actionPending=false;renderGame();setFeedback(msg);});
+  socket.on('gameError',msg=>{actionPending=false;awaitingGambling=false;renderGame();setFeedback(msg);});
   socket.on('roomError',msg=>setFeedback(msg));
   socket.on('resumeFailed',msg=>{clearSession();showLobbyHome();setFeedback(msg);});
   socket.on('roomResumed',data=>{if(data.gameVariant!=='evolution'){clearSession();showLobbyHome();setFeedback('Cette session appartient au mode Classique.');return;}currentRoom=data.code;mySymbol=data.symbol;myToken=data.token||myToken;myName=data.name||myName;saveSession();if(data.status==='lobby')updateLobby(data);else if(data.status==='tossing')showCoinToss({...data,starterSymbol:data.turn,starterName:data.players?.[data.turn]});else if(data.status==='round_end')showResult(data,false);else if(data.status==='match_end')showResult(data,true);else showGame(data);});

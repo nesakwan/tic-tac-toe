@@ -746,12 +746,20 @@
     const [glyph, title] = styleFx[style];
     const flash = document.createElement('div');
     flash.className = `evo-style-flash fx-${style}`;
+    flash.style.setProperty('--skill-color',styleVisuals[style]?.accent || '#aa83ff');
     flash.setAttribute('role', 'status');
     const name = document.createElement('strong');
     name.textContent = `${glyph} ${title}${delayed ? ' · DÉCLENCHEMENT' : ''}`;
     const by = document.createElement('small');
     by.textContent = `${playerNames[owner] || owner} utilise son pouvoir`;
     flash.append(name, by);
+    for (let i=0; i<7; i++) {
+      const particle=document.createElement('i');
+      particle.className='evo-skill-particle';
+      particle.style.setProperty('--p', String(i));
+      particle.setAttribute('aria-hidden','true');
+      flash.append(particle);
+    }
     zone.append(flash);
     for (const cell of cells) {
       const button = Array.from($('board').children).find(el => el.dataset.cell === cell);
@@ -903,16 +911,17 @@
     const randomValue = Math.min(0.999999, Math.random());
     const targetIndex = Math.floor(randomValue * options.length);
     const targetCell = options[targetIndex];
-    const alreadyOwned = state.symbols[targetCell] === state.turn;
+    const priorSymbol = state.symbols[targetCell];
+    const alreadyOwned = priorSymbol === state.turn;
     const [x, y] = parseKey(targetCell);
-    const face = String((targetIndex % 6) + 1);
+    const face = '⚄';
 
     await showDiceResult(
       face,
-      `Ligne ${y + 1} (depuis le haut) · Colonne ${x + 1} (depuis la gauche)`,
+      `Case tirée au sort : (${x}, ${y})`,
       alreadyOwned
         ? 'Votre propre case est annulée et effacée.'
-        : 'La case tirée reçoit votre symbole.'
+        : priorSymbol ? 'Le symbole adverse devient le vôtre.' : 'La case tirée reçoit votre symbole.'
     );
 
     highlightedGamble = targetCell;

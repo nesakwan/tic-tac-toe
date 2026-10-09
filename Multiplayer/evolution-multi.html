@@ -235,6 +235,20 @@
       </div>
     </div>
 
+    <!-- Réglages intégrés : la connexion et le match restent actifs. -->
+    <section id="evo-settings-modal" class="evo-settings-modal" hidden role="dialog" aria-modal="true" aria-labelledby="evo-settings-title">
+      <div class="evo-settings-card">
+        <button type="button" id="evo-settings-close" class="evo-settings-close" aria-label="Fermer les paramètres">×</button>
+        <span class="evo-settings-kicker">TIC TAC TOE</span>
+        <h2 id="evo-settings-title">PARAMÈTRES</h2>
+        <p>Vos réglages sont appliqués sans quitter la salle.</p>
+        <label class="evo-settings-row"><span>Musique et son</span><input id="evo-settings-sound" type="checkbox" checked></label>
+        <label class="evo-settings-row"><span>Volume <output id="evo-settings-volume-text">70 %</output></span><input id="evo-settings-volume" type="range" min="0" max="100" value="70"></label>
+        <label class="evo-settings-row"><span>Langue</span><select id="evo-settings-language"><option value="fr">Français</option><option value="en">English</option><option value="es">Español</option><option value="de">Deutsch</option></select></label>
+        <button type="button" id="evo-settings-done" class="evo-settings-done">Reprendre</button>
+      </div>
+    </section>
+
     <div id="dice-overlay" class="dice-overlay" hidden><div class="dice-card"><span class="dice-label">GAMBLING</span><div id="dice-cube" class="dice-cube">?</div><strong id="dice-result">Lancement en cours…</strong><p id="dice-subtext">Le serveur choisit la case.</p></div></div>
     <p id="game-message" class="feedback-message error floating-game-message" role="alert"></p>
   </main>
