@@ -2828,7 +2828,7 @@ body:has(.difficulty-choice.god input:checked) .description-god {
 
 
 
-body:has(input[name="game-mode"]:checked) .continue-button {
+body:has(input[name="game-variant"]:checked) .continue-button {
 
 
 
@@ -5965,3 +5965,10 @@ body:has(#mode-ai:checked) .players-ai {
 @keyframes ghost-reveal{from{opacity:0;transform:translateY(9px)}to{opacity:1;transform:translateY(0)}}
 @media(max-width:620px){.ghost-card{gap:12px;padding:15px}.ghost-icon{flex-basis:48px;height:52px;font-size:30px}.ghost-description strong{font-size:14px}.ghost-description small{display:block;width:max-content;margin:5px 0}.ghost-switch{width:43px}.ghost-card:has(input:checked) .ghost-switch:before{transform:translateX(14px)}}
 @media(prefers-reduced-motion:reduce){.ghost-icon,.ghost-option{animation:none}}
+
+/* Correction du parcours de préparation Évolution. */
+#step-players .difficulty-area { margin: 26px auto 16px; }
+body:has(#mode-ai:checked) #step-players .difficulty-area { display: block; }
+body:has(#mode-multi:checked) #step-players .players-layout { display: none !important; }
+body:has(#mode-multi:checked) #step-players .player-mode-selector { margin-bottom: 20px; }
+@media(max-width: 720px){ #step-players .difficulty-area { width: 100%; } }

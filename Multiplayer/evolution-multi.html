@@ -125,19 +125,33 @@
           </div>
           <label id="room-ghost-wrap" class="room-ghost-wrap" hidden>
             <input id="room-ghost-mode" type="checkbox" />
-            <span class="room-ghost-sigil">✧</span>
-            <span><strong>MODE FANTÔME</strong><small>Finale : Ajouts et Neutralisations permanents</small></span>
+            <span class="room-ghost-sigil" aria-hidden="true">✧<span>XO</span></span>
+            <span class="room-ghost-description"><strong>MODE FANTÔME <em>RÈGLE SPÉCIALE</em></strong>
+              <small>Les Ajouts et Neutralisations sont mémorisés : en manche 3 (BO3) ou 5 (BO5), ils deviennent définitifs. Les ajouts répétés se cumulent.</small>
+              <span class="room-ghost-condition">Disponible uniquement en BO3 / BO5 • L’hôte choisit</span>
+            </span>
+            <span class="room-ghost-switch" aria-hidden="true"></span>
           </label>
         </section>
 
         <section class="evo-lobby-styles" aria-label="Choix des Styles">
           <article class="evo-lobby-style-player" data-style-owner="X">
             <div class="evo-style-title"><span class="player-badge blue">X</span><div><strong id="style-owner-x">Joueur X</strong><small id="style-current-x">ÉQUILIBRÉ</small></div></div>
-            <div id="lobby-styles-x" class="evo-style-mini-track"></div>
+            <div class="evo-style-carousel">
+              <button class="evo-style-nav" type="button" data-style-prev="X" aria-label="Styles précédents">‹</button>
+              <div id="lobby-styles-x" class="evo-style-mini-track" tabindex="0" aria-label="Styles du joueur X"></div>
+              <button class="evo-style-nav" type="button" data-style-next="X" aria-label="Styles suivants">›</button>
+            </div>
+            <div class="evo-style-selected" id="evo-style-selected-x" aria-live="polite"></div>
           </article>
           <article class="evo-lobby-style-player" data-style-owner="O">
             <div class="evo-style-title"><span class="player-badge pink">O</span><div><strong id="style-owner-o">Joueur O</strong><small id="style-current-o">ÉQUILIBRÉ</small></div></div>
-            <div id="lobby-styles-o" class="evo-style-mini-track"></div>
+            <div class="evo-style-carousel">
+              <button class="evo-style-nav" type="button" data-style-prev="O" aria-label="Styles précédents">‹</button>
+              <div id="lobby-styles-o" class="evo-style-mini-track" tabindex="0" aria-label="Styles du joueur O"></div>
+              <button class="evo-style-nav" type="button" data-style-next="O" aria-label="Styles suivants">›</button>
+            </div>
+            <div class="evo-style-selected" id="evo-style-selected-o" aria-live="polite"></div>
           </article>
         </section>
 

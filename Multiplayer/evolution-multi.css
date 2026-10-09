@@ -68,3 +68,86 @@
 .room-ghost-wrap span:last-child{display:flex;flex-direction:column;gap:4px}
 .room-ghost-wrap strong{font-size:13px;letter-spacing:.09em}
 .room-ghost-wrap small{color:#aaaecb;font-size:11px}
+
+/* Salon Évolution : mêmes cartes à identité visuelle que la préparation locale. */
+.evo-lobby-styles { align-items: start; }
+.evo-lobby-style-player { padding: 20px; border-radius: 21px; background: rgba(8,17,32,.85); }
+.evo-style-title { margin-bottom: 18px; }
+.evo-style-carousel { min-width:0; display:grid; grid-template-columns:32px minmax(0,1fr) 32px; align-items:center; gap:8px; }
+.evo-style-mini-track {
+  display:flex; min-width:0; gap:12px; overflow-x:auto; scroll-behavior:smooth;
+  scroll-snap-type:x mandatory; scrollbar-width:none; padding:8px 3px 12px;
+}
+.evo-style-mini-track::-webkit-scrollbar { display:none; }
+.evo-style-nav { height:45px; width:32px; border:1px solid #314c76; border-radius:12px; background:#102038; color:#deebff; font-size:27px; cursor:pointer; }
+.evo-style-nav:disabled {opacity:.3;cursor:default;}
+.evo-mini-style {
+  flex: 0 0 clamp(116px, 43%, 160px); min-height:176px; display:flex; flex-direction:column;
+  align-items:flex-start; padding:14px; gap:3px; border-radius:19px; text-align:left;
+  background: radial-gradient(circle at 30% 9%, color-mix(in srgb,var(--style-accent) 21%,transparent), transparent 65%), linear-gradient(155deg,#1b2a45,#0b1425);
+  border:1px solid color-mix(in srgb,var(--style-accent) 52%,#243655);
+  scroll-snap-align:center; transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease;
+}
+.evo-mini-style .evo-style-icon {
+  display:grid;place-items:center; width:59px;height:59px;margin-bottom:auto;
+  border-radius:17px;font-size:29px;font-weight:800;color:#fff;
+  background:linear-gradient(140deg,color-mix(in srgb,var(--style-accent) 78%,#101b36),color-mix(in srgb,var(--style-accent) 53%,#0c1525));
+  box-shadow:0 4px 20px color-mix(in srgb,var(--style-accent) 26%,transparent);
+}
+.evo-mini-style strong {font-size:13px;letter-spacing:.03em;color:#fff}
+.evo-mini-style small {font-size:10px;color:color-mix(in srgb,var(--style-accent) 65%,#b7c4da);line-height:1.3}
+.evo-mini-style.active {transform:translateY(-2px);border-color:var(--style-accent);box-shadow:0 0 0 1px color-mix(in srgb,var(--style-accent) 55%,transparent),0 9px 27px color-mix(in srgb,var(--style-accent) 20%,transparent);}
+.evo-mini-style:disabled { opacity:.7; }
+.evo-lobby-style-player.is-mine .evo-mini-style:not(:disabled) {cursor:pointer}
+.evo-lobby-style-player.is-mine .evo-mini-style:not(:disabled):hover {transform:translateY(-4px)}
+.evo-style-selected {padding:12px 14px; margin-top:10px; border-radius:12px;border:1px solid #304266;background:#0a1628;min-height:64px;display:flex;align-items:center;gap:12px}
+.evo-style-selected strong {border-left:3px solid var(--selected-accent,#987aff);padding-left:9px;min-width:94px;font-size:12px; color:#f1f4ff}
+.evo-style-selected span {font-size:12px;color:#a5b8d5;line-height:1.4}
+/* Carte Fantôme synchronisée, comme dans l'étape Règles de Rencontre. */
+.room-ghost-wrap {display:flex;align-items:center;gap:17px;position:relative;cursor:pointer;overflow:hidden;margin-top:20px;padding:20px 22px;min-height:106px;border-radius:17px;border:1px solid #8860c488;background:linear-gradient(105deg,#39234e81,#13213a);color:#f3eeff;box-shadow:0 7px 24px #2b174928}
+.room-ghost-wrap[hidden] {display:none!important}
+.room-ghost-wrap input {position:absolute;opacity:0;width:1px;height:1px}
+.room-ghost-wrap:focus-within {outline:2px solid #b48cff;outline-offset:3px}
+.room-ghost-sigil {flex:0 0 66px;position:relative;display:grid;place-items:center;height:66px;border-radius:17px;background:#9862d22b;border:1px solid #ac86ef;color:#dcc5ff;font-size:36px;animation:spectral-pulse 3s ease-in-out infinite}
+.room-ghost-sigil span {position:absolute;font-size:11px;bottom:10px;right:11px;color:#90c4fa}
+.room-ghost-description {flex:1;min-width:0;display:flex;flex-direction:column;gap:5px}
+.room-ghost-description strong {font-size:17px;letter-spacing:.025em}
+.room-ghost-description em {font-size:10px;font-style:normal;color:#dfadff;border:1px solid #8057aa;padding:3px 6px;border-radius:99px;white-space:nowrap;vertical-align:middle}
+.room-ghost-description small {font-size:12px;color:#c8c6d9;line-height:1.45}
+.room-ghost-condition {font-size:10px;color:#c3a2ec}
+.room-ghost-switch {flex:0 0 51px;position:relative;height:28px;border:1px solid #7e8da9;border-radius:999px;background:#28364f;transition:background .2s}
+.room-ghost-switch:after {content:'';position:absolute;top:3px;left:4px;width:20px;height:20px;border-radius:50%;background:#bbc8df;transition:transform .2s}
+.room-ghost-wrap:has(input:checked) {border-color:#b785fa;box-shadow:0 0 0 1px #996bef70,0 8px 35px #7c4bdd38}
+.room-ghost-wrap:has(input:checked) .room-ghost-switch {background:#8855e7;border-color:#b687ff}
+.room-ghost-wrap:has(input:checked) .room-ghost-switch:after {transform:translateX(22px);background:#fff}
+.room-ghost-wrap:has(input:disabled) {cursor:default}
+/* Afficher un message uniquement tant qu'il a un contenu. */
+.evo-multi-shell .feedback-message:empty {display:none!important}
+.evo-multi-shell .feedback-message.feedback-notice {color:#a6c2e8!important}
+.evolution-online-game .turn-timer-track {overflow:hidden}
+.evolution-online-game #turn-timer-bar {transform-origin:left center;will-change:transform;transition:transform .12s linear}
+@media (max-width:700px) {
+ .evo-style-carousel {grid-template-columns:27px minmax(0,1fr) 27px;gap:5px}
+ .evo-style-nav {width:27px}
+ .evo-lobby-style-player {padding:13px}
+ .room-ghost-wrap {gap:12px;padding:13px}
+ .room-ghost-sigil {flex-basis:52px;height:52px}
+ .room-ghost-description strong {font-size:14px}
+ .room-ghost-description em {display:inline-block}
+ .room-ghost-switch {flex-basis:42px}
+ .room-ghost-wrap:has(input:checked) .room-ghost-switch:after {transform:translateX(13px)}
+}
+@media(prefers-reduced-motion:reduce) {.evo-mini-style,.room-ghost-sigil {animation:none;transition:none}}
+
+/* La largeur générique du salon classique (610px) ne convient pas aux deux carrousels. */
+.evolution-room-lobby { max-width:1100px; width:min(calc(100% - 32px),1100px); }
+.evo-mini-style { flex-basis:clamp(116px,31%,160px); }
+@media(max-width:1000px){
+ .evolution-room-lobby { width:min(calc(100% - 24px),760px); }
+ .evo-mini-style { flex-basis:clamp(116px,31%,180px); }
+}
+@media(max-width:600px){
+ .evolution-room-lobby { width:calc(100% - 16px); padding:18px 12px; }
+ .evo-mini-style { flex-basis:clamp(120px,42%,160px); }
+ .room-ghost-description small {font-size:11px}
+}

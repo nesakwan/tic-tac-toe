@@ -157,6 +157,7 @@ function createPublicState(room) {
         winsRequired: room.winsRequired,
         turnTime: room.turnTime,
         turnDeadline: room.turnDeadline || null,
+        serverTime: room.gameVariant === "evolution" ? Date.now() : null,
         matchId: room.matchId || null,
         matchStartedAt: room.matchStartedAt || null,
         firstStarterSymbol: room.firstStarterSymbol || null,

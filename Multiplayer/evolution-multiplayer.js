@@ -38,6 +38,9 @@
   let ghostMode = false;
   let turnTime = 0;
   let turnDeadline = null;
+  let timerRemainingOnSync = null;
+  let timerSyncedAt = 0;
+  let feedbackTimeout = null;
   let scores = { X: 0, O: 0, draw: 0 };
   let round = 1;
   let status = 'lobby';
@@ -111,9 +114,16 @@
   function clearSession() { localStorage.removeItem(SESSION_KEY); }
   function savedSession() { try { return JSON.parse(localStorage.getItem(SESSION_KEY) || 'null'); } catch { return null; } }
 
-  function setFeedback(message = '') {
-    if (els.gameMessage) els.gameMessage.textContent = message;
-    if (els.lobbyMessage) els.lobbyMessage.textContent = message;
+  function setFeedback(message = '', { neutral = false, lifetime = 5500 } = {}) {
+    clearTimeout(feedbackTimeout);
+    for (const el of [els.gameMessage, els.lobbyMessage]) {
+      if (!el) continue;
+      el.textContent = message;
+      el.classList.toggle('feedback-notice', neutral);
+    }
+    if (message && lifetime > 0) {
+      feedbackTimeout = setTimeout(() => setFeedback(), lifetime);
+    }
   }
 
   function setReadyVisual(el, ready) {
@@ -122,9 +132,24 @@
     el.classList.toggle('is-ready', Boolean(ready));
   }
 
+  const lobbyStyleIcons = {
+    aggressive:'⚔', defensive:'◆', balanced:'◈', patient:'⌛',
+    time:'⏱', bomb:'✹', risk:'▲', gambling:'⚄'
+  };
+
+  function updateStyleNav(symbol) {
+    const track = $(`lobby-styles-${symbol.toLowerCase()}`);
+    const prev = document.querySelector(`[data-style-prev="${symbol}"]`);
+    const next = document.querySelector(`[data-style-next="${symbol}"]`);
+    if (!track || !prev || !next) return;
+    prev.disabled = track.scrollLeft < 6;
+    next.disabled = track.scrollLeft >= track.scrollWidth - track.clientWidth - 6;
+  }
+
   function renderLobbyStyleCards(symbol) {
     const host = $(`lobby-styles-${symbol.toLowerCase()}`);
     if (!host) return;
+    const previousScroll = host.scrollLeft;
     host.replaceChildren();
     const mine = symbol === mySymbol;
     host.closest('.evo-lobby-style-player')?.classList.toggle('is-mine', mine);
@@ -135,7 +160,8 @@
       button.className = `evo-mini-style${roomStyles[symbol] === id ? ' active' : ''}`;
       button.style.setProperty('--style-accent', accent);
       button.disabled = !mine || status !== 'lobby';
-      button.innerHTML = `<strong>${title}</strong><small>${subtitle}</small>`;
+      button.setAttribute('aria-pressed', String(roomStyles[symbol] === id));
+      button.innerHTML = `<span class="evo-style-icon" aria-hidden="true">${lobbyStyleIcons[id]}</span><strong>${title}</strong><small>${subtitle}</small>`;
       if (mine) {
         button.addEventListener('click', () => {
           if (status !== 'lobby' || roomStyles[symbol] === id) return;
@@ -145,10 +171,34 @@
       host.append(button);
     }
 
+    host.scrollLeft = previousScroll;
+    updateStyleNav(symbol);
     const current = $(`style-current-${symbol.toLowerCase()}`);
     const owner = $(`style-owner-${symbol.toLowerCase()}`);
-    if (current) current.textContent = styleCatalog[roomStyles[symbol]]?.[0] || 'ÉQUILIBRÉ';
+    const selection = $(`evo-style-selected-${symbol.toLowerCase()}`);
+    const [name, desc, color] = styleCatalog[roomStyles[symbol]] || styleCatalog.balanced;
+    if (current) current.textContent = name;
     if (owner) owner.textContent = roomPlayers[symbol] || `Joueur ${symbol}`;
+    if (selection) {
+      selection.replaceChildren();
+      const label = document.createElement('strong');
+      label.textContent = name;
+      selection.style.setProperty('--selected-accent', color);
+      const description = document.createElement('span');
+      description.textContent = desc;
+      selection.append(label, description);
+    }
+  }
+
+  for (const symbol of ['X','O']) {
+    const track = $(`lobby-styles-${symbol.toLowerCase()}`);
+    track?.addEventListener('scroll', () => updateStyleNav(symbol), { passive: true });
+    for (const direction of ['prev','next']) {
+      const arrow = document.querySelector(`[data-style-${direction}="${symbol}"]`);
+      arrow?.addEventListener('click', () => {
+        track?.scrollBy({ left: (direction === 'prev' ? -1 : 1) * Math.max(180, track.clientWidth * .72), behavior:'smooth' });
+      });
+    }
   }
 
   function updateRoomSummary() {
@@ -161,6 +211,7 @@
       setFeedback('Cette salle appartient au mode Classique. Utilise le lobby Classique pour la rejoindre.');
       return;
     }
+    setFeedback();
     currentRoom = data.code || currentRoom;
     hostSymbol = data.hostSymbol || hostSymbol;
     boardSize = Number(data.boardSize) === 4 ? 4 : 3;
@@ -214,6 +265,10 @@
   }
 
   function showLobbyHome() {
+    setFeedback();
+    turnDeadline = null;
+    timerRemainingOnSync = null;
+    els.resumeBanner.hidden = true;
     els.lobby.hidden = false;
     els.game.hidden = true;
     els.coin.hidden = true;
@@ -232,7 +287,19 @@
     if (data?.scores) scores = data.scores;
     if (data?.round) round = Number(data.round) || round;
     if (data?.turnTime != null) turnTime = Number(data.turnTime) || 0;
-    if ('turnDeadline' in (data || {})) turnDeadline = data.turnDeadline;
+    if ('turnDeadline' in (data || {})) {
+      const incomingDeadline = data.turnDeadline;
+      turnDeadline = incomingDeadline;
+      if (incomingDeadline && Number.isFinite(Number(data.serverTime))) {
+        // Horloge commune transmise par le serveur : l'heure locale peut être décalée.
+        timerRemainingOnSync = Math.max(0, Number(incomingDeadline) - Number(data.serverTime));
+      } else if (incomingDeadline) {
+        timerRemainingOnSync = Math.max(0, Number(incomingDeadline) - Date.now());
+      } else {
+        timerRemainingOnSync = null;
+      }
+      timerSyncedAt = performance.now();
+    }
     if (data?.status) status = data.status;
     if (Array.isArray(data?.winningLine)) winningLine = [...data.winningLine];
     matchFinished = Boolean(data?.matchFinished);
@@ -609,19 +676,34 @@
     overlay.hidden = true;
   }
 
-  function stopTimer() { if (timerInterval) clearInterval(timerInterval); timerInterval=null; if (els.timer) els.timer.hidden=true; }
+  function stopTimer({ hide = true } = {}) {
+    if (timerInterval !== null) clearInterval(timerInterval);
+    timerInterval = null;
+    if (hide && els.timer) els.timer.hidden = true;
+  }
   function syncTimer() {
-    stopTimer();
-    if (!turnDeadline || !turnTime || status !== 'playing') return;
+    // Ne pas masquer/remontrer le chrono à chaque état réseau : évite le flash visuel.
+    stopTimer({ hide: false });
+    if (!turnDeadline || !turnTime || status !== 'playing' || timerRemainingOnSync === null) {
+      if (els.timer) els.timer.hidden = true;
+      return;
+    }
     const tick = () => {
-      const remaining = Math.max(0, Number(turnDeadline)-Date.now());
-      const ratio = Math.min(1, remaining/(turnTime*1000));
+      // performance.now() n'est pas modifié par l'heure du PC ni les réglages OS.
+      const elapsed = Math.max(0, performance.now() - timerSyncedAt);
+      const remaining = Math.max(0, timerRemainingOnSync - elapsed);
+      const ratio = Math.max(0, Math.min(1, remaining / (turnTime * 1000)));
       els.timer.hidden = false;
       els.timerBar.style.transform = `scaleX(${ratio})`;
-      els.timerValue.textContent = `${Math.ceil(remaining/1000)} s`;
-      if (remaining <= 0) stopTimer();
+      els.timerValue.textContent = `${Math.ceil(remaining / 1000)} s`;
+      if (remaining <= 0 && timerInterval !== null) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+        // Laisser 0 s visible jusqu'à ce que le serveur annonce le tour suivant.
+      }
     };
-    tick(); timerInterval=setInterval(tick,100);
+    tick();
+    if (timerRemainingOnSync > 0) timerInterval = setInterval(tick, 100);
   }
 
   function showCoinToss(data) {
@@ -729,10 +811,12 @@
   // Lobby controls
   els.nameInput.value = initialName();
   els.create.addEventListener('click', () => {
+    setFeedback();
     myName = normalizeName(els.nameInput.value) || 'Joueur'; localStorage.setItem(ONLINE_NAME_KEY,myName);
     socket.emit('createRoom', { gameVariant:'evolution', name:myName, boardSize:Number(preparation.boardSize)||3, bestOf:Number(preparation.bestOf)||1, turnTime:Number(preparation.turnTime)||0, ghostMode:preparation.ghostMode===true, evolutionStyle:'balanced', cosmetic:myCosmetic('X') });
   });
   els.join.addEventListener('click', () => {
+    setFeedback();
     const code=String(els.codeInput.value||'').trim().toUpperCase(); if(code.length!==4){setFeedback('Entre un code de salle à 4 caractères.');return;}
     myName=normalizeName(els.nameInput.value)||'Joueur'; localStorage.setItem(ONLINE_NAME_KEY,myName);
     socket.emit('joinRoom',{gameVariant:'evolution',code,name:myName,evolutionStyle:'balanced',cosmetic:myCosmetic('O')});
@@ -797,9 +881,9 @@
   socket.on('resumeFailed',msg=>{clearSession();showLobbyHome();setFeedback(msg);});
   socket.on('roomResumed',data=>{if(data.gameVariant!=='evolution'){clearSession();showLobbyHome();setFeedback('Cette session appartient au mode Classique.');return;}currentRoom=data.code;mySymbol=data.symbol;myToken=data.token||myToken;myName=data.name||myName;saveSession();if(data.status==='lobby')updateLobby(data);else if(data.status==='tossing')showCoinToss({...data,starterSymbol:data.turn,starterName:data.players?.[data.turn]});else if(data.status==='round_end')showResult(data,false);else if(data.status==='match_end')showResult(data,true);else showGame(data);});
   socket.on('opponentTemporaryLeft',data=>setFeedback(data?.message||'Adversaire déconnecté temporairement.'));
-  socket.on('opponentReconnected',data=>{setFeedback('Adversaire reconnecté.');applyServerState(data);});
-  socket.on('opponentLeft',msg=>{clearSession();showLobbyHome();setFeedback(msg||'Votre adversaire a quitté la salle.');});
-  socket.on('roomClosed',msg=>{clearSession();showLobbyHome();setFeedback(msg||'La salle a été fermée.');});
+  socket.on('opponentReconnected',data=>{applyServerState(data);setFeedback('Adversaire reconnecté.', {neutral:true, lifetime:3200});});
+  socket.on('opponentLeft',msg=>{clearSession();currentRoom=null;showLobbyHome();setFeedback(msg||'Votre adversaire a quitté la salle.', {neutral:true, lifetime:4500});});
+  socket.on('roomClosed',msg=>{clearSession();currentRoom=null;showLobbyHome();setFeedback(msg||'La salle a été fermée.', {neutral:true, lifetime:4500});});
   socket.on('rematchRequested',data=>{if(confirm(`${data.from||'Votre adversaire'} propose une revanche. Accepter ?`))socket.emit('respondRematch',{accepted:true});else socket.emit('respondRematch',{accepted:false});});
   socket.on('rematchState',state=>{if(state.X&&state.O){els.result.hidden=true;}else els.resultNext.textContent='REVANCHE DEMANDÉE…';});
   socket.on('rematchDeclined',()=>{els.resultNext.textContent='↻ REVANCHE';setFeedback('La revanche a été refusée.');});
