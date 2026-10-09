@@ -1,0 +1,70 @@
+/* Adaptation multijoueur du Mode Évolution. Le lobby garde l'ADN du Multi classique. */
+.evo-multi-shell { min-height: 100vh; position: relative; overflow-x: hidden; }
+.multi-back { justify-self: start; color: #b9c4d6; font-size: .9rem; }
+.multi-back:hover { color: #fff; }
+.multi-brand { justify-self: center; font-size: clamp(1.45rem,2.6vw,2rem); font-weight: 900; letter-spacing: -.04em; }
+.multi-brand span { color: #6c9aff; }
+.multi-settings { justify-self: end; color: #b9c4d6; font-size: .9rem; }
+.evo-online-badge { color: #cdb9ff; }
+.evo-room-icon { font-size: 2.2rem; font-weight: 900; color: #a985ff; }
+
+.evolution-room-lobby { width: min(100%, 1020px); }
+.evo-lobby-styles { display:grid; grid-template-columns:1fr 1fr; gap:18px; margin:22px 0 8px; }
+.evo-lobby-style-player { min-width:0; padding:16px; border:1px solid rgba(96,130,184,.22); border-radius:18px; background:rgba(10,20,36,.72); }
+.evo-style-title { display:flex; gap:12px; align-items:center; margin-bottom:12px; }
+.evo-style-title strong { display:block; color:#eef4ff; }
+.evo-style-title small { display:block; margin-top:4px; color:#9fb0c9; }
+.evo-style-mini-track { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:8px; }
+.evo-mini-style { min-height:72px; padding:9px 8px; border-radius:12px; border:1px solid rgba(95,128,180,.18); background:rgba(19,34,57,.88); color:#eaf2ff; text-align:left; }
+.evo-mini-style strong { display:block; font-size:.74rem; line-height:1.1; }
+.evo-mini-style small { display:block; margin-top:5px; font-size:.64rem; color:#8ea2bf; }
+.evo-mini-style.active { border-color:var(--style-accent,#a985ff); box-shadow:0 0 0 1px color-mix(in srgb,var(--style-accent,#a985ff) 42%,transparent), 0 0 18px color-mix(in srgb,var(--style-accent,#a985ff) 18%,transparent); }
+.evo-mini-style:disabled { cursor:default; opacity:.5; }
+.evo-lobby-style-player.is-mine .evo-mini-style:not(:disabled):hover { transform:translateY(-1px); border-color:var(--style-accent,#a985ff); }
+
+.evolution-online-game { width:min(96vw,1280px); margin:32px auto 56px; position:relative; z-index:3; }
+.evolution-online-game .arena-head { margin-bottom:22px; }
+.evolution-online-game .arena-content { align-items:start; }
+.evolution-online-game .board-zone { min-height:560px; display:grid; place-items:center; }
+.evolution-online-game .side-panel { position:sticky; top:100px; }
+.evolution-online-game .player-panel.is-me { box-shadow:inset 0 0 0 1px rgba(108,154,255,.18); }
+.evolution-online-game .player-panel.opponent { box-shadow:inset 0 0 0 1px rgba(230,106,181,.12); }
+.evolution-online-game .bottom-bar { margin-top:22px; }
+.online-turn-lock { opacity:.5; pointer-events:none; }
+
+/* Bomb : la prévisualisation reste strictement locale au joueur qui programme l'effet. */
+.cell.bomb-preview { border-color:#ff9b54 !important; box-shadow:0 0 0 1px rgba(255,155,84,.35),0 0 18px rgba(255,110,84,.28) !important; }
+.cell.bomb-preview::after { content:'⏱'; position:absolute; right:6px; top:4px; font-size:.72rem; }
+.cell { position:relative; }
+
+/* Replay : à droite pour laisser le plateau visible. */
+.evo-online-replay { left:auto !important; right:24px !important; top:118px !important; width:min(470px,calc(100vw - 48px)) !important; transform:none !important; z-index:45; }
+.evo-online-replay:not(.is-open) { display:none; }
+
+/* Le popup résultat utilise les mêmes composants visuels que les autres modes. */
+#evo-result-popup[hidden], #dice-overlay[hidden] { display:none !important; }
+
+.evo-connection-pause { position:fixed; inset:0; z-index:60; display:grid; place-items:center; background:rgba(3,8,16,.72); backdrop-filter:blur(9px); }
+.evo-connection-pause[hidden] { display:none; }
+.evo-connection-card { width:min(430px,calc(100% - 32px)); padding:28px; border-radius:24px; background:#111d30; border:1px solid #304561; text-align:center; box-shadow:0 25px 70px #0007; }
+.evo-connection-card p { color:#9fb0c9; }
+
+@media (max-width:1000px) {
+  .evo-lobby-styles { grid-template-columns:1fr; }
+  .evolution-online-game .side-panel { position:static; }
+  .evolution-online-game .board-zone { min-height:auto; }
+}
+@media (max-width:720px) {
+  .multi-nav { padding:0 16px; }
+  .evo-style-mini-track { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .evo-online-replay { right:10px !important; top:96px !important; width:calc(100vw - 20px) !important; }
+}
+
+/* Option Fantôme synchronisée avec le salon du serveur */
+.room-ghost-wrap{display:flex;align-items:center;gap:13px;margin-top:16px;padding:14px 18px;border:1px solid #9b6efa77;border-radius:13px;background:linear-gradient(100deg,#3b2b604d,#1a2335);cursor:pointer;color:#e5d5ff}
+.room-ghost-wrap[hidden]{display:none!important}
+.room-ghost-wrap input{width:18px;height:18px;accent-color:#a87aff}
+.room-ghost-sigil{font-size:28px;color:#c49aff;text-shadow:0 0 15px #a674ff;animation:spectral-pulse 3s ease-in-out infinite}
+.room-ghost-wrap span:last-child{display:flex;flex-direction:column;gap:4px}
+.room-ghost-wrap strong{font-size:13px;letter-spacing:.09em}
+.room-ghost-wrap small{color:#aaaecb;font-size:11px}

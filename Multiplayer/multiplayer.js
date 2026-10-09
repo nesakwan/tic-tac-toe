@@ -441,7 +441,7 @@ createRoomButton?.addEventListener("click", () => {
     if (!requireSocket()) return;
     if (lobbyMessage) lobbyMessage.textContent = "";
     myName = savePlayerName();
-    socket.emit("createRoom", { name: myName, boardSize, bestOf, turnTime, cosmetic: myCosmeticForSymbol("X") });
+    socket.emit("createRoom", { gameVariant: "classic", name: myName, boardSize, bestOf, turnTime, cosmetic: myCosmeticForSymbol("X") });
 });
 
 joinRoomButton?.addEventListener("click", () => {
@@ -453,7 +453,7 @@ joinRoomButton?.addEventListener("click", () => {
     }
     if (lobbyMessage) lobbyMessage.textContent = "";
     myName = savePlayerName();
-    socket.emit("joinRoom", { code, name: myName, cosmetic: myCosmeticForSymbol("O") });
+    socket.emit("joinRoom", { gameVariant: "classic", code, name: myName, cosmetic: myCosmeticForSymbol("O") });
 });
 
 function setReadyVisual(element, ready) {

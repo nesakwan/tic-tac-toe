@@ -5557,3 +5557,411 @@ body:has(#mode-ai:checked) .players-ai {
         grid-template-columns: 1fr;
     }
 }
+/* =========================================================
+   VARIANTES DE PARTIE (CLASSIQUE / ÉVOLUTION / BATTLE)
+   ========================================================= */
+.variant-selector {
+    margin-bottom: 32px;
+    padding: 22px 24px;
+    border: 1px solid rgba(118, 160, 255, 0.16);
+    border-radius: 24px;
+    background: linear-gradient(180deg, rgba(15, 29, 52, 0.92), rgba(10, 18, 33, 0.92));
+    box-shadow: 0 18px 42px rgba(0, 0, 0, 0.22);
+}
+
+.variant-heading {
+    margin-bottom: 18px;
+}
+
+.variant-heading h3 {
+    margin: 0 0 8px;
+    font-size: 1.2rem;
+    color: #f5f8ff;
+}
+
+.variant-heading p {
+    margin: 0;
+    color: #a7b6cc;
+}
+
+.variant-cards {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.variant-card {
+    display: block;
+}
+
+.variant-card > input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.variant-card-content {
+    position: relative;
+    min-height: 180px;
+    padding: 20px;
+    border-radius: 22px;
+    border: 1px solid rgba(111, 145, 212, 0.18);
+    background: linear-gradient(180deg, rgba(24, 41, 69, 0.84), rgba(10, 18, 33, 0.96));
+    transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.variant-card:hover .variant-card-content {
+    transform: translateY(-2px);
+    border-color: rgba(108, 154, 255, 0.44);
+    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.2);
+}
+
+.variant-card:has(input:checked) .variant-card-content {
+    border-color: rgba(108, 154, 255, 0.88);
+    box-shadow: 0 0 0 1px rgba(108, 154, 255, 0.45), 0 16px 36px rgba(33, 60, 110, 0.32);
+}
+
+.variant-card-content h3 {
+    margin: 0 0 10px;
+    color: #ffffff;
+    letter-spacing: 0.03em;
+}
+
+.variant-card-content p {
+    margin: 0;
+    color: #aebddb;
+    line-height: 1.55;
+}
+
+.variant-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 78px;
+    padding: 6px 10px;
+    margin-bottom: 16px;
+    border-radius: 999px;
+    font-size: 0.74rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #dbe8ff;
+    background: rgba(108, 154, 255, 0.16);
+    border: 1px solid rgba(108, 154, 255, 0.3);
+}
+
+.variant-badge.evolution {
+    color: #efe3ff;
+    background: rgba(174, 125, 255, 0.16);
+    border-color: rgba(174, 125, 255, 0.34);
+}
+
+.variant-badge.battle {
+    color: #ffdfe9;
+    background: rgba(230, 106, 181, 0.16);
+    border-color: rgba(230, 106, 181, 0.34);
+}
+
+.variant-note {
+    margin: 16px 0 0;
+    color: #c7d2e6;
+    font-size: 0.95rem;
+    display: none;
+}
+
+.variant-note.visible {
+    display: block;
+}
+
+.mode-card.locked {
+    opacity: 0.48;
+}
+
+.mode-card.locked .mode-card-content {
+    pointer-events: none;
+}
+
+@media (max-width: 980px) {
+    .variant-cards {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ===== 12 PATCH : variantes + choix des participants ===== */
+.variant-selector {
+    padding: 24px !important;
+    border-radius: 26px !important;
+    background:
+        radial-gradient(circle at 15% 0%, rgba(76, 137, 255, .10), transparent 34%),
+        linear-gradient(180deg, rgba(15, 29, 52, .94), rgba(8, 17, 31, .96)) !important;
+}
+.variant-cards {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 16px !important;
+}
+.variant-card-content {
+    min-height: 210px !important;
+    padding: 22px !important;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    overflow: hidden;
+    isolation: isolate;
+}
+.variant-card-content::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    opacity: .9;
+    background: radial-gradient(circle at 85% 10%, rgba(108,154,255,.16), transparent 35%);
+}
+.variant-card:nth-child(2) .variant-card-content::before {
+    background: radial-gradient(circle at 85% 10%, rgba(166,125,255,.22), transparent 38%);
+}
+.variant-card:nth-child(3) .variant-card-content::before {
+    background: radial-gradient(circle at 85% 10%, rgba(230,106,181,.18), transparent 38%);
+}
+.variant-card-content h3 {
+    font-size: 1.25rem !important;
+    margin-top: 6px !important;
+}
+.variant-card-content p {
+    min-height: 46px;
+}
+.variant-card:has(input:checked) .variant-card-content {
+    transform: translateY(-3px);
+    border-color: #6c9aff !important;
+    box-shadow: 0 0 0 1px rgba(108,154,255,.55), 0 18px 42px rgba(28,70,145,.28) !important;
+}
+.variant-card:has(input:checked) .variant-card-content::after {
+    content: "✓";
+    position: absolute;
+    top: 18px;
+    right: 18px;
+    width: 30px;
+    height: 30px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    color: white;
+    font-weight: 900;
+    background: linear-gradient(135deg, #4d8eff, #7559f4);
+    box-shadow: 0 7px 20px rgba(77,142,255,.3);
+}
+
+.player-mode-selector {
+    width: min(980px, 100%);
+    margin: 0 auto 34px;
+    padding: 20px;
+    border: 1px solid rgba(109,148,218,.16);
+    border-radius: 24px;
+    background: rgba(10,20,36,.58);
+}
+.player-mode-heading {
+    margin-bottom: 16px;
+    text-align: left;
+}
+.player-mode-heading h3 { margin: 0 0 5px; color: #f5f8ff; font-size: 1.12rem; }
+.player-mode-heading p { margin: 0; color: #9fb0ca; }
+.player-mode-selector .mode-cards { margin: 0 !important; }
+
+@media (max-width: 900px) {
+    .variant-cards { grid-template-columns: 1fr !important; }
+    .variant-card-content { min-height: 155px !important; }
+}
+
+/* ===== PATCH 7 : cartes de variantes enrichies ===== */
+.variant-selector {
+    overflow: hidden;
+}
+
+.variant-cards {
+    align-items: stretch;
+}
+
+.variant-card {
+    cursor: pointer;
+}
+
+.variant-card-content {
+    min-height: 250px !important;
+    padding: 18px !important;
+    justify-content: flex-start !important;
+    gap: 0;
+    background:
+        linear-gradient(180deg, rgba(21, 38, 66, .96), rgba(8, 16, 29, .98)) !important;
+}
+
+.variant-card-content::before {
+    opacity: 1 !important;
+}
+
+.variant-topline {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    min-height: 32px;
+}
+
+.variant-check {
+    width: 30px;
+    height: 30px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    color: transparent;
+    border: 1px solid rgba(132, 158, 207, .22);
+    background: rgba(255,255,255,.025);
+    transition: .2s ease;
+}
+
+.variant-card:has(input:checked) .variant-check {
+    color: #fff;
+    border-color: transparent;
+    background: linear-gradient(135deg, #4d8eff, #765cf3);
+    box-shadow: 0 7px 20px rgba(77,142,255,.32);
+}
+
+.variant-card:has(input:checked) .variant-card-content::after {
+    display: none !important;
+}
+
+.variant-visual {
+    height: 76px;
+    margin: 16px 0 18px;
+    border: 1px solid rgba(116, 150, 212, .13);
+    border-radius: 18px;
+    background: rgba(5, 12, 23, .42);
+    box-shadow: inset 0 1px rgba(255,255,255,.025);
+}
+
+.classic-visual {
+    display: grid;
+    grid-template-columns: repeat(3, 24px);
+    grid-template-rows: repeat(3, 18px);
+    place-content: center;
+    gap: 2px;
+}
+.classic-visual span {
+    display: grid;
+    place-items: center;
+    color: #dfe8f8;
+    border: 1px solid rgba(116, 150, 212, .13);
+    border-radius: 4px;
+    font-size: .82rem;
+    font-weight: 900;
+}
+.classic-visual span:nth-child(1),
+.classic-visual span:nth-child(5),
+.classic-visual span:nth-child(9) { color: #69a0ff; }
+.classic-visual span:nth-child(3),
+.classic-visual span:nth-child(7) { color: #ef79bd; }
+
+.evolution-visual {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    color: #ece4ff;
+    background:
+        radial-gradient(circle at 50% 50%, rgba(150, 100, 245, .18), transparent 55%),
+        rgba(5, 12, 23, .42);
+}
+.evo-grid {
+    padding: 8px 12px;
+    border-radius: 12px;
+    border: 1px solid rgba(171, 124, 255, .34);
+    color: #dce7ff;
+    font-weight: 900;
+    letter-spacing: .18em;
+    line-height: 1.2;
+    background: rgba(91, 55, 134, .18);
+}
+.evo-plus {
+    color: #9f7cff;
+    font-size: 2rem;
+    font-weight: 900;
+}
+.evo-spark {
+    color: #ef79bd;
+    font-size: 1.4rem;
+}
+
+.battle-visual {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    color: #f1d9e9;
+    font-size: 1.5rem;
+    background:
+        radial-gradient(circle at 50% 50%, rgba(229, 106, 181, .16), transparent 58%),
+        rgba(5, 12, 23, .42);
+}
+.battle-visual span:first-child { color: #ffd27a; font-size: 1.9rem; }
+.battle-visual span:nth-child(2) { color: #ef79bd; }
+.battle-visual span:last-child { color: #8ca3c9; }
+
+.variant-card-content h3 {
+    margin: 0 0 8px !important;
+    font-size: 1.28rem !important;
+}
+
+.variant-card-content p {
+    min-height: 50px !important;
+    margin: 0 !important;
+    color: #b4c1d7 !important;
+}
+
+.variant-foot {
+    margin-top: auto;
+    padding-top: 14px;
+    color: #7f93b5;
+    font-size: .78rem;
+    font-weight: 700;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+}
+
+.variant-classic:has(input:checked) .variant-card-content {
+    border-color: #5d93ff !important;
+    box-shadow: 0 0 0 1px rgba(93,147,255,.48), 0 18px 42px rgba(28,70,145,.26) !important;
+}
+.variant-evolution:has(input:checked) .variant-card-content {
+    border-color: #a67dff !important;
+    box-shadow: 0 0 0 1px rgba(166,125,255,.5), 0 18px 42px rgba(79,45,137,.28) !important;
+}
+.variant-battle:has(input:checked) .variant-card-content {
+    border-color: #e66ab5 !important;
+    box-shadow: 0 0 0 1px rgba(230,106,181,.45), 0 18px 42px rgba(129,45,93,.25) !important;
+}
+
+@media (max-width: 900px) {
+    .variant-card-content { min-height: 220px !important; }
+}
+
+/* Option de partie Fantôme, affichée seulement en Évolution BO3/BO5 */
+#ghost-option[hidden]{display:none!important}
+.ghost-option{max-width:860px;margin:24px auto 26px;padding:0 8px;animation:ghost-reveal .45s ease both}
+.ghost-card{display:flex;align-items:center;gap:20px;position:relative;cursor:pointer;overflow:hidden;padding:20px 24px;border-radius:17px;border:1px solid rgba(163,115,255,.42);background:linear-gradient(110deg,rgba(60,39,106,.36),rgba(21,33,52,.94));color:#edf0ff;box-shadow:0 9px 32px rgba(37,16,83,.23);transition:border-color .25s,transform .25s,box-shadow .25s}
+.ghost-card:hover{transform:translateY(-2px);border-color:#c399ff;box-shadow:0 10px 35px #7d50ed38}
+.ghost-card input{position:absolute;opacity:0;width:1px;height:1px}
+.ghost-card:focus-within{outline:2px solid #9e82ff;outline-offset:3px}
+.ghost-icon{flex:0 0 68px;height:68px;border-radius:16px;display:grid;place-items:center;color:#d7b4ff;font-size:39px;background:#9e6aff20;border:1px solid #a877ff80;text-shadow:0 0 20px #b27cff;animation:ghost-float 3s ease-in-out infinite}
+.ghost-icon span{position:absolute;font-size:13px;font-weight:900;transform:translate(13px,13px);color:#95ceff;letter-spacing:2px}
+.ghost-description{flex:1;display:flex;flex-direction:column;gap:5px;font-size:13px;line-height:1.45;color:#bfc6d7}
+.ghost-description strong{font-size:18px;color:white;letter-spacing:.045em}
+.ghost-description small{font-size:10px;color:#d2aaff;border-radius:99px;border:1px solid #885cbf;padding:4px 7px;margin-left:8px;vertical-align:middle}
+.ghost-description em{font-size:11px;color:#b39bda;font-style:normal}
+.ghost-switch{width:52px;height:28px;border:1px solid #73829e;border-radius:25px;background:#263249;flex-shrink:0;position:relative;transition:.25s}
+.ghost-switch:before{content:'';position:absolute;width:20px;height:20px;top:3px;left:4px;border-radius:50%;background:#b9c4d7;transition:transform .25s}
+.ghost-card:has(input:checked){border-color:#b27aff;box-shadow:0 0 0 1px #a571ff70,0 0 35px #9c65fc2b}
+.ghost-card:has(input:checked) .ghost-switch{background:#8952ec;border-color:#b687ff}
+.ghost-card:has(input:checked) .ghost-switch:before{transform:translateX(23px);background:#fff}
+@keyframes ghost-float{50%{transform:translateY(-5px);filter:brightness(1.25)}}
+@keyframes ghost-reveal{from{opacity:0;transform:translateY(9px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:620px){.ghost-card{gap:12px;padding:15px}.ghost-icon{flex-basis:48px;height:52px;font-size:30px}.ghost-description strong{font-size:14px}.ghost-description small{display:block;width:max-content;margin:5px 0}.ghost-switch{width:43px}.ghost-card:has(input:checked) .ghost-switch:before{transform:translateX(14px)}}
+@media(prefers-reduced-motion:reduce){.ghost-icon,.ghost-option{animation:none}}

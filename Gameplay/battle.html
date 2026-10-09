@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>TTT 3.5 — Battle Fantôme</title>
+  <link rel="stylesheet" href="battle.css">
+</head>
+<body>
+  <div class="battle-shell">
+    <header class="topbar">
+      <a href="../Rencontre/rencontre.html" class="back-link">← Préparation</a>
+      <strong class="brand">TIC <span>TAC</span> TOE</strong>
+      <a href="../Parametre/parametre.html?from=battle" class="settings-link">Paramètres</a>
+    </header>
+
+    <main class="page-wrap">
+      <section class="hero-panel">
+        <div class="section-tag">VARIANTE</div>
+        <h1>Battle Fantôme</h1>
+        <p>Le mode Battle reprend désormais le langage visuel des autres modes. Cette page sert de base harmonisée pour la suite de l’intégration du système.</p>
+
+        <div class="summary-grid">
+          <article class="summary-card">
+            <span>Format</span>
+            <strong id="battle-format">BO3</strong>
+            <small id="battle-size">Plateau 3 × 3</small>
+          </article>
+          <article class="summary-card">
+            <span>Joueur 1</span>
+            <strong id="battle-player-x">Joueur 1</strong>
+            <small>Symbole X</small>
+          </article>
+          <article class="summary-card">
+            <span>Joueur 2</span>
+            <strong id="battle-player-o">Joueur 2</strong>
+            <small>Symbole O</small>
+          </article>
+        </div>
+
+        <div class="battle-layout">
+          <article class="feature-card">
+            <span class="feature-tag">Visuel</span>
+            <h2>Interface harmonisée</h2>
+            <p>Structure en panneaux, fond sombre, cartes d’informations et boutons cohérents avec l’accueil, la préparation et le mode classique.</p>
+          </article>
+          <article class="feature-card">
+            <span class="feature-tag">Prototype</span>
+            <h2>Base prête à connecter</h2>
+            <p>Le moteur spécifique du mode Battle pourra maintenant être branché sur cette base sans repartir d’un écran séparé au style différent.</p>
+          </article>
+        </div>
+
+        <div class="actions-row">
+          <a href="../Rencontre/rencontre.html" class="secondary-button">Retour à la préparation</a>
+          <a href="evolution.html" class="primary-button">Voir le mode Évolution</a>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    (() => {
+      const key = 'tttPreparationState';
+      let prep = {};
+      try { prep = JSON.parse(sessionStorage.getItem(key) || '{}') || {}; } catch {}
+      const byId = (id) => document.getElementById(id);
+      byId('battle-format').textContent = `BO${[1,3,5].includes(Number(prep.bestOf)) ? Number(prep.bestOf) : 3}`;
+      byId('battle-size').textContent = `Plateau ${Number(prep.boardSize) === 4 ? 4 : 3} × ${Number(prep.boardSize) === 4 ? 4 : 3}`;
+      byId('battle-player-x').textContent = String(prep.localPlayer1Name || prep.aiPlayerName || 'Joueur 1').trim() || 'Joueur 1';
+      byId('battle-player-o').textContent = String(prep.localPlayer2Name || prep.aiOpponentName || 'Joueur 2').trim() || 'Joueur 2';
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>TTT 3.5 — Évolution Multijoueur</title>
+  <link rel="stylesheet" href="../Gameplay/gamestyle.css">
+  <link rel="stylesheet" href="multi.css">
+  <link rel="stylesheet" href="../Gameplay/evolution.css">
+  <link rel="stylesheet" href="evolution-multi.css">
+</head>
+<body>
+  <main id="multi-app" class="multi-shell evo-multi-shell">
+    <nav class="multi-nav">
+      <a id="multi-back-button" href="../Rencontre/rencontre.html" class="multi-back">← Préparation</a>
+      <a class="multi-brand" href="../index.html">TIC <span>TAC</span> TOE</a>
+      <a id="settings-button" href="../Parametre/parametre.html?from=multi-evolution" class="multi-settings">Paramètres</a>
+    </nav>
+
+    <div id="network-quality" class="network-quality" data-quality="connecting" aria-live="polite" title="Latence vers le serveur">
+      <span class="network-quality-dot"></span>
+      <strong id="network-quality-label">CONNEXION...</strong>
+      <small id="network-ping-value">— ms</small>
+    </div>
+
+    <div class="background-symbols" aria-hidden="true">
+      <span class="decor-x decor-x-one"></span>
+      <span class="decor-o decor-o-one"></span>
+      <span class="decor-x decor-x-two"></span>
+    </div>
+
+    <section id="lobby" class="lobby-stage">
+      <header class="lobby-heading">
+        <span class="eyebrow evo-online-badge">MODE ÉVOLUTION • EN LIGNE</span>
+        <h2>MULTIJOUEUR</h2>
+        <p>Même lobby que le Classique, adapté aux Styles et aux Points d’Effet.</p>
+        <div class="server-state" aria-live="polite">
+          <span id="connection-dot" class="connection-dot"></span>
+          <span id="connection-status">Connexion au serveur...</span>
+        </div>
+      </header>
+
+      <section class="player-name-panel" aria-label="Votre identité en ligne">
+        <div class="name-copy">
+          <span class="card-kicker">VOTRE PROFIL</span>
+          <label for="player-name-input">Choisissez votre nom</label>
+          <small>Ce nom et votre Style seront visibles par votre adversaire.</small>
+        </div>
+        <input id="player-name-input" class="player-name-input" type="text" maxlength="18" autocomplete="nickname" placeholder="Joueur 1">
+      </section>
+
+      <section id="resume-banner" class="resume-banner" hidden>
+        <div>
+          <span class="card-kicker">PARTIE ÉVOLUTION DÉTECTÉE</span>
+          <strong id="resume-summary">Une session peut être reprise.</strong>
+        </div>
+        <div class="resume-actions">
+          <button id="resume-session" class="primary-action" type="button">REPRENDRE</button>
+          <button id="forget-session" class="secondary-action" type="button">ABANDONNER</button>
+        </div>
+      </section>
+
+      <section id="lobby-actions" class="lobby-actions" aria-label="Choix multijoueur">
+        <article class="lobby-card create-card">
+          <div class="card-icon card-icon-create" aria-hidden="true"><span class="evo-room-icon">＋</span></div>
+          <div class="card-copy">
+            <span class="card-kicker">NOUVELLE SALLE</span>
+            <h3>Créer une partie Évolution</h3>
+            <p>Générez un code privé puis choisissez votre Style dans le lobby.</p>
+          </div>
+          <button id="create-room" class="primary-action" type="button"><span>CRÉER UNE PARTIE</span><span>→</span></button>
+        </article>
+
+        <article class="lobby-card join-card">
+          <div class="card-icon card-icon-join" aria-hidden="true"><span class="evo-room-icon">◇</span></div>
+          <div class="card-copy">
+            <span class="card-kicker">CODE PRIVÉ</span>
+            <h3>Rejoindre une partie</h3>
+            <p>Entrez le code à 4 caractères reçu de votre ami.</p>
+          </div>
+          <div class="join-controls">
+            <input id="room-code-input" type="text" maxlength="4" autocomplete="off" spellcheck="false" placeholder="ABCD" aria-label="Code de partie">
+            <button id="join-room" class="secondary-action" type="button">REJOINDRE</button>
+          </div>
+        </article>
+      </section>
+
+      <p id="lobby-message" class="feedback-message error" role="alert"></p>
+
+      <section id="room-info" class="waiting-panel room-lobby evolution-room-lobby" hidden>
+        <span class="waiting-kicker">SALLE ÉVOLUTION</span>
+        <h3>Préparez le match</h3>
+
+        <div class="room-code-box">
+          <span>CODE DE LA PARTIE</span>
+          <strong id="room-code">----</strong>
+          <div class="room-share-actions">
+            <button id="copy-room-code" type="button">Copier le code</button>
+            <button id="copy-room-link" type="button">Copier le lien</button>
+          </div>
+        </div>
+
+        <div class="room-players">
+          <article class="room-player-card">
+            <div><span class="room-player-meta">JOUEUR X <b id="host-badge">• HÔTE</b></span><strong id="lobby-player-x">En attente...</strong></div>
+            <span id="lobby-ready-x" class="ready-state">○ PAS PRÊT</span>
+          </article>
+          <span class="room-vs">VS</span>
+          <article class="room-player-card">
+            <div><span class="room-player-meta">JOUEUR O</span><strong id="lobby-player-o">En attente...</strong></div>
+            <span id="lobby-ready-o" class="ready-state">○ PAS PRÊT</span>
+          </article>
+        </div>
+
+        <section class="room-rules-panel">
+          <div class="room-rules-summary">
+            <span>RÈGLES ACTUELLES</span>
+            <strong id="room-rules-summary">3 × 3 • BO1 • Sans chrono • Évolution</strong>
+            <small id="room-rules-note">L’hôte règle le plateau, le format et le chrono. Chaque joueur choisit son propre Style.</small>
+          </div>
+          <div class="room-rules">
+            <label><span>PLATEAU</span><select id="room-board-size"><option value="3">3 × 3</option><option value="4">4 × 4</option></select></label>
+            <label><span>FORMAT</span><select id="room-best-of"><option value="1">BO1 • 1 victoire</option><option value="3">BO3 • Premier à 2</option><option value="5">BO5 • Premier à 3</option></select></label>
+            <label><span>TEMPS / TOUR</span><select id="room-turn-time"><option value="0">Aucun</option><option value="10">10 s</option><option value="20">20 s</option><option value="30">30 s</option></select></label>
+          </div>
+          <label id="room-ghost-wrap" class="room-ghost-wrap" hidden>
+            <input id="room-ghost-mode" type="checkbox" />
+            <span class="room-ghost-sigil">✧</span>
+            <span><strong>MODE FANTÔME</strong><small>Finale : Ajouts et Neutralisations permanents</small></span>
+          </label>
+        </section>
+
+        <section class="evo-lobby-styles" aria-label="Choix des Styles">
+          <article class="evo-lobby-style-player" data-style-owner="X">
+            <div class="evo-style-title"><span class="player-badge blue">X</span><div><strong id="style-owner-x">Joueur X</strong><small id="style-current-x">ÉQUILIBRÉ</small></div></div>
+            <div id="lobby-styles-x" class="evo-style-mini-track"></div>
+          </article>
+          <article class="evo-lobby-style-player" data-style-owner="O">
+            <div class="evo-style-title"><span class="player-badge pink">O</span><div><strong id="style-owner-o">Joueur O</strong><small id="style-current-o">ÉQUILIBRÉ</small></div></div>
+            <div id="lobby-styles-o" class="evo-style-mini-track"></div>
+          </article>
+        </section>
+
+        <p id="room-rules-change" class="room-rules-change" aria-live="polite"></p>
+        <p id="waiting-message" class="waiting-message">En attente d'un adversaire...</p>
+        <button id="ready-button" class="primary-action ready-button" type="button">JE SUIS PRÊT</button>
+      </section>
+    </section>
+
+    <section id="coin-toss" class="start-toss-overlay" hidden aria-live="polite">
+      <div class="start-toss-card">
+        <span class="start-toss-kicker">TIRAGE AU SORT • ÉVOLUTION</span>
+        <h2>Qui commence ?</h2>
+        <p id="coin-toss-subtitle">Le serveur prépare le lancer...</p>
+        <div class="start-coin-scene" aria-hidden="true"><div id="coin" class="start-coin"><span class="start-coin-face start-coin-x">X</span><span class="start-coin-face start-coin-o">O</span></div></div>
+        <strong id="coin-toss-result" class="start-toss-result">TIRAGE...</strong>
+      </div>
+    </section>
+
+    <section id="game" class="game-panel evolution-online-game" hidden aria-label="Partie Évolution en ligne">
+      <div class="arena-head glass-panel">
+        <article id="x-info" class="player-panel"></article>
+        <article class="match-panel">
+          <span class="match-kicker">MODE ÉVOLUTION • EN LIGNE</span>
+          <strong id="message" aria-live="polite">Connexion...</strong>
+          <span id="round">MANCHE 1</span>
+          <span id="score">X 0 — 0 O · Nuls 0</span>
+          <div id="turn-timer" class="turn-timer" hidden><div class="turn-timer-track"><span id="turn-timer-bar"></span></div><strong id="turn-timer-value">20 s</strong></div>
+        </article>
+        <article id="o-info" class="player-panel"></article>
+      </div>
+
+      <div class="arena-content">
+        <section class="board-zone glass-panel"><div id="board" class="board" aria-label="Plateau Évolution multijoueur"></div></section>
+        <aside class="side-panel glass-panel">
+          <div class="actions">
+            <button id="place" class="selected">Poser</button>
+            <button id="add">+ Ajouter</button>
+            <button id="erase">− Neutraliser</button>
+            <button id="style">Pouvoir de style</button>
+            <button id="cancel">Annuler</button>
+          </div>
+          <div class="action-settings">
+            <label id="amount-wrap"><span>Coût</span><select id="amount"><option value="1">1 point</option><option value="2">2 points</option><option value="3">3 points</option></select></label>
+            <label id="bomb-wrap" hidden><span>Type de bombe</span><select id="bomb-effect"><option value="add">Ajout différé</option><option value="erase">Neutralisation différée</option></select></label>
+          </div>
+          <button id="confirm" class="primary-button" hidden>Confirmer l’effet</button>
+          <p id="hint" class="hint">Attente de l’état de la partie.</p>
+          <div class="effects-box"><strong>Effets actifs</strong><div id="effects-list" class="effects-list">Aucun effet actif.</div></div>
+        </aside>
+      </div>
+
+      <div class="bottom-bar glass-panel">
+        <button id="replay">▶ Replay</button>
+        <button id="change-mode">⇄ Changer de mode</button>
+        <button id="abandon" class="danger-action">Abandonner le match</button>
+      </div>
+    </section>
+
+    <section id="evo-replay" class="replay-panel evo-online-replay" aria-live="polite">
+      <div class="replay-header"><div><span class="replay-kicker">REPLAY</span><h2>Revisionnez la partie</h2><p id="evo-replay-label">Début de la partie</p></div><button id="evo-replay-close" class="replay-exit-button" type="button">×</button></div>
+      <div class="replay-mode-selector"><label><input id="evo-replay-mode-action" type="radio" name="evo-replay-mode" value="action" checked><span>Action par action</span></label><label><input id="evo-replay-mode-turn" type="radio" name="evo-replay-mode" value="turn"><span>Tour par tour</span></label></div>
+      <div class="replay-controls"><button id="evo-replay-start">|&lt; Début</button><button id="evo-replay-prev">← Précédent</button><strong id="evo-replay-progress">Action 0 / 0</strong><button id="evo-replay-next">Suivant →</button><button id="evo-replay-end">Fin &gt;|</button></div>
+      <button id="evo-replay-close-bottom" class="replay-quit-button">Quitter le replay</button>
+    </section>
+
+    <div id="evo-result-popup" class="popup-overlay" hidden role="dialog" aria-modal="true" aria-labelledby="evo-result-title">
+      <div class="result-effects" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+      <div class="popup">
+        <button id="evo-result-close" class="popup-close" type="button">×</button>
+        <div id="evo-result-icon" class="result-icon">🏆</div>
+        <span id="evo-result-kicker" class="result-kicker">RÉSULTAT DE LA MANCHE</span>
+        <h2 id="evo-result-title">VICTOIRE !</h2>
+        <p id="evo-result-message"></p>
+        <div class="popup-buttons">
+          <button id="evo-result-next" class="primary-result-action" type="button">EN ATTENTE...</button>
+          <button id="evo-result-replay" type="button">▶ Replay</button>
+          <button id="evo-result-change" type="button">⇄ Changer de mode</button>
+          <button id="evo-result-home" type="button">⌂ Retour à l'accueil</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="dice-overlay" class="dice-overlay" hidden><div class="dice-card"><span class="dice-label">GAMBLING</span><div id="dice-cube" class="dice-cube">?</div><strong id="dice-result">Lancement en cours…</strong><p id="dice-subtext">Le serveur choisit la case.</p></div></div>
+    <p id="game-message" class="feedback-message error floating-game-message" role="alert"></p>
+  </main>
+
+  <script src="../js/music.js" data-music-src="../assets/Sounds/Super Smash Bros Brawl Music - Final Destination.mp3"></script>
+  <script src="../js/player-data.js"></script>
+  <script src="../js/evolution-engine.js"></script>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="evolution-multiplayer.js"></script>
+</body>
+</html>

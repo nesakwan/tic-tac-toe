@@ -3,6 +3,7 @@ const http = require("http");
 const path = require("path");
 const crypto = require("crypto");
 const { Server } = require("socket.io");
+const Evolution = require("./js/evolution-engine.js");
 
 const app = express();
 const server = http.createServer(app);
@@ -53,6 +54,14 @@ function normalizeBestOf(value) {
 function normalizeTurnTime(value) {
     const n = Number(value);
     return VALID_TURN_TIMES.has(n) ? n : 0;
+}
+
+function normalizeGameVariant(value) {
+    return value === "evolution" ? "evolution" : "classic";
+}
+
+function normalizeEvolutionStyle(value) {
+    return Evolution.STYLES.includes(value) ? value : "balanced";
 }
 
 function normalizeCosmetic(value, symbol) {
@@ -110,12 +119,41 @@ function publicReady(room) {
     return { X: Boolean(room.ready.X), O: Boolean(room.ready.O) };
 }
 
+function cloneJSON(value) {
+    return value == null ? value : JSON.parse(JSON.stringify(value));
+}
+
+function publicEvolutionState(room) {
+    if (room.gameVariant !== "evolution" || !room.evolutionState) return null;
+    const state = cloneJSON(room.evolutionState);
+
+    // Une Bomb programmée est une information privée : aucune cible n'est
+    // transmise tant que l'effet n'a pas réellement été déclenché.
+    // Une Bomb programmée reste entièrement invisible chez les clients
+    // (y compris son existence côté adversaire) jusqu'à son déclenchement.
+    // Le serveur conserve bien sûr la vraie liste dans room.evolutionState.
+    state.pending = [];
+
+    // Même protection pour le journal interne pendant une manche active :
+    // aucune action Bomb n'est transmise avant que la manche soit terminée.
+    if (!["round_end", "match_end"].includes(room.status) && Array.isArray(state.history)) {
+        state.history = state.history.filter(entry => !(
+            entry?.type === "action" &&
+            entry?.action?.type === "style" &&
+            entry?.action?.style === "bomb"
+        ));
+    }
+    return state;
+}
+
 function createPublicState(room) {
     return {
         code: room.code,
+        gameVariant: room.gameVariant || "classic",
         hostSymbol: room.hostSymbol,
         boardSize: room.boardSize,
         bestOf: room.bestOf,
+        ghostMode: Boolean(room.ghostMode),
         winsRequired: room.winsRequired,
         turnTime: room.turnTime,
         turnDeadline: room.turnDeadline || null,
@@ -143,7 +181,15 @@ function createPublicState(room) {
         matchFinished: Boolean(room.matchFinished),
         matchWinner: room.matchWinner,
         endReason: room.endReason || null,
-        rematchReady: { X: Boolean(room.rematchReady.X), O: Boolean(room.rematchReady.O) }
+        rematchReady: { X: Boolean(room.rematchReady.X), O: Boolean(room.rematchReady.O) },
+        evolutionStyles: room.gameVariant === "evolution" ? { ...room.evolutionStyles } : null,
+        evolution: publicEvolutionState(room),
+        evolutionFrames: room.gameVariant === "evolution" && ["round_end", "match_end"].includes(room.status)
+            ? cloneJSON(room.evolutionFrames || [])
+            : [],
+        evolutionRoundHistory: room.gameVariant === "evolution"
+            ? cloneJSON(room.evolutionRoundHistory || [])
+            : []
     };
 }
 
@@ -181,7 +227,30 @@ function armTurnTimer(room, remainingMs = null) {
         if (!activeRoom || activeRoom !== room || room.status !== "playing" || room.paused || room.matchFinished || !room.turn) return;
 
         const timedOutSymbol = room.turn;
-        room.turn = timedOutSymbol === "X" ? "O" : "X";
+
+        if (room.gameVariant === "evolution" && room.evolutionState) {
+            try {
+                room.evolutionState = Evolution.play(room.evolutionState, { type: "pass" });
+                room.evolutionFrames.push({
+                    state: cloneJSON(room.evolutionState),
+                    label: `${room.names[timedOutSymbol] || timedOutSymbol} perd son tour (chrono)`,
+                    actor: timedOutSymbol,
+                    round: room.round
+                });
+                room.turn = room.evolutionState.turn;
+                const evoWin = Evolution.winningLine(room.evolutionState);
+                if (room.evolutionState.winner || room.evolutionState.draw) {
+                    handleRoundEnd(room, room.evolutionState.winner || null, evoWin?.cells || []);
+                    return;
+                }
+            } catch (_) {
+                room.turn = timedOutSymbol === "X" ? "O" : "X";
+                if (room.evolutionState) room.evolutionState.turn = room.turn;
+            }
+        } else {
+            room.turn = timedOutSymbol === "X" ? "O" : "X";
+        }
+
         armTurnTimer(room);
         io.to(room.code).emit("turnTimedOut", {
             timedOutSymbol,
@@ -249,6 +318,18 @@ function resetBoardForRound(room) {
     room.history = [];
     room.winner = null;
     room.winningLine = [];
+
+    if (room.gameVariant === "evolution") {
+        room.evolutionState = room.ghostMode && room.round > 1 && room.evolutionState
+            ? Evolution.newRound(room.evolutionState, room.turn === "O" ? "O" : "X", true, room.round, room.bestOf)
+            : Evolution.initial(room.boardSize, room.evolutionStyles, room.turn === "O" ? "O" : "X");
+        room.evolutionFrames = [{
+            state: cloneJSON(room.evolutionState),
+            label: `Début de la manche ${room.round}`,
+            actor: null,
+            round: room.round
+        }];
+    }
 }
 
 function startCoinToss(room, forcedStarter = null) {
@@ -262,6 +343,10 @@ function startCoinToss(room, forcedStarter = null) {
         ? forcedStarter
         : (Math.random() < 0.5 ? "X" : "O");
     if (room.round === 1 && !room.firstStarterSymbol) room.firstStarterSymbol = room.turn;
+    if (room.gameVariant === "evolution" && room.evolutionState) {
+        room.evolutionState.turn = room.turn;
+        if (room.evolutionFrames[0]?.state) room.evolutionFrames[0].state.turn = room.turn;
+    }
     room.status = "tossing";
 
     io.to(room.code).emit("coinToss", {
@@ -280,6 +365,11 @@ function startCoinToss(room, forcedStarter = null) {
         const activeRoom = rooms.get(room.code);
         if (!activeRoom || activeRoom !== room || room.paused || !room.players.X || !room.players.O) return;
         room.status = "playing";
+        if (room.gameVariant === "evolution" && room.evolutionState?.draw) {
+            io.to(room.code).emit("gameStart", createPublicState(room));
+            handleRoundEnd(room, null, []);
+            return;
+        }
         armTurnTimer(room);
         io.to(room.code).emit("gameStart", createPublicState(room));
     }, TOSS_DURATION_MS + 450);
@@ -292,6 +382,10 @@ function startRoundWithStarter(room, starterSymbol) {
     clearTurnTimer(room);
     resetBoardForRound(room);
     room.turn = starterSymbol;
+    if (room.gameVariant === "evolution" && room.evolutionState) {
+        room.evolutionState.turn = starterSymbol;
+        if (room.evolutionFrames[0]?.state) room.evolutionFrames[0].state.turn = starterSymbol;
+    }
     room.status = "round_start";
 
     io.to(room.code).emit("roundStart", {
@@ -305,6 +399,11 @@ function startRoundWithStarter(room, starterSymbol) {
         room.startTimer = null;
         if (room.paused || !room.players.X || !room.players.O || room.matchFinished) return;
         room.status = "playing";
+        if (room.gameVariant === "evolution" && room.evolutionState?.draw) {
+            io.to(room.code).emit("gameStart", createPublicState(room));
+            handleRoundEnd(room, null, []);
+            return;
+        }
         armTurnTimer(room);
         io.to(room.code).emit("gameStart", createPublicState(room));
     }, 1500);
@@ -328,7 +427,12 @@ function startNewMatch(room) {
     clearStartTimer(room);
     room.scores = { X: 0, O: 0, draw: 0 };
     room.round = 1;
+    room.evolutionState = null;
     room.roundHistory = [];
+    if (room.gameVariant === "evolution") {
+        room.evolutionRoundHistory = [];
+        room.evolutionFrames = [];
+    }
     room.matchFinished = false;
     room.matchWinner = null;
     room.endReason = null;
@@ -372,6 +476,15 @@ function handleRoundEnd(room, winner, line) {
         history: room.history.map(move => ({ ...move }))
     });
 
+    if (room.gameVariant === "evolution") {
+        room.evolutionRoundHistory.push({
+            round: room.round,
+            winner,
+            frames: cloneJSON(room.evolutionFrames || []),
+            finalState: cloneJSON(room.evolutionState)
+        });
+    }
+
     if (winner && room.scores[winner] >= room.winsRequired) {
         room.matchFinished = true;
         room.matchWinner = winner;
@@ -382,10 +495,25 @@ function handleRoundEnd(room, winner, line) {
         return;
     }
 
+    // Une finale Fantôme BO3/BO5 clôt le match, même si les manches nulles
+    // empêchent d'atteindre mathématiquement les 2 ou 3 victoires.
+    if (room.gameVariant === "evolution" && room.ghostMode && room.round >= room.bestOf) {
+        room.matchFinished = true;
+        room.matchWinner = room.scores.X === room.scores.O ? null : (room.scores.X > room.scores.O ? "X" : "O");
+        room.endReason = "ghost_final";
+        room.status = "match_end";
+        room.turn = null;
+        io.to(room.code).emit("matchOver", createPublicState(room));
+        return;
+    }
+
     room.status = "round_end";
     room.turn = null;
-    const nextStarter = winner ? (winner === "X" ? "O" : "X") : null;
-    const nextToss = !winner;
+    // En Évolution, chaque manche commence par un vrai tirage (local et multi).
+    // Le mode Classique conserve sa règle habituelle.
+    const nextStarter = room.gameVariant === 'evolution' ? null
+      : (winner ? (winner === "X" ? "O" : "X") : null);
+    const nextToss = room.gameVariant === 'evolution' || !winner;
 
     io.to(room.code).emit("roundOver", {
         ...createPublicState(room),
@@ -457,6 +585,7 @@ io.on("connection", socket => {
         detachSocketFromRoom(socket, { destroyIfLobby: true });
 
         const code = generateRoomCode();
+        const gameVariant = normalizeGameVariant(payload?.gameVariant);
         const boardSize = normalizeBoardSize(payload?.boardSize);
         const bestOf = normalizeBestOf(payload?.bestOf);
         const turnTime = normalizeTurnTime(payload?.turnTime);
@@ -465,9 +594,11 @@ io.on("connection", socket => {
 
         const room = {
             code,
+            gameVariant,
             hostSymbol: "X",
             boardSize,
             bestOf,
+            ghostMode: gameVariant === "evolution" && bestOf > 1 && payload?.ghostMode === true,
             winsRequired: Math.ceil(bestOf / 2),
             turnTime,
             turnDeadline: null,
@@ -497,6 +628,13 @@ io.on("connection", socket => {
             startTimer: null,
             pendingNextStarter: null,
             pendingNextToss: false,
+            evolutionStyles: {
+                X: normalizeEvolutionStyle(payload?.evolutionStyle),
+                O: "balanced"
+            },
+            evolutionState: null,
+            evolutionFrames: [],
+            evolutionRoundHistory: [],
             paused: false,
             disconnectDeadline: null,
             disconnectTimers: { X: null, O: null }
@@ -515,7 +653,7 @@ io.on("connection", socket => {
             ...createPublicState(room)
         });
         emitLobbyState(room);
-        console.log("Room créée :", code, `${boardSize}x${boardSize}`, `BO${bestOf}`);
+        console.log("Room créée :", code, gameVariant, `${boardSize}x${boardSize}`, `BO${bestOf}`);
     });
 
     socket.on("joinRoom", payload => {
@@ -524,6 +662,14 @@ io.on("connection", socket => {
         const room = rooms.get(code);
 
         if (!room) return socket.emit("roomError", "Cette partie n'existe pas.");
+        const requestedVariant = payload && typeof payload === "object" && payload.gameVariant
+            ? normalizeGameVariant(payload.gameVariant)
+            : null;
+        if (requestedVariant && requestedVariant !== room.gameVariant) {
+            return socket.emit("roomError", room.gameVariant === "evolution"
+                ? "Cette salle appartient au Mode Évolution."
+                : "Cette salle appartient au Mode Classique.");
+        }
         if (room.tokens.O) return socket.emit("roomError", "Cette partie est déjà complète.");
         if (room.status !== "lobby") return socket.emit("roomError", "Cette partie a déjà commencé.");
 
@@ -543,6 +689,9 @@ io.on("connection", socket => {
             "O"
         );
         room.ready.O = false;
+        if (room.gameVariant === "evolution") {
+            room.evolutionStyles.O = normalizeEvolutionStyle(payload?.evolutionStyle);
+        }
         if (room.players.X) {
             room.paused = false;
             room.disconnectDeadline = null;
@@ -571,8 +720,19 @@ io.on("connection", socket => {
         room.bestOf = normalizeBestOf(payload?.bestOf ?? room.bestOf);
         room.turnTime = normalizeTurnTime(payload?.turnTime ?? room.turnTime);
         room.winsRequired = Math.ceil(room.bestOf / 2);
+        room.ghostMode = room.gameVariant === "evolution" && room.bestOf > 1 && payload?.ghostMode === true;
         room.board = Array(room.boardSize * room.boardSize).fill("");
         room.ready = { X: false, O: false };
+        emitLobbyState(room);
+    });
+
+    socket.on("setEvolutionStyle", payload => {
+        const room = rooms.get(socket.data.roomCode);
+        const symbol = socketSymbolInRoom(socket, room);
+        if (!room || !symbol || room.gameVariant !== "evolution" || room.status !== "lobby") return;
+
+        room.evolutionStyles[symbol] = normalizeEvolutionStyle(payload?.style);
+        room.ready[symbol] = false;
         emitLobbyState(room);
     });
 
@@ -636,10 +796,56 @@ io.on("connection", socket => {
         }
     });
 
+    socket.on("playEvolutionAction", payload => {
+        const room = rooms.get(socket.data.roomCode || payload?.code);
+        if (!room || room.gameVariant !== "evolution" || room.status !== "playing" || room.paused || room.matchFinished) return;
+
+        const symbol = socketSymbolInRoom(socket, room);
+        if (!symbol) return;
+        if (room.turn !== symbol || room.evolutionState?.turn !== symbol) {
+            return socket.emit("gameError", "Ce n'est pas ton tour.");
+        }
+
+        const action = payload?.action;
+        if (!action || typeof action !== "object") return socket.emit("gameError", "Action Évolution invalide.");
+
+        try {
+            const beforeTurn = room.evolutionState.turn;
+            const nextEvolutionState = Evolution.play(room.evolutionState, action, Math.random);
+            clearTurnTimer(room);
+            room.evolutionState = nextEvolutionState;
+            room.turn = room.evolutionState.turn;
+
+            let label = "Action Évolution";
+            if (action.type === "place") label = `${room.names[beforeTurn]} pose ${beforeTurn}`;
+            else if (action.type === "effect") label = action.effect === "add" ? `${room.names[beforeTurn]} ajoute des cases` : `${room.names[beforeTurn]} neutralise des cases`;
+            else if (action.type === "style") label = `${room.names[beforeTurn]} utilise ${String(action.style || room.evolutionStyles[beforeTurn]).toUpperCase()}`;
+            else if (action.type === "pass") label = `${room.names[beforeTurn]} passe son tour`;
+
+            room.evolutionFrames.push({
+                state: cloneJSON(room.evolutionState),
+                label,
+                actor: beforeTurn,
+                round: room.round
+            });
+
+            const line = Evolution.winningLine(room.evolutionState);
+            if (room.evolutionState.winner || room.evolutionState.draw) {
+                handleRoundEnd(room, room.evolutionState.winner || null, line?.cells || []);
+                return;
+            }
+
+            armTurnTimer(room);
+            io.to(room.code).emit("gameState", createPublicState(room));
+        } catch (error) {
+            socket.emit("gameError", error?.message || "Action Évolution impossible.");
+        }
+    });
+
     socket.on("playMove", payload => {
         const room = rooms.get(socket.data.roomCode || payload?.code);
         const index = Number(payload?.index);
-        if (!room || room.status !== "playing" || room.paused || room.matchFinished) return;
+        if (!room || room.gameVariant !== "classic" || room.status !== "playing" || room.paused || room.matchFinished) return;
 
         const symbol = socketSymbolInRoom(socket, room);
         if (!symbol) return;

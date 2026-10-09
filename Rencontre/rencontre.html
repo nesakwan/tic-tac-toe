@@ -1,1799 +1,754 @@
 <!DOCTYPE html>
 
 <html lang="fr">
-
-
-
 <head>
-
-    <meta charset="UTF-8">
-
-
-
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-
-
-    <title>Préparation de la partie - Tic Tac Toe</title>
-
-
-
-    <link rel="stylesheet" href="rencontre.css">
-    <link rel="icon" type="image/x-icon" href="assets/Images/TTTLogo.png">
-
-
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Préparation de la partie - Tic Tac Toe</title>
+<link href="rencontre.css" rel="stylesheet"/>
+<link href="assets/Images/TTTLogo.png" rel="icon" type="image/x-icon"/>
 </head>
-
-
-
-
-
 <body>
-
-
-
-    <main class="meeting-screen">
-
-
-
-
-
-        <!-- =====================================================
+<main class="meeting-screen">
+<!-- =====================================================
 
              DÉCORATIONS DE FOND
 
         ====================================================== -->
-
-
-
-        <div class="background-symbols" aria-hidden="true">
-
-
-
-            <div class="decor-x decor-x-1"></div>
-
-            <div class="decor-x decor-x-2"></div>
-
-            <div class="decor-x decor-x-3"></div>
-
-
-
-            <div class="decor-o decor-o-1"></div>
-
-            <div class="decor-o decor-o-2"></div>
-
-
-
-        </div>
-
-
-
-
-
-
-
-        <!-- =====================================================
+<div aria-hidden="true" class="background-symbols">
+<div class="decor-x decor-x-1"></div>
+<div class="decor-x decor-x-2"></div>
+<div class="decor-x decor-x-3"></div>
+<div class="decor-o decor-o-1"></div>
+<div class="decor-o decor-o-2"></div>
+</div>
+<!-- =====================================================
 
              RETOUR ACCUEIL
 
         ====================================================== -->
-
-
-
-        <a href="../index.html" class="back-button">
-
-
-
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-
-                <path d="M15 18L9 12L15 6"></path>
-
-            </svg>
-
-
-
-            <span>Retour</span>
-
-
-
-        </a>
-
-
-
-
-
-
-
-        <!-- =====================================================
+<a class="back-button" href="../index.html">
+<svg aria-hidden="true" viewbox="0 0 24 24">
+<path d="M15 18L9 12L15 6"></path>
+</svg>
+<span>Retour</span>
+</a>
+<!-- =====================================================
              PARAMÈTRES
         ====================================================== -->
-
-        <a href="../Parametre/parametre.html?from=preparation" class="settings-button" id="settings-button"
-            aria-label="Ouvrir les paramètres" title="Paramètres">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-                <circle cx="12" cy="12" r="3"></circle>
-                <path
-                    d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06-2.86 2.86-.06-.06A1.7 1.7 0 0 0 15 19.4a1.7 1.7 0 0 0-1 .6 1.7 1.7 0 0 0-.4 1.1V21H9.6v-.1a1.7 1.7 0 0 0-.4-1.1 1.7 1.7 0 0 0-1-.6 1.7 1.7 0 0 0-1.88.34l-.06.06L3.4 16.74l.06-.06A1.7 1.7 0 0 0 3.8 14.8a1.7 1.7 0 0 0-.6-1 1.7 1.7 0 0 0-1.1-.4H2V9.4h.1a1.7 1.7 0 0 0 1.1-.4 1.7 1.7 0 0 0 .6-1 1.7 1.7 0 0 0-.34-1.88l-.06-.06L6.26 3.2l.06.06A1.7 1.7 0 0 0 8.2 3.6a1.7 1.7 0 0 0 1-.6 1.7 1.7 0 0 0 .4-1.1V2h4v.1a1.7 1.7 0 0 0 .4 1.1 1.7 1.7 0 0 0 1 .6 1.7 1.7 0 0 0 1.88-.34l.06-.06 2.86 2.86-.06.06A1.7 1.7 0 0 0 19.4 8.2a1.7 1.7 0 0 0 .6 1 1.7 1.7 0 0 0 1.1.4h.1v4h-.1a1.7 1.7 0 0 0-1.1.4 1.7 1.7 0 0 0-.6 1Z">
-                </path>
-            </svg>
-        </a>
-
-
-        <!-- =====================================================
+<a aria-label="Ouvrir les paramètres" class="settings-button" href="../Parametre/parametre.html?from=preparation" id="settings-button" title="Paramètres">
+<svg aria-hidden="true" viewbox="0 0 24 24">
+<circle cx="12" cy="12" r="3"></circle>
+<path d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06-2.86 2.86-.06-.06A1.7 1.7 0 0 0 15 19.4a1.7 1.7 0 0 0-1 .6 1.7 1.7 0 0 0-.4 1.1V21H9.6v-.1a1.7 1.7 0 0 0-.4-1.1 1.7 1.7 0 0 0-1-.6 1.7 1.7 0 0 0-1.88.34l-.06.06L3.4 16.74l.06-.06A1.7 1.7 0 0 0 3.8 14.8a1.7 1.7 0 0 0-.6-1 1.7 1.7 0 0 0-1.1-.4H2V9.4h.1a1.7 1.7 0 0 0 1.1-.4 1.7 1.7 0 0 0 .6-1 1.7 1.7 0 0 0-.34-1.88l-.06-.06L6.26 3.2l.06.06A1.7 1.7 0 0 0 8.2 3.6a1.7 1.7 0 0 0 1-.6 1.7 1.7 0 0 0 .4-1.1V2h4v.1a1.7 1.7 0 0 0 .4 1.1 1.7 1.7 0 0 0 1 .6 1.7 1.7 0 0 0 1.88-.34l.06-.06 2.86 2.86-.06.06A1.7 1.7 0 0 0 19.4 8.2a1.7 1.7 0 0 0 .6 1 1.7 1.7 0 0 0 1.1.4h.1v4h-.1a1.7 1.7 0 0 0-1.1.4 1.7 1.7 0 0 0-.6 1Z">
+</path>
+</svg>
+</a>
+<!-- =====================================================
 
              CONTENU PRINCIPAL
 
         ====================================================== -->
-
-
-
-        <section class="preparation-container">
-
-
-
-
-
-            <!-- =================================================
+<section class="preparation-container">
+<!-- =================================================
 
                  TITRE
 
             ================================================== -->
-            <header class="preparation-header">
-
-
-
-                <h1>
+<header class="preparation-header">
+<h1>
 
                     PRÉPARATION DE LA PARTIE
 
                 </h1>
 
-
-
-                <p>
-
-                    Configurez votre rencontre avant de commencer.
-
-                </p>
-
-
-
-            </header>
-
-
-
-
-
-
-
-            <!-- =================================================
+</header>
+<!-- =================================================
 
                  PROGRESSION
 
             ================================================== -->
-
-
-
-            <nav class="progress-system" aria-label="Progression de la préparation">
-
-
-
-
-
-                <!-- MODE -->
-
-
-
-                <div class="progress-step progress-mode active">
-
-
-
-                    <div class="progress-circle">
+<nav aria-label="Progression de la préparation" class="progress-system">
+<!-- MODE -->
+<div class="progress-step progress-mode active">
+<div class="progress-circle">
 
                         1
 
                     </div>
-
-
-
-                    <span>
+<span>
 
                         Mode
 
                     </span>
-
-
-
-                </div>
-
-
-
-
-
-
-
-                <div class="progress-line"></div>
-
-
-
-
-
-
-
-                <!-- JOUEURS -->
-
-
-
-                <div class="progress-step progress-players">
-
-
-
-                    <div class="progress-circle">
+</div>
+<div class="progress-line"></div>
+<!-- JOUEURS -->
+<div class="progress-step progress-players">
+<div class="progress-circle">
 
                         2
 
                     </div>
-
-
-
-                    <span>
+<span>
 
                         Joueurs
 
                     </span>
-
-
-
-                </div>
-
-
-
-
-
-
-                <div class="progress-line"></div>
-
-
-                <!-- RÈGLES -->
-
-                <div class="progress-step progress-rules">
-
-                    <div class="progress-circle">
+</div>
+<div class="progress-line"></div>
+<!-- RÈGLES -->
+<div class="progress-step progress-rules">
+<div class="progress-circle">
                         3
                     </div>
-
-                    <span>
+<span>
                         Règles
                     </span>
-
-                </div>
-
-            </nav>
-
-
-
-
-
-
-
-            <!-- =================================================
+</div>
+</nav>
+<!-- =================================================
 
                  ÉTAPE 1
 
                  CHOIX DU MODE
 
             ================================================== -->
-
-
-
-            <section id="step-mode" class="step-panel">
-
-
-
-                <div class="step-heading">
-
-
-
-                    <span class="step-number">
+<section class="step-panel" id="step-mode">
+<div class="step-heading">
+<span class="step-number">
 
                         Étape 1
 
                     </span>
-
-
-
-                    <h2>
+<h2>
 
                         Choisissez un mode de jeu
 
                     </h2>
-
-
-
-                    <p>
+<p>
 
                         Sélectionnez la façon dont vous souhaitez jouer.
 
                     </p>
-
-
-
-                </div>
-
-
-
-
-
-
-
-                <!-- =============================================
+</div>
+<!-- =============================================
 
                      CARTES MODE
 
                 ============================================== -->
-
-
-
-                <div class="mode-cards">
-
-
-
-
-
-                    <!-- =========================================
-
-                         2 JOUEURS
-
-                    ========================================== -->
-
-
-
-                    <label class="mode-card">
-
-
-
-                        <input type="radio" name="game-mode" id="mode-local" value="local">
-
-
-
-
-
-                        <div class="mode-card-content">
-
-
-
-
-
-                            <!-- ICÔNE 2 JOUEURS -->
-
-
-
-                            <div class="mode-icon players-icon">
-
-
-
-                                <svg viewBox="0 0 100 80" aria-hidden="true">
-
-
-
-                                    <defs>
-
-
-
-                                        <linearGradient id="playersGradient" x1="0" y1="0" x2="1" y2="1">
-
-
-
-                                            <stop offset="0%" stop-color="#6C9AFF" />
-
-
-
-                                            <stop offset="100%" stop-color="#7559F4" />
-
-
-
-                                        </linearGradient>
-
-
-
-                                    </defs>
-
-
-
-
-
-                                    <circle cx="36" cy="25" r="15" fill="url(#playersGradient)" />
-
-
-
-                                    <circle cx="64" cy="25" r="15" fill="url(#playersGradient)" />
-
-
-
-                                    <path d="M10 68C10 48 21 38 36 38C51 38 60 49 60 68Z"
-                                        fill="url(#playersGradient)" />
-
-
-
-                                    <path d="M40 68C40 49 50 38 64 38C79 38 90 48 90 68Z"
-                                        fill="url(#playersGradient)" />
-
-
-
-                                </svg>
-
-
-
-                            </div>
-
-
-
-
-
-                            <h3>
-
-                                2 JOUEURS
-
-                            </h3>
-
-
-
-                            <p>
-
-                                Jouez avec un ami
-
-                                <br>
-
-                                sur le même appareil
-
-                            </p>
-
-
-
-
-
-                            <div class="selection-indicator">
-
-
-
-                                <svg viewBox="0 0 24 24" aria-hidden="true">
-
-                                    <path d="M5 12L10 17L19 7"></path>
-
-                                </svg>
-
-
-
-                            </div>
-
-
-
-                        </div>
-
-
-
-                    </label>
-
-
-
-
-
-
-
-                    <!-- =========================================
-
-                         CONTRE IA
-
-                    ========================================== -->
-
-
-
-                    <label class="mode-card">
-
-
-
-                        <input type="radio" name="game-mode" id="mode-ai" value="ai">
-
-
-
-
-
-                        <div class="mode-card-content">
-
-
-
-
-
-                            <!-- ROBOT -->
-
-
-
-                            <div class="mode-icon robot-icon">
-
-
-
-                                <svg viewBox="0 0 100 90" aria-hidden="true">
-
-
-
-                                    <rect x="23" y="20" width="54" height="52" rx="15" />
-
-
-
-                                    <path d="M50 20V10"></path>
-
-
-
-                                    <circle cx="50" cy="7" r="4" />
-
-
-
-                                    <circle cx="40" cy="43" r="5" />
-
-
-
-                                    <circle cx="60" cy="43" r="5" />
-
-
-
-                                    <path d="M39 58C45 63 55 63 61 58" />
-
-
-
-                                    <path d="M23 35H15C11 35 9 38 9 42V55C9 59 11 62 15 62H23" />
-
-
-
-                                    <path d="M77 35H85C89 35 91 38 91 42V55C91 59 89 62 85 62H77" />
-
-
-
-                                </svg>
-
-
-
-                            </div>
-
-
-
-
-
-                            <h3>
-
-                                CONTRE L'IA
-
-                            </h3>
-
-
-
-                            <p>
-
-                                Affrontez l'ordinateur
-
-                                <br>
-
-                                et choisissez votre difficulté
-
-                            </p>
-
-
-
-
-
-                            <div class="selection-indicator">
-
-
-
-                                <svg viewBox="0 0 24 24" aria-hidden="true">
-
-                                    <path d="M5 12L10 17L19 7"></path>
-
-                                </svg>
-
-
-
-                            </div>
-
-
-
-                        </div>
-
-
-
-                    </label>
-
-
-                    <!-- =========================================
-
-                         MULTIJOUEUR EN LIGNE
-
-                    ========================================== -->
-
-
-
-                    <label class="mode-card">
-
-                        <input type="radio" name="game-mode" id="mode-multi" value="multi">
-
-                        <div class="mode-card-content">
-
-                            <div class="mode-icon multi-icon">
-
-                                <svg viewBox="0 0 100 90" aria-hidden="true">
-                                    <defs>
-                                        <linearGradient id="multiGradient" x1="0" y1="0" x2="1" y2="1">
-                                            <stop offset="0%" stop-color="#6C9AFF" />
-                                            <stop offset="55%" stop-color="#4D8EFF" />
-                                            <stop offset="100%" stop-color="#E66AB5" />
-                                        </linearGradient>
-                                    </defs>
-
-                                    <rect x="17" y="16" width="66" height="46" rx="11" fill="none"
-                                        stroke="url(#multiGradient)" stroke-width="5"></rect>
-
-                                    <path d="M39 75H61M50 62V74" fill="none" stroke="url(#multiGradient)"
-                                        stroke-width="5" stroke-linecap="round"></path>
-
-                                    <circle cx="36" cy="35" r="6" fill="url(#multiGradient)"></circle>
-                                    <circle cx="64" cy="35" r="6" fill="url(#multiGradient)"></circle>
-
-                                    <path d="M27 51C28 44 31 41 36 41C41 41 44 44 45 51" fill="none"
-                                        stroke="url(#multiGradient)" stroke-width="4" stroke-linecap="round"></path>
-
-                                    <path d="M55 51C56 44 59 41 64 41C69 41 72 44 73 51" fill="none"
-                                        stroke="url(#multiGradient)" stroke-width="4" stroke-linecap="round"></path>
-                                </svg>
-
-                            </div>
-
-                            <h3>
-                                MULTIJOUEUR
-                            </h3>
-
-                            <p>
-                                Jouez en ligne
-                                <br>
-                                avec un autre joueur
-                            </p>
-
-                            <div class="selection-indicator">
-                                <svg viewBox="0 0 24 24" aria-hidden="true">
-                                    <path d="M5 12L10 17L19 7"></path>
-                                </svg>
-                            </div>
-
-                        </div>
-
-                    </label>
-
-
-
-
-                </div>
-                <!-- =============================================
+<div class="variant-selector">
+<div class="variant-heading">
+<h3>Choisissez une variante</h3>
+<p>Définissez d’abord le type d’expérience souhaité.</p>
+</div>
+<div class="variant-cards">
+<label class="variant-card variant-classic">
+<input checked="" name="game-variant" type="radio" value="classic"/>
+<div class="variant-card-content">
+<div class="variant-topline"><span class="variant-badge">Standard</span><span class="variant-check" aria-hidden="true">✓</span></div>
+<div class="variant-visual classic-visual" aria-hidden="true"><span>X</span><span></span><span>O</span><span></span><span>X</span><span></span><span>O</span><span></span><span>X</span></div>
+<h3>CLASSIQUE</h3>
+<p>Le duel pur : placez, bloquez, alignez.</p>
+<div class="variant-foot">3×3 · 4×4</div>
+</div>
+</label>
+<label class="variant-card variant-evolution">
+<input name="game-variant" type="radio" value="evolution"/>
+<div class="variant-card-content">
+<div class="variant-topline"><span class="variant-badge evolution">Styles</span><span class="variant-check" aria-hidden="true">✓</span></div>
+<div class="variant-visual evolution-visual" aria-hidden="true"><span class="evo-plus">+</span><span class="evo-grid">X&nbsp;&nbsp;O<br>O&nbsp;&nbsp;X</span><span class="evo-spark">✦</span></div>
+<h3>ÉVOLUTION</h3>
+<p>Transformez le plateau avec vos points d’effet.</p>
+<div class="variant-foot">8 styles · effets temporaires</div>
+</div>
+</label>
+<label class="variant-card variant-battle">
+<input name="game-variant" type="radio" value="battle"/>
+<div class="variant-card-content">
+<div class="variant-topline"><span class="variant-badge battle">Prototype</span><span class="variant-check" aria-hidden="true">✓</span></div>
+<div class="variant-visual battle-visual" aria-hidden="true"><span>♛</span><span>✦</span><span>☁</span></div>
+<h3>BATTLE FANTÔME</h3>
+<p>Affrontements multiples et terrain qui garde des traces.</p>
+<div class="variant-foot">Battle · mémoire du terrain</div>
+</div>
+</label>
+</div>
+<p class="variant-note">Les variantes Évolution et Battle Fantôme utilisent pour l’instant le format local sur le même appareil.</p>
+</div>
+
+<!-- =============================================
 
                      DIFFICULTÉ IA
 
                 ============================================== -->
-
-
-
-                <div class="difficulty-area">
-
-
-
-                    <div class="difficulty-header">
-
-
-
-                        <h3>
+<div class="difficulty-area">
+<div class="difficulty-header">
+<h3>
 
                             Difficulté de l'IA
 
                         </h3>
-
-
-
-                        <p>
+<p>
 
                             Choisissez le niveau de votre adversaire.
 
                         </p>
-
-
-
-                    </div>
-
-
-
-
-
-                    <div class="difficulty-options">
-
-
-
-
-
-                        <!-- FACILE -->
-
-
-
-                        <label class="difficulty-choice easy">
-
-
-
-                            <input type="radio" name="difficulty" value="easy">
-
-
-
-                            <span>
+</div>
+<div class="difficulty-options">
+<!-- FACILE -->
+<label class="difficulty-choice easy">
+<input name="difficulty" type="radio" value="easy"/>
+<span>
 
                                 Facile
 
                             </span>
-
-
-
-                        </label>
-
-
-
-
-
-
-
-                        <!-- NORMAL -->
-
-
-
-                        <label class="difficulty-choice normal">
-
-
-
-                            <input type="radio" name="difficulty" value="normal" checked>
-
-
-
-                            <span>
+</label>
+<!-- NORMAL -->
+<label class="difficulty-choice normal">
+<input checked="" name="difficulty" type="radio" value="normal"/>
+<span>
 
                                 Normal
 
                             </span>
-
-
-
-                        </label>
-
-
-
-
-
-
-
-                        <!-- DIFFICILE -->
-
-
-
-                        <label class="difficulty-choice hard">
-
-
-
-                            <input type="radio" name="difficulty" value="hard">
-
-
-
-                            <span>
+</label>
+<!-- DIFFICILE -->
+<label class="difficulty-choice hard">
+<input name="difficulty" type="radio" value="hard"/>
+<span>
 
                                 Difficile
 
                             </span>
-
-
-
-                        </label>
-
-
-
-
-
-
-
-                        <!-- GOD -->
-
-
-
-                        <label class="difficulty-choice god">
-
-
-
-                            <input type="radio" name="difficulty" value="god">
-
-
-
-                            <span>
+</label>
+<!-- GOD -->
+<label class="difficulty-choice god">
+<input name="difficulty" type="radio" value="god"/>
+<span>
 
                                 GOD
 
                             </span>
-
-
-
-                        </label>
-
-
-
-                    </div>
-
-
-
-
-
-
-
-                    <!-- DESCRIPTION -->
-
-
-
-                    <div class="difficulty-description">
-
-
-
-                        <p class="description-easy">
+</label>
+</div>
+<!-- DESCRIPTION -->
+<div class="difficulty-description">
+<p class="description-easy">
 
                             L'IA joue principalement de manière aléatoire.
 
                         </p>
-
-
-
-                        <p class="description-normal">
+<p class="description-normal">
 
                             L'IA analyse les menaces et peut vous bloquer.
 
                         </p>
-
-
-
-                        <p class="description-hard">
+<p class="description-hard">
 
                             L'IA anticipe plusieurs coups pour vous piéger.
 
                         </p>
-
-
-
-                        <p class="description-god">
+<p class="description-god">
 
                             L'IA joue parfaitement. Aucun faux pas permis.
 
                         </p>
-
-
-
-                    </div>
-
-
-
-                </div>
-
-
-
-
-
-
-
-                <!-- =============================================
+</div>
+</div>
+<!-- =============================================
 
                      CONTINUER VERS JOUEURS
 
                 ============================================== -->
-
-
-
-                <div class="step-actions">
-
-
-
-                    <a href="#step-players" class="primary-button continue-button">
-
-
-
-                        <span>
+<div class="step-actions">
+<a class="primary-button continue-button" href="#step-players">
+<span>
 
                             CONTINUER
 
                         </span>
-
-
-
-                        <svg viewBox="0 0 24 24" aria-hidden="true">
-
-                            <path d="M9 6L15 12L9 18"></path>
-
-                        </svg>
-
-
-
-                    </a>
-
-
-
-                </div>
-
-
-
-            </section>
-
-
-
-
-
-
-
-            <!-- =================================================
+<svg aria-hidden="true" viewbox="0 0 24 24">
+<path d="M9 6L15 12L9 18"></path>
+</svg>
+</a>
+</div>
+</section>
+<!-- =================================================
 
                  ÉTAPE 2
 
                  JOUEURS + SYMBOLES
 
             ================================================== -->
-
-
-
-            <section id="step-players" class="step-panel">
-
-
-
-                <div class="step-heading">
-
-
-
-                    <span class="step-number">
+<section class="step-panel" id="step-players">
+<div class="step-heading">
+<span class="step-number">
 
                         Étape 2
 
                     </span>
-
-
-
-                    <h2>
+<h2>
 
                         Préparez les joueurs
 
                     </h2>
 
+</div><div class="player-mode-selector"><div class="player-mode-heading"><h3>Choisissez les participants</h3></div><div class="mode-cards">
+<!-- =========================================
 
+                         2 JOUEURS
 
-                    <p>
+                    ========================================== -->
+<label class="mode-card">
+<input id="mode-local" name="game-mode" type="radio" value="local"/>
+<div class="mode-card-content">
+<!-- ICÔNE 2 JOUEURS -->
+<div class="mode-icon players-icon">
+<svg aria-hidden="true" viewbox="0 0 100 80">
+<defs>
+<lineargradient id="playersGradient" x1="0" x2="1" y1="0" y2="1">
+<stop offset="0%" stop-color="#6C9AFF"></stop>
+<stop offset="100%" stop-color="#7559F4"></stop>
+</lineargradient>
+</defs>
+<circle cx="36" cy="25" fill="url(#playersGradient)" r="15"></circle>
+<circle cx="64" cy="25" fill="url(#playersGradient)" r="15"></circle>
+<path d="M10 68C10 48 21 38 36 38C51 38 60 49 60 68Z" fill="url(#playersGradient)"></path>
+<path d="M40 68C40 49 50 38 64 38C79 38 90 48 90 68Z" fill="url(#playersGradient)"></path>
+</svg>
+</div>
+<h3>
 
-                        Configurez les participants et leurs symboles.
+                                2 JOUEURS
 
-                    </p>
+                            </h3>
 
+<div class="selection-indicator">
+<svg aria-hidden="true" viewbox="0 0 24 24">
+<path d="M5 12L10 17L19 7"></path>
+</svg>
+</div>
+</div>
+</label>
+<!-- =========================================
 
+                         CONTRE IA
 
-                </div>
+                    ========================================== -->
+<label class="mode-card">
+<input id="mode-ai" name="game-mode" type="radio" value="ai"/>
+<div class="mode-card-content">
+<!-- ROBOT -->
+<div class="mode-icon robot-icon">
+<svg aria-hidden="true" viewbox="0 0 100 90">
+<rect height="52" rx="15" width="54" x="23" y="20"></rect>
+<path d="M50 20V10"></path>
+<circle cx="50" cy="7" r="4"></circle>
+<circle cx="40" cy="43" r="5"></circle>
+<circle cx="60" cy="43" r="5"></circle>
+<path d="M39 58C45 63 55 63 61 58"></path>
+<path d="M23 35H15C11 35 9 38 9 42V55C9 59 11 62 15 62H23"></path>
+<path d="M77 35H85C89 35 91 38 91 42V55C91 59 89 62 85 62H77"></path>
+</svg>
+</div>
+<h3>
 
+                                CONTRE L'IA
 
+                            </h3>
 
+<div class="selection-indicator">
+<svg aria-hidden="true" viewbox="0 0 24 24">
+<path d="M5 12L10 17L19 7"></path>
+</svg>
+</div>
+</div>
+</label>
+<!-- =========================================
 
+                         MULTIJOUEUR EN LIGNE
 
+                    ========================================== -->
+<label class="mode-card">
+<input id="mode-multi" name="game-mode" type="radio" value="multi"/>
+<div class="mode-card-content">
+<div class="mode-icon multi-icon">
+<svg aria-hidden="true" viewbox="0 0 100 90">
+<defs>
+<lineargradient id="multiGradient" x1="0" x2="1" y1="0" y2="1">
+<stop offset="0%" stop-color="#6C9AFF"></stop>
+<stop offset="55%" stop-color="#4D8EFF"></stop>
+<stop offset="100%" stop-color="#E66AB5"></stop>
+</lineargradient>
+</defs>
+<rect fill="none" height="46" rx="11" stroke="url(#multiGradient)" stroke-width="5" width="66" x="17" y="16"></rect>
+<path d="M39 75H61M50 62V74" fill="none" stroke="url(#multiGradient)" stroke-linecap="round" stroke-width="5"></path>
+<circle cx="36" cy="35" fill="url(#multiGradient)" r="6"></circle>
+<circle cx="64" cy="35" fill="url(#multiGradient)" r="6"></circle>
+<path d="M27 51C28 44 31 41 36 41C41 41 44 44 45 51" fill="none" stroke="url(#multiGradient)" stroke-linecap="round" stroke-width="4"></path>
+<path d="M55 51C56 44 59 41 64 41C69 41 72 44 73 51" fill="none" stroke="url(#multiGradient)" stroke-linecap="round" stroke-width="4"></path>
+</svg>
+</div>
+<h3>
+                                MULTIJOUEUR
+                            </h3>
 
-
-                <!-- =============================================
+<div class="selection-indicator">
+<svg aria-hidden="true" viewbox="0 0 24 24">
+<path d="M5 12L10 17L19 7"></path>
+</svg>
+</div>
+</div>
+</label>
+</div></div>
+<!-- =============================================
 
                      MODE 2 JOUEURS
 
                 ============================================== -->
-
-
-
-                <div class="players-layout players-local">
-
-
-
-
-
-                    <!-- JOUEUR 1 -->
-
-
-
-                    <article class="player-card">
-
-
-
-
-
-                        <div class="player-avatar">
-
-
-
-                            <svg viewBox="0 0 24 24" aria-hidden="true">
-
-
-
-                                <circle cx="12" cy="8" r="4"></circle>
-
-
-
-                                <path d="M4 21C4 16 7 13 12 13C17 13 20 16 20 21"></path>
-
-
-
-                            </svg>
-
-
-
-                        </div>
-
-
-
-
-
-                        <span class="player-label">
+<div class="players-layout players-local">
+<!-- JOUEUR 1 -->
+<article class="player-card">
+<div class="player-avatar">
+<svg aria-hidden="true" viewbox="0 0 24 24">
+<circle cx="12" cy="8" r="4"></circle>
+<path d="M4 21C4 16 7 13 12 13C17 13 20 16 20 21"></path>
+</svg>
+</div>
+<span class="player-label">
 
                             JOUEUR 1
 
                         </span>
-
-
-
-
-
-                        <input class="player-name-input" type="text" value="Joueur 1" aria-label="Nom du joueur 1">
-
-
-
-
-
-
-
-                        <!-- SYMBOLE JOUEUR 1 -->
-
-
-
-                        <div class="player-symbol-zone">
-
-
-
-                            <span class="symbol-zone-title">
+<input aria-label="Nom du joueur 1" class="player-name-input" type="text" value="Joueur 1"/>
+<!-- SYMBOLE JOUEUR 1 -->
+<div class="player-symbol-zone">
+<span class="symbol-zone-title">
 
                                 Symbole
 
                             </span>
-
-
-
-
-
-                            <div class="mini-symbol-selector">
-
-
-
-
-
-                                <label class="mini-symbol mini-x">
-
-
-
-                                    <input type="radio" name="player1-symbol" value="x" checked>
-
-
-
-                                    <span>
+<div class="mini-symbol-selector">
+<label class="mini-symbol mini-x">
+<input checked="" name="player1-symbol" type="radio" value="x"/>
+<span>
 
                                         X
 
                                     </span>
-
-
-
-                                </label>
-
-
-
-
-
-
-
-                                <label class="mini-symbol mini-o">
-
-
-
-                                    <input type="radio" name="player1-symbol" value="o">
-
-
-
-                                    <span>
+</label>
+<label class="mini-symbol mini-o">
+<input name="player1-symbol" type="radio" value="o"/>
+<span>
 
                                         O
 
                                     </span>
-
-
-
-                                </label>
-
-
-
-                            </div>
-
-
-
-                        </div>
-
-
-
-                    </article>
-
-
-
-
-
-
-
-                    <!-- VS -->
-
-
-
-                    <div class="versus">
-
-
-
-                        <span>
+</label>
+</div>
+</div>
+</article>
+<!-- VS -->
+<div class="versus">
+<span>
 
                             VS
 
                         </span>
-
-
-
-                    </div>
-
-
-
-
-
-
-
-                    <!-- JOUEUR 2 -->
-
-
-
-                    <article class="player-card">
-
-
-
-
-
-                        <div class="player-avatar secondary">
-
-
-
-                            <svg viewBox="0 0 24 24" aria-hidden="true">
-
-
-
-                                <circle cx="12" cy="8" r="4"></circle>
-
-
-
-                                <path d="M4 21C4 16 7 13 12 13C17 13 20 16 20 21"></path>
-
-
-
-                            </svg>
-
-
-
-                        </div>
-
-
-
-
-
-                        <span class="player-label">
+</div>
+<!-- JOUEUR 2 -->
+<article class="player-card">
+<div class="player-avatar secondary">
+<svg aria-hidden="true" viewbox="0 0 24 24">
+<circle cx="12" cy="8" r="4"></circle>
+<path d="M4 21C4 16 7 13 12 13C17 13 20 16 20 21"></path>
+</svg>
+</div>
+<span class="player-label">
 
                             JOUEUR 2
 
                         </span>
-
-
-
-
-
-                        <input class="player-name-input" type="text" value="Joueur 2" aria-label="Nom du joueur 2">
-
-
-
-
-
-
-
-                        <!-- SYMBOLE JOUEUR 2 -->
-
-
-
-                        <div class="player-symbol-zone">
-
-
-
-                            <span class="symbol-zone-title">
+<input aria-label="Nom du joueur 2" class="player-name-input" type="text" value="Joueur 2"/>
+<!-- SYMBOLE JOUEUR 2 -->
+<div class="player-symbol-zone">
+<span class="symbol-zone-title">
 
                                 Symbole
 
                             </span>
-
-
-
-
-
-                            <div class="mini-symbol-selector">
-
-
-
-
-
-                                <label class="mini-symbol mini-x">
-
-
-
-                                    <input type="radio" name="player2-symbol" value="x">
-
-
-
-                                    <span>
+<div class="mini-symbol-selector">
+<label class="mini-symbol mini-x">
+<input name="player2-symbol" type="radio" value="x"/>
+<span>
 
                                         X
 
                                     </span>
-
-
-
-                                </label>
-
-
-
-
-
-
-
-                                <label class="mini-symbol mini-o">
-
-
-
-                                    <input type="radio" name="player2-symbol" value="o" checked>
-
-
-
-                                    <span>
+</label>
+<label class="mini-symbol mini-o">
+<input checked="" name="player2-symbol" type="radio" value="o"/>
+<span>
 
                                         O
 
                                     </span>
-
-
-
-                                </label>
-
-
-
-                            </div>
-
-
-
-                        </div>
-
-
-
-                    </article>
-
-
-
-                </div>
-
-
-
-
-
-
-
-                <!-- =============================================
+</label>
+</div>
+</div>
+</article>
+</div>
+<!-- =============================================
 
                      MODE CONTRE IA
 
                 ============================================== -->
-
-
-
-                <div class="players-layout players-ai">
-
-
-
-
-
-                    <!-- JOUEUR -->
-
-
-
-                    <article class="player-card">
-
-
-
-
-
-                        <div class="player-avatar">
-
-
-
-                            <svg viewBox="0 0 24 24" aria-hidden="true">
-
-
-
-                                <circle cx="12" cy="8" r="4"></circle>
-
-
-
-                                <path d="M4 21C4 16 7 13 12 13C17 13 20 16 20 21"></path>
-
-
-
-                            </svg>
-
-
-
-                        </div>
-
-
-
-
-
-                        <span class="player-label">
+<div class="players-layout players-ai">
+<!-- JOUEUR -->
+<article class="player-card">
+<div class="player-avatar">
+<svg aria-hidden="true" viewbox="0 0 24 24">
+<circle cx="12" cy="8" r="4"></circle>
+<path d="M4 21C4 16 7 13 12 13C17 13 20 16 20 21"></path>
+</svg>
+</div>
+<span class="player-label">
 
                             JOUEUR
 
                         </span>
-
-
-
-
-
-                        <input class="player-name-input" type="text" value="Joueur 1" aria-label="Nom du joueur">
-
-
-
-
-
-
-
-                        <!-- SEUL CHOIX DE SYMBOLE -->
-
-
-
-                        <div class="player-symbol-zone">
-
-
-
-                            <span class="symbol-zone-title">
+<input aria-label="Nom du joueur" class="player-name-input" type="text" value="Joueur 1"/>
+<!-- SEUL CHOIX DE SYMBOLE -->
+<div class="player-symbol-zone">
+<span class="symbol-zone-title">
 
                                 Votre symbole
 
                             </span>
-
-
-
-
-
-                            <div class="mini-symbol-selector">
-
-
-
-
-
-                                <label class="mini-symbol mini-x">
-
-
-
-                                    <input type="radio" name="ai-player-symbol" value="x" checked>
-
-
-
-                                    <span>
+<div class="mini-symbol-selector">
+<label class="mini-symbol mini-x">
+<input checked="" name="ai-player-symbol" type="radio" value="x"/>
+<span>
 
                                         X
 
                                     </span>
-
-
-
-                                </label>
-
-
-
-
-
-
-
-                                <label class="mini-symbol mini-o">
-
-
-
-                                    <input type="radio" name="ai-player-symbol" value="o">
-
-
-
-                                    <span>
+</label>
+<label class="mini-symbol mini-o">
+<input name="ai-player-symbol" type="radio" value="o"/>
+<span>
 
                                         O
 
                                     </span>
-
-
-
-                                </label>
-
-
-
-                            </div>
-
-
-
-                        </div>
-
-
-
-                    </article>
-
-
-
-
-
-
-
-                    <!-- VS -->
-
-
-
-                    <div class="versus">
-
-
-
-                        <span>
+</label>
+</div>
+</div>
+</article>
+<!-- VS -->
+<div class="versus">
+<span>
 
                             VS
 
                         </span>
-
-
-
-                    </div>
-
-
-
-
-
-
-
-                    <!-- IA -->
-
-
-
-                    <article class="player-card ai-player-card">
-
-
-
-
-
-                        <div class="player-avatar robot-small">
-
-
-
-                            <svg viewBox="0 0 24 24" aria-hidden="true">
-
-
-
-                                <rect x="5" y="7" width="14" height="11" rx="4"></rect>
-
-
-
-                                <path d="M12 7V4"></path>
-
-
-
-                                <circle cx="12" cy="3" r="1"></circle>
-
-
-
-                                <circle cx="9" cy="12" r="1"></circle>
-
-
-
-                                <circle cx="15" cy="12" r="1"></circle>
-
-
-
-                            </svg>
-
-
-
-                        </div>
-
-
-
-
-
-                        <span class="player-label">
+</div>
+<!-- IA -->
+<article class="player-card ai-player-card">
+<div class="player-avatar robot-small">
+<svg aria-hidden="true" viewbox="0 0 24 24">
+<rect height="11" rx="4" width="14" x="5" y="7"></rect>
+<path d="M12 7V4"></path>
+<circle cx="12" cy="3" r="1"></circle>
+<circle cx="9" cy="12" r="1"></circle>
+<circle cx="15" cy="12" r="1"></circle>
+</svg>
+</div>
+<span class="player-label">
 
                             INTELLIGENCE ARTIFICIELLE
 
                         </span>
-
-
-
-                        <strong class="ai-opponent-name" id="ai-opponent-name">
+<strong class="ai-opponent-name" id="ai-opponent-name">
 
                             Olivier
 
                         </strong>
-
-
-
-                        <span class="ai-level">
+<span class="ai-level">
 
                             DIFFICULTÉ SÉLECTIONNÉE
 
                         </span>
-
-
-
-
-
-                        <div class="auto-symbol">
-
-
-
-                            <span class="auto-symbol-label">
+<div class="auto-symbol">
+<span class="auto-symbol-label">
 
                                 Symbole
 
                             </span>
-
-
-
-                            <strong>
+<strong>
 
                                 AUTO
 
                             </strong>
-
-
-
-                            <small>
+<small>
 
                                 L'autre symbole sera attribué à l'IA.
 
                             </small>
-
-
-
-                        </div>
-
-
-
-                    </article>
-
-
-
-                </div>
-
-
-
-
-
-
-
-                <!-- =============================================
+</div>
+</article>
+</div>
+<!-- =============================================
 
                      ACTIONS FINALES
 
                 ============================================== -->
 
-
-
-                <div class="step-actions final-actions">
-
-
-
-
-
-                    <a href="#step-mode" class="previous-button">
+<div class="step-actions final-actions">
+<a class="previous-button" href="#step-mode">
 
                         ← Précédent
 
                     </a>
-
-
-
-
-
-                    <!-- CONTINUER VERS LES RÈGLES -->
-
-                    <a href="#step-rules" class="primary-button rules-continue-button">
-
-
-
-                        <span>
+<!-- CONTINUER VERS LES RÈGLES -->
+<a class="primary-button rules-continue-button" href="#step-rules">
+<span>
 
                             CONTINUER
 
                         </span>
-
-
-
-                        <svg viewBox="0 0 24 24" aria-hidden="true">
-
-                            <path d="M7 4L19 12L7 20V4Z"></path>
-
-                        </svg>
-
-
-
-                    </a>
-
-
-
-                </div>
-
-
-
-            </section>
-
-
-            <!-- =================================================
+<svg aria-hidden="true" viewbox="0 0 24 24">
+<path d="M7 4L19 12L7 20V4Z"></path>
+</svg>
+</a>
+</div>
+</section>
+<!-- =================================================
                  ÉTAPE 3
                  RÈGLES DU MATCH
             ================================================== -->
-
-            <section id="step-rules" class="step-panel">
-
-                <div class="step-heading">
-                    <span class="step-number">
+<section class="step-panel" id="step-rules">
+<div class="step-heading">
+<span class="step-number">
                         Étape 3
                     </span>
-                    <h2>
+<h2>
                         Choisissez les règles du match
                     </h2>
-                    <p>
+<p>
                         Sélectionnez la taille du plateau, le format et le temps accordé à chaque tour.
                     </p>
-                </div>
-
-                <!-- =============================================
+</div>
+<!-- =============================================
 
                      TAILLE DU PLATEAU
 
                 ============================================== -->
-
-                <section class="board-size-area" aria-label="Taille du plateau">
-                    <div class="board-size-copy">
-                        <span class="board-size-kicker">FORMAT DE PARTIE</span>
-                        <h3>Taille du plateau</h3>
-                        <p>Choisissez le format utilisé pour cette partie.</p>
-                    </div>
-
-                    <div class="board-size-options">
-                        <label class="board-size-choice">
-                            <input type="radio" name="board-size" value="3" checked>
-                            <span>
-                                <strong>3 × 3</strong>
-                                <small>Classique</small>
-                            </span>
-                        </label>
-
-                        <label class="board-size-choice">
-                            <input type="radio" name="board-size" value="4">
-                            <span>
-                                <strong>4 × 4</strong>
-                                <small>4 symboles alignés</small>
-                            </span>
-                        </label>
-                    </div>
-                </section>
-
-                <!-- =============================================
+<section aria-label="Taille du plateau" class="board-size-area">
+<div class="board-size-copy">
+<span class="board-size-kicker">FORMAT DE PARTIE</span>
+<h3>Taille du plateau</h3>
+<p>Choisissez le format utilisé pour cette partie.</p>
+</div>
+<div class="board-size-options">
+<label class="board-size-choice">
+<input checked="" name="board-size" type="radio" value="3"/>
+<span>
+<strong>3 × 3</strong>
+<small>Classique</small>
+</span>
+</label>
+<label class="board-size-choice">
+<input name="board-size" type="radio" value="4"/>
+<span>
+<strong>4 × 4</strong>
+<small>4 symboles alignés</small>
+</span>
+</label>
+</div>
+</section>
+<!-- =============================================
                      FORMAT DU MATCH
                 ============================================== -->
-
-                <section class="match-format-area" aria-label="Format du match">
-                    <div class="board-size-copy">
-                        <span class="board-size-kicker">NOMBRE DE MANCHES</span>
-                        <h3>Format du match</h3>
-                        <p>Le premier joueur à atteindre le nombre de victoires requis remporte le match.</p>
-                    </div>
-
-                    <div class="match-format-options">
-                        <label class="match-format-choice">
-                            <input type="radio" name="best-of" value="1" checked>
-                            <span><strong>BO1</strong><small>1 victoire</small></span>
-                        </label>
-
-                        <label class="match-format-choice">
-                            <input type="radio" name="best-of" value="3">
-                            <span><strong>BO3</strong><small>Premier à 2</small></span>
-                        </label>
-
-                        <label class="match-format-choice">
-                            <input type="radio" name="best-of" value="5">
-                            <span><strong>BO5</strong><small>Premier à 3</small></span>
-                        </label>
-                    </div>
-                </section>
-
-                <!-- =============================================
+<section aria-label="Format du match" class="match-format-area">
+<div class="board-size-copy">
+<span class="board-size-kicker">NOMBRE DE MANCHES</span>
+<h3>Format du match</h3>
+<p>Le premier joueur à atteindre le nombre de victoires requis remporte le match.</p>
+</div>
+<div class="match-format-options">
+<label class="match-format-choice">
+<input checked="" name="best-of" type="radio" value="1"/>
+<span><strong>BO1</strong><small>1 victoire</small></span>
+</label>
+<label class="match-format-choice">
+<input name="best-of" type="radio" value="3"/>
+<span><strong>BO3</strong><small>Premier à 2</small></span>
+</label>
+<label class="match-format-choice">
+<input name="best-of" type="radio" value="5"/>
+<span><strong>BO5</strong><small>Premier à 3</small></span>
+</label>
+</div>
+</section>
+<!-- =============================================
                      TEMPS PAR TOUR
                 ============================================== -->
-
-                <section class="turn-time-area" aria-label="Temps par tour">
-                    <div class="board-size-copy">
-                        <span class="board-size-kicker">RYTHME DU MATCH</span>
-                        <h3>Temps par tour</h3>
-                        <p>À zéro, le joueur perd son tour. Le chrono se met en pause pendant les animations et
+<section aria-label="Temps par tour" class="turn-time-area">
+<div class="board-size-copy">
+<span class="board-size-kicker">RYTHME DU MATCH</span>
+<h3>Temps par tour</h3>
+<p>À zéro, le joueur perd son tour. Le chrono se met en pause pendant les animations et
                             résultats.</p>
-                    </div>
-
-                    <div class="turn-time-options">
-                        <label class="turn-time-choice">
-                            <input type="radio" name="turn-time" value="0" checked>
-                            <span><strong>Aucun</strong><small>Sans limite</small></span>
-                        </label>
-                        <label class="turn-time-choice">
-                            <input type="radio" name="turn-time" value="10">
-                            <span><strong>10 s</strong><small>Rapide</small></span>
-                        </label>
-                        <label class="turn-time-choice">
-                            <input type="radio" name="turn-time" value="20">
-                            <span><strong>20 s</strong><small>Équilibré</small></span>
-                        </label>
-                        <label class="turn-time-choice">
-                            <input type="radio" name="turn-time" value="30">
-                            <span><strong>30 s</strong><small>Réflexion</small></span>
-                        </label>
-                    </div>
-                </section>
-
-                <div class="step-actions final-actions">
-                    <a href="#step-players" class="previous-button">
+</div>
+<div class="turn-time-options">
+<label class="turn-time-choice">
+<input checked="" name="turn-time" type="radio" value="0"/>
+<span><strong>Aucun</strong><small>Sans limite</small></span>
+</label>
+<label class="turn-time-choice">
+<input name="turn-time" type="radio" value="10"/>
+<span><strong>10 s</strong><small>Rapide</small></span>
+</label>
+<label class="turn-time-choice">
+<input name="turn-time" type="radio" value="20"/>
+<span><strong>20 s</strong><small>Équilibré</small></span>
+</label>
+<label class="turn-time-choice">
+<input name="turn-time" type="radio" value="30"/>
+<span><strong>30 s</strong><small>Réflexion</small></span>
+</label>
+</div>
+</section>
+<section id="ghost-option" class="ghost-option" hidden aria-label="Règle spéciale Fantôme">
+  <label class="ghost-card" for="ghost-mode">
+    <input id="ghost-mode" type="checkbox" name="ghost-mode" />
+    <span class="ghost-icon" aria-hidden="true">✧<span>XO</span></span>
+    <span class="ghost-description"><strong>MODE FANTÔME <small>RÈGLE SPÉCIALE</small></strong>
+      <span>Les cases ajoutées et neutralisées pendant les premières manches sont mémorisées. En manche 3 (BO3) ou 5 (BO5), elles deviennent définitives : les extensions répétées sur un même bord s'empilent en plusieurs lignes ou colonnes.</span>
+      <em>Disponible uniquement en Évolution · BO3 ou BO5</em></span>
+    <span class="ghost-switch" aria-hidden="true"></span>
+  </label>
+</section>
+<div class="step-actions final-actions">
+<a class="previous-button" href="#step-players">
                         ← Précédent
                     </a>
-
-                    <a href="../Gameplay/game.html" class="primary-button start-button">
-                        <span>LANCER LE MATCH</span>
-                        <svg viewBox="0 0 24 24" aria-hidden="true">
-                            <path d="M7 4L19 12L7 20V4Z"></path>
-                        </svg>
-                    </a>
-                </div>
-
-            </section>
-
-
-
-
-
-        </section>
-
-
-
-    </main>
-
-
-
-
-    <script src="../js/music.js" data-music-src="../assets/Sounds/Super Smash Bros Brawl Music - Final Destination.mp3"></script>
-    <script src="../js/ai-names.js"></script>
-    <script src="../js/player-data.js"></script>
-
-    <script>
+<a class="primary-button start-button" href="../Gameplay/game.html">
+<span>LANCER LE MATCH</span>
+<svg aria-hidden="true" viewbox="0 0 24 24">
+<path d="M7 4L19 12L7 20V4Z"></path>
+</svg>
+</a>
+</div>
+</section>
+</section>
+</main>
+<script data-music-src="../assets/Sounds/Super Smash Bros Brawl Music - Final Destination.mp3" src="../js/music.js"></script>
+<script src="../js/ai-names.js"></script>
+<script src="../js/player-data.js"></script>
+<script>
         (() => {
             const PREPARATION_STORAGE_KEY = "tttPreparationState";
             const SETTINGS_RETURN_KEY = "tttSettingsReturn";
@@ -1831,11 +786,15 @@
                     step: location.hash === "#step-rules"
                         ? "rules"
                         : (location.hash === "#step-players" ? "players" : "mode"),
+                    gameVariant: ["classic", "evolution", "battle"].includes(checkedValue("game-variant"))
+                        ? checkedValue("game-variant")
+                        : "classic",
                     gameMode: ["local", "ai", "multi"].includes(checkedValue("game-mode"))
                         ? checkedValue("game-mode")
                         : "local",
                     boardSize: Number(checkedValue("board-size")) === 4 ? 4 : 3,
                     bestOf: [1, 3, 5].includes(Number(checkedValue("best-of"))) ? Number(checkedValue("best-of")) : 1,
+                    ghostMode: checkedValue("game-variant") === "evolution" && [3, 5].includes(Number(checkedValue("best-of"))) && Boolean(document.getElementById("ghost-mode")?.checked),
                     turnTime: [0, 10, 20, 30].includes(Number(checkedValue("turn-time"))) ? Number(checkedValue("turn-time")) : 0,
                     difficulty: selectedDifficulty,
                     localPlayer1Name: localNames[0]?.value || "Joueur 1",
@@ -1889,11 +848,16 @@
                     const state = JSON.parse(raw);
 
                     setCheckedValue(
+                        "game-variant",
+                        ["classic", "evolution", "battle"].includes(state.gameVariant) ? state.gameVariant : "classic"
+                    );
+                    setCheckedValue(
                         "game-mode",
                         ["local", "ai", "multi"].includes(state.gameMode) ? state.gameMode : "local"
                     );
                     setCheckedValue("board-size", String(state.boardSize || 3));
                     setCheckedValue("best-of", String([1, 3, 5].includes(Number(state.bestOf)) ? Number(state.bestOf) : 1));
+                    document.getElementById("ghost-mode").checked = state.ghostMode === true;
                     setCheckedValue("turn-time", String([0, 10, 20, 30].includes(Number(state.turnTime)) ? Number(state.turnTime) : 0));
                     setCheckedValue("difficulty", state.difficulty);
                     setCheckedValue("player1-symbol", state.player1Symbol);
@@ -1957,6 +921,49 @@
                 }
             }
 
+            function updateGhostOption() {
+                const available = checkedValue("game-variant") === "evolution" && [3,5].includes(Number(checkedValue("best-of")));
+                const panel = document.getElementById("ghost-option");
+                const toggle = document.getElementById("ghost-mode");
+                panel.hidden = !available;
+                toggle.disabled = !available;
+                if (!available) toggle.checked = false;
+            }
+
+            function updateVariantAvailability() {
+                updateGhostOption();
+                const variant = checkedValue("game-variant") || "classic";
+                const localInput = document.getElementById("mode-local");
+                const aiInput = document.getElementById("mode-ai");
+                const multiInput = document.getElementById("mode-multi");
+                const note = document.querySelector(".variant-note");
+
+                // Évolution accepte Local + IA + Multijoueur.
+                // Battle Fantôme reste limité au local pour le moment.
+                const aiLocked = variant === "battle";
+                const multiLocked = variant === "battle";
+
+                if (aiInput) {
+                    aiInput.disabled = aiLocked;
+                    aiInput.closest(".mode-card")?.classList.toggle("locked", aiLocked);
+                }
+                if (multiInput) {
+                    multiInput.disabled = multiLocked;
+                    multiInput.closest(".mode-card")?.classList.toggle("locked", multiLocked);
+                }
+
+                if ((aiLocked && aiInput?.checked) || (multiLocked && multiInput?.checked)) {
+                    if (localInput) localInput.checked = true;
+                }
+
+                if (note) {
+                    note.textContent = variant === "evolution"
+                        ? "Mode Évolution : 2 joueurs, Contre l’IA et Multijoueur disponibles."
+                        : "Battle Fantôme est actuellement disponible en local.";
+                    note.classList.toggle("visible", variant !== "classic");
+                }
+            }
+
             function normalizePreparationEntry() {
                 if (resumeFromSettings) {
                     // Le paramètre ?resume=1 n'est valable que pour ce retour depuis Paramètres.
@@ -1974,21 +981,39 @@
 
             settingsButton?.addEventListener("click", savePreparationState);
 
-            continueButton?.addEventListener("click", (event) => {
-                const selectedMode = checkedValue("game-mode");
-
-                if (selectedMode !== "multi") {
-                    savePreparationState();
-                    return;
-                }
-
-                event.preventDefault();
+            continueButton?.addEventListener("click", () => {
+                // Étape 1 = variante uniquement. Le type de participants est maintenant choisi à l’étape 2.
                 savePreparationState();
-                window.location.href = "../Multiplayer/multi.html";
             });
 
-            rulesContinueButton?.addEventListener("click", savePreparationState);
-            startButton?.addEventListener("click", savePreparationState);
+            rulesContinueButton?.addEventListener("click", (event) => {
+                savePreparationState();
+                const variant = checkedValue("game-variant") || "classic";
+                const selectedMode = checkedValue("game-mode") || "local";
+                if (selectedMode === "multi") {
+                    event.preventDefault();
+                    window.location.href = variant === "evolution"
+                        ? "../Multiplayer/evolution-multi.html"
+                        : "../Multiplayer/multi.html";
+                }
+            });
+            startButton?.addEventListener("click", (event) => {
+                savePreparationState();
+                const variant = checkedValue("game-variant") || "classic";
+                if (variant === "evolution") {
+                    const selectedMode = checkedValue("game-mode") || "local";
+                    event.preventDefault();
+                    window.location.href = selectedMode === "multi"
+                        ? "../Multiplayer/evolution-multi.html"
+                        : "../Gameplay/evolution.html";
+                    return;
+                }
+                if (variant === "battle") {
+                    event.preventDefault();
+                    window.location.href = "../Gameplay/battle.html";
+                    return;
+                }
+            });
 
             document.querySelectorAll('input[name="difficulty"]').forEach((input) => {
                 input.addEventListener("change", () => {
@@ -1997,15 +1022,24 @@
                 });
             });
 
+            document.querySelectorAll('input[name="game-variant"]').forEach((input) => {
+                input.addEventListener("change", () => {
+                    updateVariantAvailability();
+                    savePreparationState();
+                });
+            });
+
             document.querySelectorAll(
                 'input[name="game-mode"], input[name="board-size"], input[name="best-of"], input[name="difficulty"], input[name="player1-symbol"], input[name="player2-symbol"], input[name="ai-player-symbol"], .player-name-input'
             ).forEach((control) => {
-                control.addEventListener("change", savePreparationState);
+                control.addEventListener("change", () => { updateGhostOption(); savePreparationState(); });
                 control.addEventListener("input", savePreparationState);
             });
 
+            document.getElementById("ghost-mode").addEventListener("change", savePreparationState);
             normalizePreparationEntry();
             restorePreparationState();
+            updateVariantAvailability();
 
             window.addEventListener("pageshow", (event) => {
                 // Avec le back/forward cache, le navigateur peut restaurer l'ancien #step-rules
@@ -2016,9 +1050,5 @@
             });
         })();
     </script>
-
 </body>
-
-
-
 </html>
