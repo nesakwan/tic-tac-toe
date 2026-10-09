@@ -1,2 +1,2 @@
 # tic-tac-toe
-The future app updated
+The future app v1.0.2
